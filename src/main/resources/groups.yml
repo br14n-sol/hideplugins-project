@@ -1,0 +1,13 @@
+groups:
+  default:
+    commands:
+      - 'help'
+      - 'msg'
+      - 'tell'
+  mod:
+    commands:
+      - 'about'
+  admin:
+    commans:
+      - 'kick'
+      - 'ban'
