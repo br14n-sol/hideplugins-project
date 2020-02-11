@@ -1,13 +1,9 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import io.github.complexcodegit.hidepluginsproject.managers.SoundManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

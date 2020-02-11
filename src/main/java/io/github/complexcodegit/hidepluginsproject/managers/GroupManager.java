@@ -9,11 +9,11 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 
 public class GroupManager {
-    public static List<String> groupsPermissions = new ArrayList<>();
-    public static List<String> playerPermissions = new ArrayList<>();
-    public static List<String> groupsList = new ArrayList<>();
-    public static String permission = "";
-    public static String group = "";
+    static List<String> groupsPermissions = new ArrayList<>();
+    static List<String> playerPermissions = new ArrayList<>();
+    static List<String> groupsList = new ArrayList<>();
+    static String permission = "";
+    static String group = "";
 
     public static List<String> getGroups(HidePluginsProject plugin) {
         for(String groups : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {

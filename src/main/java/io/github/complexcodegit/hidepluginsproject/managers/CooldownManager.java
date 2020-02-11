@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 public class CooldownManager {
-    public static HashMap<UUID, Double> cooldowns = new HashMap<>();
+    static HashMap<UUID, Double> cooldowns = new HashMap<>();
 
     public static void setCooldown(Player player, int seconds) {
         double delay = System.currentTimeMillis() + (seconds * 1000);

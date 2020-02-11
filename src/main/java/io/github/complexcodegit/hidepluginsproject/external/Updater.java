@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Updater {
-    private static String latestVersion;
+    static String latestVersion;
 
     public static void checkedUpdate(HidePluginsProject plugin, String version) {
         if(plugin.getConfig().getBoolean("updates")) {

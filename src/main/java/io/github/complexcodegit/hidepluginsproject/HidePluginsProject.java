@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
-import io.github.complexcodegit.hidepluginsproject.external.Metrics;
 import io.github.complexcodegit.hidepluginsproject.external.Updater;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.MetricManager;
@@ -28,19 +24,20 @@ import io.github.complexcodegit.hidepluginsproject.events.LockedCommands;
 import io.github.complexcodegit.hidepluginsproject.utils.Title;
 
 public class HidePluginsProject extends JavaPlugin implements Listener {
-    private FileConfiguration groups = null;
-    private File groupsFile = null;
-    private FileConfiguration languages = null;
-    private File languagesFile = null;
-    private FileConfiguration players = null;
-    private File playersFile = null;
+    private FileConfiguration groups;
+    private File groupsFile;
+    private FileConfiguration languages;
+    private File languagesFile;
+    private FileConfiguration players;
+    private File playersFile;
 
     PluginDescriptionFile pdffile = getDescription();
 
-    public String rutaConfig;
-    public ConsoleCommandSender console = Bukkit.getConsoleSender();
-    public String version = pdffile.getVersion();
+    String rutaConfig;
+    String version = pdffile.getVersion();
 
+    public ConsoleCommandSender console = Bukkit.getConsoleSender();
+    
     public void onEnable() {
         registerConfig();
 
