@@ -16,11 +16,14 @@ public class TabCompletes implements Listener {
     }
 
     @EventHandler
-    public void onCommandTabSend(PlayerCommandSendEvent event) {
+    public boolean onCommandTabSend(PlayerCommandSendEvent event) {
         Player player = event.getPlayer();
         if(plugin.getConfig().getBoolean("locked-commands")) {
-            event.getCommands().clear();
+            if(player.isOp()){
+                return false;
+            }
 
+            event.getCommands().clear();
             String permission = GroupManager.getPlayerGroupPermission(player, plugin);
             if(!permission.isEmpty() || !(permission == null)) {
                 String group = GroupManager.getPlayerGroup(player, plugin);
@@ -29,5 +32,6 @@ public class TabCompletes implements Listener {
                 }
             }
         }
+        return false;
     }
 }

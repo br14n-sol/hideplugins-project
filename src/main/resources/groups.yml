@@ -1,13 +1,40 @@
 groups:
-  default:
-    commands:
-      - 'help'
-      - 'msg'
-      - 'tell'
-  mod:
-    commands:
-      - 'about'
-  admin:
-    commans:
-      - 'kick'
-      - 'ban'
+    default:
+        custom-help:
+            enable: true
+            .:
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+        commands:
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'
+    mod:
+        custom-help:
+            enable: true
+            .:
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+        commands:
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'
+    admin:
+        custom-help:
+            enable: true
+            .:
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+                - '<line...>'
+        commands:
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'
+            - '<command..>'

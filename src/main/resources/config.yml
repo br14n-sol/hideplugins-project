@@ -1,16 +1,15 @@
 updates: true
 news-broadcast: true
 language: 'english'
+
 locked-commands: true
 warning-message:
-  title: '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
-  subtitle: '&cYou are not allowed to use that command, contact staff if this is a mistake.'
+    title: '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
+    subtitle: '&cYou are not allowed to use that command, contact staff if this is a mistake.'
 sounds:
-  enable: true
-  sounds-list:
-    - 'AMBIENT_CAVE'
-    - 'ENTITY_ENDERMAN_DEATH'
-    - 'ENTITY_BLAZE_DEATH'
-    - 'ENTITY_HORSE_DEATH'
-    - 'ENTITY_ENDER_DRAGON_DEATH'
-    - 'ENTITY_PHANTOM_DEATH'
+    enable: true
+    .:
+        - '<sound...>'
+        - '<sound...>'
+        - '<sound...>'
+        - '<sound...>'

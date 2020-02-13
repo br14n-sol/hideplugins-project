@@ -15,7 +15,7 @@ public class SoundManager {
     }
 
     public static void playRandomSound(HidePluginsProject plugin, Player player){
-        List<String> sounds = plugin.getConfig().getStringList("sounds.sounds-list");
+        List<String> sounds = plugin.getConfig().getStringList("sounds..");
         int soundsSize = sounds.size();
 
         Random random = new Random(System.currentTimeMillis());

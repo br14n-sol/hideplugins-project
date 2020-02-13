@@ -34,6 +34,11 @@ public class LockedCommands implements Listener {
 
         event.setCancelled(true);
 
+        if(player.isOp()){
+            event.setCancelled(false);
+            return false;
+        }
+
         if(!CooldownManager.checkCooldown(player)) {
             player.sendMessage(plugin.colors("&cYou can't use another command for &f" + CooldownManager.getCooldown(player) + " &cseconds."));
         } else {

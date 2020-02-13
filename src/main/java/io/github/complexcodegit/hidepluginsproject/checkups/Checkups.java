@@ -18,8 +18,8 @@ public class Checkups {
             return true;
         }
         plugin.console.sendMessage("");
-        plugin.console.sendMessage(plugin.colors("&e>>> &cDisabled &bHidePlugins Project"));
-        plugin.console.sendMessage(plugin.colors("&e>>> &fPlease select a correct language."));
+        plugin.console.sendMessage(plugin.colors("&6&l&m>>>&r &cDisabled &bHidePlugins Project"));
+        plugin.console.sendMessage(plugin.colors("&6&l&m>>>&r &fPlease select a correct language."));
         plugin.getPluginLoader().disablePlugin(plugin);
         return false;
     }
@@ -29,8 +29,8 @@ public class Checkups {
             return true;
         }
         plugin.console.sendMessage(plugin.colors(""));
-        plugin.console.sendMessage(plugin.colors("&e>>> &cDisabled &bHidePlugins Project"));
-        plugin.console.sendMessage(plugin.colors("&e>>> &fPlease define the group 'default' in groups.yml"));
+        plugin.console.sendMessage(plugin.colors("&6&l&m>>>&r &cDisabled &bHidePlugins Project"));
+        plugin.console.sendMessage(plugin.colors("&6&l&m>>>&r &fPlease define the group 'default' in groups.yml"));
         plugin.getPluginLoader().disablePlugin(plugin);
         return false;
     }

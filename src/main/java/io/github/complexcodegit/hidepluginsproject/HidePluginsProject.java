@@ -6,6 +6,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
+import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
+import io.github.complexcodegit.hidepluginsproject.events.PlayerRegister;
 import io.github.complexcodegit.hidepluginsproject.external.Updater;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.MetricManager;
@@ -31,13 +33,15 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration players;
     private File playersFile;
 
+    public String prefix = "&6&l&m[&e&lHPP&6&l&m]&r ";
+
     PluginDescriptionFile pdffile = getDescription();
 
     String rutaConfig;
     String version = pdffile.getVersion();
 
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
-    
+
     public void onEnable() {
         registerConfig();
 
@@ -47,11 +51,12 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         MetricManager.customMetrics(this);
 
         registerEvents();
+        registerCommands();
 
         console.sendMessage("");
-        console.sendMessage(colors("&e>>> &aEnable &bHidePlugins Project"));
-        console.sendMessage(colors("&e>>>    &aVersion &f>> &b" + version));
-        console.sendMessage(colors("&e>>>    &aAuthor  &f>> &bComplexCode"));
+        console.sendMessage(colors("&6&l&m>>>&r &aEnable &bHidePlugins Project"));
+        console.sendMessage(colors("&6&l&m>>>&r    &aVersion: &e" + version));
+        console.sendMessage(colors("&6&l&m>>>&r    &aAuthor:  &eComplexCode"));
         console.sendMessage("");
     }
 
@@ -67,6 +72,11 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new LockedCommands(this, new Title()), this);
         pm.registerEvents(new TabCompletes(this), this);
+        pm.registerEvents(new PlayerRegister(this), this);
+    }
+
+    public void registerCommands(){
+        getCommand("hproject").setExecutor(new ChiefCommand(this));
     }
 
     public void registerConfig() {

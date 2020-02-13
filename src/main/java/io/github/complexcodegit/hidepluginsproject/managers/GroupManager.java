@@ -1,8 +1,9 @@
 package io.github.complexcodegit.hidepluginsproject.managers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -31,6 +32,10 @@ public class GroupManager {
             }
         }
         return groupsPermissions;
+    }
+
+    public static String getGroupPermission(String group) {
+        return "hidepluginsproject.group."+group;
     }
 
     public static String getPlayerGroupPermission(Player player, HidePluginsProject plugin) {
@@ -63,5 +68,28 @@ public class GroupManager {
             }
         }
         return commandsList;
+    }
+
+    public static List<String> getGroupCommandsList(String group, HidePluginsProject plugin){
+        List<String> commandsList = new ArrayList<>();
+        for(String commands : plugin.getGroups().getStringList("groups."+group+".commands")) {
+            if(!commandsList.contains(commands)) {
+                commandsList.add(commands);
+            }
+        }
+        return commandsList;
+    }
+
+    public static int getMembersGroup(String group, HidePluginsProject plugin){
+        List<String> groups = new ArrayList<>();
+        for(Player user : Bukkit.getOnlinePlayers()){
+            if(!user.isOp()){
+                String userGroup = getPlayerGroup(user, plugin);
+                groups.add(userGroup);
+            }
+        }
+
+        groups = groups.stream().filter(x -> x.equals(group)).collect(Collectors.toList());
+        return groups.size();
     }
 }
