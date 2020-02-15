@@ -1,4 +1,4 @@
-package io.github.complexcodegit.hidepluginsproject.messages;
+package io.github.complexcodegit.hidepluginsproject.utils;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
@@ -31,6 +31,8 @@ public class InteractText {
             for(int i=0; i < groups.size(); i++){
                 text1 = new TextComponent(plugin.colors("&6&l&m>>>&r "));
                 text2 = new TextComponent(groups.get(i));
+                text2.setColor(ChatColor.AQUA);
+                text2.setBold(true);
                 text2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hproject group " + groups.get(i)));
                 text2.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to see more group " + plugin.colors("&b" + groups.get(i) + "&r") + " information.").create()));
                 text1.addExtra(text2);
@@ -52,10 +54,10 @@ public class InteractText {
 
     public static void sendUser(String key, String user, Player player, HidePluginsProject plugin){
         if(key.equals("playerHistory")){
-            TextComponent use = new TextComponent(plugin.colors("&6&l&m>>>&r &fCommand history: &r"));
-            TextComponent click = new TextComponent(plugin.colors("&6&l&m[&b&lOPEN&6&l&m]"));
-            click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hproject open " + user));
-            click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to open the command history.").color(ChatColor.AQUA).create()));
+            TextComponent use = new TextComponent(plugin.colors("&6&l&m>>>&r &f&lCommand history: &r"));
+            TextComponent click = new TextComponent(plugin.colors("&b&l&o---CLICK"));
+            click.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/hprojectinternal open " + user));
+            click.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Open the command history.").create()));
             use.addExtra(click);
 
             player.spigot().sendMessage(use);

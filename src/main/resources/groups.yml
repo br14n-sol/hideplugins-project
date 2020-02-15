@@ -2,39 +2,12 @@ groups:
     default:
         custom-help:
             enable: true
-            .:
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
+            list:
+                - "&e&l&mx------------------------------x"
+                - "&b/msg  &f- Send messages to your classmates."
+                - "&b/tell &f- whisper to your friends."
+                - "&e&l&mx------------------------------x"
         commands:
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
-    mod:
-        custom-help:
-            enable: true
-            .:
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
-        commands:
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
-    admin:
-        custom-help:
-            enable: true
-            .:
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
-                - '<line...>'
-        commands:
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
-            - '<command..>'
+            - 'help'
+            - 'msg'
+            - 'tell'

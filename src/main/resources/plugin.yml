@@ -7,8 +7,6 @@ description: HidePlugins Project is perfect to hide all your plugins!
 commands:
     hproject:
         description: Chief command of plugin.
-        aliases:
-            - hpj
-            - h
-            - hpp
-            - hp
+        aliases: [hpj, hpp]
+    hprojectinternal:
+        description: Internal command of plugin.

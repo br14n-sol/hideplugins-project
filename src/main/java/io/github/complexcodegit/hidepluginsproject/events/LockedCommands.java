@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.complexcodegit.hidepluginsproject.managers.SoundManager;
 import org.bukkit.Particle;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +28,9 @@ public class LockedCommands implements Listener {
 
     @EventHandler
     public boolean onBlockedCommand(PlayerCommandPreprocessEvent event) {
+        FileConfiguration players = plugin.getPlayers();
         Player player = event.getPlayer();
+
         if(!plugin.getConfig().getBoolean("locked-commands")) {
             return false;
         }
@@ -40,22 +43,22 @@ public class LockedCommands implements Listener {
         }
 
         if(!CooldownManager.checkCooldown(player)) {
-            player.sendMessage(plugin.colors("&cYou can't use another command for &f" + CooldownManager.getCooldown(player) + " &cseconds."));
+            player.sendMessage(plugin.colors(plugin.getConfig().getString("cooldown.message")).replaceAll("%timeRemaining%", String.valueOf(CooldownManager.getCooldown(player))));
         } else {
-            String permission = GroupManager.getPlayerGroupPermission(player, plugin);
-            if(permission == null || permission.isEmpty()) {
-                title.send(player, plugin.colors(plugin.getConfig().getString("warning-message.title")), plugin.colors(plugin.getConfig().getString("warning-message.subtitle")), 0, 0, 0);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (6*20), 1, false, false, false));
-                player.spawnParticle(Particle.SMOKE_LARGE, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 200);
-
-                SoundManager.playRandomSound(plugin, player);
-                CooldownManager.setCooldown(player, 6);
-            }
-
             String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
 
             List<String> commandsList = GroupManager.getCommandsList(player, plugin);
             if(commandsList.contains(command)) {
+                if(plugin.getGroups().getBoolean("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.enable")){
+                    if(commandsList.contains("/help")){
+                        event.setCancelled(true);
+                        List<String> helpLines = plugin.getGroups().getStringList("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.list");
+                        for(int i=0; i < helpLines.size(); i++){
+                            player.sendMessage(plugin.colors(helpLines.get(i)));
+                        }
+                        return false;
+                    }
+                }
                 event.setCancelled(false);
                 return false;
             } else {
@@ -63,8 +66,18 @@ public class LockedCommands implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (6*20), 1, false, false, false));
                 player.spawnParticle(Particle.SMOKE_LARGE, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 200);
 
-                SoundManager.playRandomSound(plugin, player);
-                CooldownManager.setCooldown(player, 6);
+                SoundManager.checkSoundPlayer(plugin, player);
+                CooldownManager.setCooldown(player, plugin.getConfig().getInt("cooldown.time"));
+
+                players.set("players." + player.getName() + ".reports", players.getInt("players." + player.getName() + ".reports")+1);
+                players.set("players." + player.getName() + ".last-command", command);
+
+                List<String> listCommands = players.getStringList("players." + player.getName() + ".command-history");
+                listCommands.add(command);
+
+                players.set("players." + player.getName() + ".command-history", listCommands);
+
+                plugin.savePlayers();
             }
         }
         return false;

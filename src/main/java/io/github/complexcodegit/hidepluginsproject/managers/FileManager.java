@@ -6,11 +6,8 @@ import java.io.File;
 
 public class FileManager {
     public static void registerFiles(HidePluginsProject plugin){
-        File langd = new File(plugin.getDataFolder(), "languages.yml");
         File groupd = new File(plugin.getDataFolder(), "groups.yml");
         File playerd = new File(plugin.getDataFolder(), "players.yml");
-        if(!langd.exists())
-            plugin.saveResource("languages.yml", false);
         if(!groupd.exists())
             plugin.saveResource("groups.yml", false);
         if(!playerd.exists())

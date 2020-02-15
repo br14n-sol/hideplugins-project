@@ -13,8 +13,8 @@ public class GroupManager {
     static List<String> groupsPermissions = new ArrayList<>();
     static List<String> playerPermissions = new ArrayList<>();
     static List<String> groupsList = new ArrayList<>();
-    static String permission = "";
-    static String group = "";
+    static String permission;
+    static String group;
 
     public static List<String> getGroups(HidePluginsProject plugin) {
         for(String groups : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
@@ -48,7 +48,7 @@ public class GroupManager {
                 permission = getGroupsPermissions(plugin).get(i);
             }
         }
-        if(permission.isEmpty() || permission == null) {
+        if(permission == null) {
             permission = "hidepluginsproject.group.default";
         }
         return permission;

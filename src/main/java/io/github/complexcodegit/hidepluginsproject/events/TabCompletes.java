@@ -20,16 +20,18 @@ public class TabCompletes implements Listener {
         Player player = event.getPlayer();
         if(plugin.getConfig().getBoolean("locked-commands")) {
             if(player.isOp()){
+                event.getCommands().remove("hprojectinternal");
+                event.getCommands().remove("hideplugins_project:hprojectinternal");
+                event.getCommands().remove("hideplugins_project:hproject");
+                event.getCommands().remove("hideplugins_project:hpp");
+                event.getCommands().remove("hideplugins_project:hpj");
                 return false;
             }
 
             event.getCommands().clear();
-            String permission = GroupManager.getPlayerGroupPermission(player, plugin);
-            if(!permission.isEmpty() || !(permission == null)) {
-                String group = GroupManager.getPlayerGroup(player, plugin);
-                for(String commands : plugin.getGroups().getStringList("groups."+group+".commands")) {
-                    event.getCommands().add(commands);
-                }
+            String group = GroupManager.getPlayerGroup(player, plugin);
+            for(String commands : plugin.getGroups().getStringList("groups."+group+".commands")) {
+                event.getCommands().add(commands);
             }
         }
         return false;

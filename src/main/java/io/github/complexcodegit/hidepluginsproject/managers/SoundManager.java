@@ -1,6 +1,7 @@
 package io.github.complexcodegit.hidepluginsproject.managers;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -15,15 +16,23 @@ public class SoundManager {
     }
 
     public static void playRandomSound(HidePluginsProject plugin, Player player){
-        List<String> sounds = plugin.getConfig().getStringList("sounds..");
-        int soundsSize = sounds.size();
+        List<String> sounds = plugin.getConfig().getStringList("sounds.list");
+        if(!(sounds.size() == 0)){
+            int soundsSize = sounds.size();
 
-        Random random = new Random(System.currentTimeMillis());
-        int intRandom = random.nextInt(soundsSize);
+            Random random = new Random(System.currentTimeMillis());
+            int intRandom = random.nextInt(soundsSize);
 
-        String intSound = sounds.get(intRandom);
-        random.setSeed(System.currentTimeMillis());
+            String intSound = sounds.get(intRandom);
+            random.setSeed(System.currentTimeMillis());
 
-        player.playSound(player.getLocation(), Sound.valueOf(intSound), 100.0F, 100.0F);
+            player.playSound(player.getLocation(), Sound.valueOf(intSound), 100.0F, 100.0F);
+        } else {
+            for(Player op : Bukkit.getOnlinePlayers()){
+                if(op.isOp()){
+                    op.sendMessage(plugin.colors(plugin.prefix + "&cNo sound is valid, please make a review."));
+                }
+            }
+        }
     }
 }

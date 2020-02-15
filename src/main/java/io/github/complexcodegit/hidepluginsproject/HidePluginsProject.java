@@ -1,12 +1,11 @@
 package io.github.complexcodegit.hidepluginsproject;
 
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
+import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommandCompleter;
+import io.github.complexcodegit.hidepluginsproject.commands.InternalCommand;
 import io.github.complexcodegit.hidepluginsproject.events.PlayerRegister;
 import io.github.complexcodegit.hidepluginsproject.external.Updater;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
@@ -28,8 +27,6 @@ import io.github.complexcodegit.hidepluginsproject.utils.Title;
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
     private File groupsFile;
-    private FileConfiguration languages;
-    private File languagesFile;
     private FileConfiguration players;
     private File playersFile;
 
@@ -38,7 +35,7 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     PluginDescriptionFile pdffile = getDescription();
 
     String rutaConfig;
-    String version = pdffile.getVersion();
+    public String version = pdffile.getVersion();
 
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
 
@@ -54,18 +51,14 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         registerCommands();
 
         console.sendMessage("");
-        console.sendMessage(colors("&6&l&m>>>&r &aEnable &bHidePlugins Project"));
-        console.sendMessage(colors("&6&l&m>>>&r    &aVersion: &e" + version));
-        console.sendMessage(colors("&6&l&m>>>&r    &aAuthor:  &eComplexCode"));
+        console.sendMessage(colors(prefix + "&aEnable &bHidePlugins Project"));
+        console.sendMessage(colors(prefix + "    &aVersion: &f" + version));
+        console.sendMessage(colors(prefix + "    &aAuthor:  &fComplexCode"));
         console.sendMessage("");
     }
 
     public String colors(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
-    }
-
-    public String messages(String s) {
-        return colors(getLang().getString("languages." + getConfig().getString("language") + "." + s));
     }
 
     public void registerEvents() {
@@ -77,6 +70,8 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
 
     public void registerCommands(){
         getCommand("hproject").setExecutor(new ChiefCommand(this));
+        getCommand("hproject").setTabCompleter(new ChiefCommandCompleter(this));
+        getCommand("hprojectinternal").setExecutor(new InternalCommand(this));
     }
 
     public void registerConfig() {
@@ -105,35 +100,19 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         }
     }
 
+    public void saveGroups() {
+        try {
+            groups.save(groupsFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public FileConfiguration getGroups() {
         if(groups == null) {
             reloadGroups();
         }
         return groups;
-    }
-
-    public FileConfiguration getLang() {
-        if(languages == null) {
-            reloadLang();
-        }
-        return languages;
-    }
-
-    public void reloadLang() {
-        if(languages == null) {
-            languagesFile = new File(getDataFolder(), "languages.yml");
-        }
-
-        languages = YamlConfiguration.loadConfiguration(languagesFile);
-        try {
-            Reader defConfigStream = new InputStreamReader(getResource("languages.yml"), "UTF8");
-            if(defConfigStream != null) {
-                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                languages.setDefaults(defConfig);
-            }
-        } catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
     }
 
     public FileConfiguration getPlayers() {
@@ -156,6 +135,14 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
                 players.setDefaults(defConfig);
             }
         } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void savePlayers() {
+        try {
+            players.save(playersFile);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -21,14 +21,12 @@ public class Updater {
 
                 if(latestVersion.length() <= 7 && !version.equals(latestVersion)) {
                     plugin.console.sendMessage("");
-                    plugin.console.sendMessage(plugin.colors("&e>>> &bHidePlugins Project"));
-                    plugin.console.sendMessage(plugin.colors("&e>>> &fThere is a new version available. &b" + latestVersion));
-                    plugin.console.sendMessage(plugin.colors("&e>>> &fYou can download it at: &bhttps://www.spigotmc.org/resources/25317/"));
+                    plugin.console.sendMessage(plugin.colors(plugin.prefix + "&fThere is a new version available. &b" + latestVersion));
+                    plugin.console.sendMessage(plugin.colors(plugin.prefix + "&fYou can download it at: &bhttps://www.spigotmc.org/resources/25317/"));
                 }
             } catch(Exception ex) {
                 plugin.console.sendMessage("");
-                plugin.console.sendMessage(plugin.colors("&e>>> &bHidePlugins Project"));
-                plugin.console.sendMessage(plugin.colors("&e>>> &fError verifying update."));
+                plugin.console.sendMessage(plugin.colors(plugin.prefix + "&fError verifying update."));
             }
         }
     }
