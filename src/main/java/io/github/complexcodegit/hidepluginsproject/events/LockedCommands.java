@@ -48,17 +48,26 @@ public class LockedCommands implements Listener {
             String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
 
             List<String> commandsList = GroupManager.getCommandsList(player, plugin);
+            if(command.equalsIgnoreCase("/hprojectinternal")){
+                if(commandsList.contains("/hproject")){
+                    event.setCancelled(false);
+                    return false;
+                }
+            }
             if(commandsList.contains(command)) {
-                if(plugin.getGroups().getBoolean("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.enable")){
+                if(command.equalsIgnoreCase("/help")){
                     if(commandsList.contains("/help")){
-                        event.setCancelled(true);
-                        List<String> helpLines = plugin.getGroups().getStringList("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.list");
-                        for(int i=0; i < helpLines.size(); i++){
-                            player.sendMessage(plugin.colors(helpLines.get(i)));
+                        if(plugin.getGroups().getBoolean("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.enable")){
+                            event.setCancelled(true);
+                            List<String> helpLines = plugin.getGroups().getStringList("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.list");
+                            for(int i=0; i < helpLines.size(); i++){
+                                player.sendMessage(plugin.colors(helpLines.get(i)));
+                            }
+                            return false;
                         }
-                        return false;
                     }
                 }
+
                 event.setCancelled(false);
                 return false;
             } else {
