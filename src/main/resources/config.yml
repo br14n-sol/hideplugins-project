@@ -17,21 +17,44 @@ updates: true
 locked-commands: true
 
 #-----------------# Here is the warning message the player receives when he tries to rummage through your commands.
-# WARNING MESSAGE # Please note that this message is received by the player in title format on their screen,
-#-----------------# So you must configure a title and subtitle.
+# WARNING MESSAGE # Note that the message the player receives depends on how you configure it.
+#-----------------# By default it will appear in title format
 
 # Note: All messages in this addon support color codes, to know more about them: https://minecraft.gamepedia.com/Formatting_codes
 # Please do not use §, just use & + the color identifier, to avoid mistakes.
 warning-message:
-    title: '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
-    subtitle: '&cYou are not allowed to use that command, contact staff if this is a mistake.'
+    enable: true
+    type: 'screen-title'
+    screen-title:
+        title: '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
+        subtitle: '&cYou are not allowed to use that command, contact staff if this is a mistake.'
+    chat-message:
+        - '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
+        - '&cYou are not allowed to use that command, contact staff if this is a mistake.'
+
+#---------------# Specify here the effect that accompanies the warning message, you can check the effects in the following link:
+# POTION EFFECT # https://minecraft-helpandinfo.weebly.com/potion-effects-ids.html - Write the name of the effect all in uppercase.
+#---------------# Note: Set the time in seconds, the plugin will take care of the rest.
+potion-effect:
+    enable: true
+    effect: 'BLINDNESS'
+    time: 6
+    amplifier: 1
+
+#-----------# Specify here the particle that accompanies the warning message, you can see the types of particles in the following link:
+# PARTICLES # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+#-----------# Note: Write the name of the effect all in uppercase.
+particles:
+    enable: true
+    particle: 'SMOKE_LARGE'
 
 #----------# This is the time the player will have to wait to use another command.
 # COOLDOWN # This cooldown is only activated if the player uses a command which is not allowed.
 #----------# Note: Set the time in seconds, the plugin will take care of the rest.
 cooldown:
-    time: 6
+    enable: true
     message: "&cYou can't use another command for &f%timeRemaining% &cseconds."
+    time: 6
 
 #--------# These are the sounds that will be emitted next to the warning message to the player.
 # SOUNDS # Note: The plugin randomly chooses which sound to play to the player,
@@ -42,4 +65,3 @@ sounds:
         - 'AMBIENT_CAVE'
         - 'ENTITY_ENDER_DRAGON_DEATH'
         - 'ENTITY_ENDERMAN_DEATH'
-        - 'MUSIC_UNDER_WATER'

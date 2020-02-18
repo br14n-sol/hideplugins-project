@@ -7,6 +7,10 @@ groups:
                 - "&b/msg  &f- Send messages to your classmates."
                 - "&b/tell &f- whisper to your friends."
                 - "&e&l&mx------------------------------x"
+        tab-completes:
+            - 'help'
+            - 'msg'
+            - 'tell'
         commands:
             - 'help'
             - 'msg'

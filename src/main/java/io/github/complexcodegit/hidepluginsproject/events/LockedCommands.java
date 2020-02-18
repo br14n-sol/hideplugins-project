@@ -71,12 +71,33 @@ public class LockedCommands implements Listener {
                 event.setCancelled(false);
                 return false;
             } else {
-                title.send(player, plugin.colors(plugin.getConfig().getString("warning-message.title")), plugin.colors(plugin.getConfig().getString("warning-message.subtitle")), 0, 0, 0);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, (6*20), 1, false, false, false));
-                player.spawnParticle(Particle.SMOKE_LARGE, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 200);
+                if(plugin.getConfig().getBoolean("warning-message.enable")){
+                    if(plugin.getConfig().getString("warning-message.type").equals("screen-title")){
+                        title.send(player, plugin.colors(plugin.getConfig().getString("warning-message.screen-title.title")), plugin.colors(plugin.getConfig().getString("warning-message.screen-title.subtitle")), 0, 0, 0);
+                    } else if(plugin.getConfig().getString("warning-message.type").equals("chat-message")){
+                        List<String> messages = plugin.getConfig().getStringList("warning-message.chat-message");
+                        for(int i=0; i < messages.size(); i++){
+                            player.sendMessage(plugin.colors(messages.get(i)));
+                        }
+                    }
+                }
+
+                if(plugin.getConfig().getBoolean("potion-effect.enable")){
+                    String name = plugin.getConfig().getString("potion-effect.effect");
+                    PotionEffectType effect;
+                    effect = PotionEffectType.getByName(name);
+                    player.addPotionEffect(new PotionEffect(effect, (plugin.getConfig().getInt("potion-effect.time")*20), plugin.getConfig().getInt("potion-effect.amplifier"), false, false, false));
+                }
+
+                if(plugin.getConfig().getBoolean("particles.enable")){
+                    player.spawnParticle(Particle.valueOf(plugin.getConfig().getString("particles.particle")), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 200);
+                }
 
                 SoundManager.checkSoundPlayer(plugin, player);
-                CooldownManager.setCooldown(player, plugin.getConfig().getInt("cooldown.time"));
+
+                if(plugin.getConfig().getBoolean("cooldown.enable")){
+                    CooldownManager.setCooldown(player, plugin.getConfig().getInt("cooldown.time"));
+                }
 
                 players.set("players." + player.getName() + ".reports", players.getInt("players." + player.getName() + ".reports")+1);
                 players.set("players." + player.getName() + ".last-command", command);

@@ -221,6 +221,62 @@ public class ChiefCommand implements CommandExecutor {
                 } else {
                     player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
                 }
+            } else if(args[0].equalsIgnoreCase("addtab")){
+                List<String> groups = GroupManager.getGroups(plugin);
+                String arg = args[1];
+                String cmd = args[2];
+                if(groups.contains(arg)){
+                    List<String> groupTabs = GroupManager.getGroupTabList(arg, plugin);
+                    if(!groupTabs.contains(cmd)){
+                        List<String> blacklist = new ArrayList<>();
+                        for(Plugin plugins : Bukkit.getServer().getPluginManager().getPlugins()){
+                            if(plugins != null){
+                                if(!blacklist.contains(plugins.getName())){
+                                    blacklist.add(plugins.getName());
+                                }
+                            }
+                        }
+                        blacklist.add("Aliases");
+                        blacklist.add("Bukkit");
+                        blacklist.add("Minecraft");
+                        blacklist.add("hprojectinternal");
+                        blacklist.add("hpp");
+                        blacklist.add("hpj");
+
+                        List<String> cmds = new ArrayList<>();
+                        for(HelpTopic cmdLabel : plugin.getServer().getHelpMap().getHelpTopics()){
+                            if(!cmds.contains(cmdLabel.getName().replaceAll("/", ""))){
+                                cmds.add(cmdLabel.getName().replaceAll("/", ""));
+                            }
+                        }
+
+                        for(int i=0; i < blacklist.size(); i++){
+                            if(cmds.contains(blacklist.get(i))){
+                                cmds.remove(blacklist.get(i));
+                            }
+                        }
+
+                        List<String> groupCommands = GroupManager.getGroupTabList(arg, plugin);
+                        for(int i=0; i < groupCommands.size(); i++){
+                            if(cmds.contains(groupCommands.get(i))){
+                                cmds.remove(groupCommands.get(i));
+                            }
+                        }
+
+                        if(cmds.contains(cmd)){
+                            groupTabs.add(cmd);
+                            plugin.getGroups().set("groups." + arg + ".tab-completes", groupTabs);
+                            plugin.saveGroups();
+                            player.sendMessage(plugin.colors(plugin.prefix + "&aThe &b" + cmd + " &atab was successfully added to the &b" + arg + " &agroup."));
+                        } else {
+                            player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + cmd + " &ccommand does not exist, please verify that it is well written."));
+                        }
+                    } else {
+                        player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup already has the &b" + cmd + " &ctab."));
+                    }
+                } else {
+                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
+                }
             } else {
                 InteractText.send("commandExistUse", player, plugin);
             }

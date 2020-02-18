@@ -30,7 +30,7 @@ public class TabCompletes implements Listener {
 
             event.getCommands().clear();
             String group = GroupManager.getPlayerGroup(player, plugin);
-            for(String commands : plugin.getGroups().getStringList("groups."+group+".commands")) {
+            for(String commands : plugin.getGroups().getStringList("groups."+group+".tab-completes")) {
                 event.getCommands().add(commands);
             }
         }

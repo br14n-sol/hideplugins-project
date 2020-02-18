@@ -34,11 +34,12 @@ public class ChiefCommandCompleter implements TabCompleter {
                 commandsArg1.add("reload");
                 commandsArg1.add("player");
                 commandsArg1.add("addcmd");
+                commandsArg1.add("addtab");
                 commandsArg1.add("sethelp");
                 return commandsArg1;
             } else if(args.length == 2){
                 List<String> groups = GroupManager.getGroups(plugin);
-                if(args[0].equalsIgnoreCase("group") || args[0].equalsIgnoreCase("addcmd") || args[0].equalsIgnoreCase("sethelp")){
+                if(args[0].equalsIgnoreCase("group") || args[0].equalsIgnoreCase("addcmd") || args[0].equalsIgnoreCase("addtab") || args[0].equalsIgnoreCase("sethelp")){
                     for(int i=0; i < groups.size(); i++){
                         commandsArg2.add(groups.get(i));
                     }
@@ -64,6 +65,44 @@ public class ChiefCommandCompleter implements TabCompleter {
                     commandsArg3.add("true");
                     commandsArg3.add("false");
                     return commandsArg3;
+                }
+
+                if(args[0].equalsIgnoreCase("addtab")){
+                    List<String> blacklist = new ArrayList<>();
+                    for(Plugin plugins : Bukkit.getServer().getPluginManager().getPlugins()){
+                        if(plugins != null){
+                            if(!blacklist.contains(plugins.getName())){
+                                blacklist.add(plugins.getName());
+                            }
+                        }
+                    }
+                    blacklist.add("Aliases");
+                    blacklist.add("Bukkit");
+                    blacklist.add("Minecraft");
+                    blacklist.add("hprojectinternal");
+                    blacklist.add("hpp");
+                    blacklist.add("hpj");
+
+                    List<String> cmds = new ArrayList<>();
+                    for(HelpTopic cmdLabel : plugin.getServer().getHelpMap().getHelpTopics()){
+                        if(!cmds.contains(cmdLabel.getName().replaceAll("/", ""))){
+                            cmds.add(cmdLabel.getName().replaceAll("/", ""));
+                        }
+                    }
+
+                    for(int i=0; i < blacklist.size(); i++){
+                        if(cmds.contains(blacklist.get(i))){
+                            cmds.remove(blacklist.get(i));
+                        }
+                    }
+
+                    List<String> groupCommands = GroupManager.getGroupTabList(args[1], plugin);
+                    for(int i=0; i < groupCommands.size(); i++){
+                        if(cmds.contains(groupCommands.get(i))){
+                            cmds.remove(groupCommands.get(i));
+                        }
+                    }
+                    return cmds;
                 }
 
                 if(args[0].equalsIgnoreCase("addcmd")){

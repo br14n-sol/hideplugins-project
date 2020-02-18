@@ -80,6 +80,16 @@ public class GroupManager {
         return commandsList;
     }
 
+    public static List<String> getGroupTabList(String group, HidePluginsProject plugin){
+        List<String> tabList = new ArrayList<>();
+        for(String tab : plugin.getGroups().getStringList("groups."+group+".tab-completes")) {
+            if(!tabList.contains(tab)) {
+                tabList.add(tab);
+            }
+        }
+        return tabList;
+    }
+
     public static int getMembersGroup(String group, HidePluginsProject plugin){
         List<String> groups = new ArrayList<>();
         for(Player user : Bukkit.getOnlinePlayers()){
