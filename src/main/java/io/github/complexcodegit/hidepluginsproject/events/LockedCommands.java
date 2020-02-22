@@ -86,7 +86,11 @@ public class LockedCommands implements Listener {
                     String name = plugin.getConfig().getString("potion-effect.effect");
                     PotionEffectType effect;
                     effect = PotionEffectType.getByName(name);
-                    player.addPotionEffect(new PotionEffect(effect, (plugin.getConfig().getInt("potion-effect.time")*20), plugin.getConfig().getInt("potion-effect.amplifier"), false, false, false));
+                    if(plugin.serverVersion.equalsIgnoreCase("v1_12_R1")){
+                        player.addPotionEffect(new PotionEffect(effect, (plugin.getConfig().getInt("potion-effect.time")*20), plugin.getConfig().getInt("potion-effect.amplifier"), false, false));
+                    } else {
+                        player.addPotionEffect(new PotionEffect(effect, (plugin.getConfig().getInt("potion-effect.time")*20), plugin.getConfig().getInt("potion-effect.amplifier"), false, false, false));
+                    }
                 }
 
                 if(plugin.getConfig().getBoolean("particles.enable")){

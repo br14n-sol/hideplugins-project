@@ -59,9 +59,12 @@ cooldown:
 #--------# These are the sounds that will be emitted next to the warning message to the player.
 # SOUNDS # Note: The plugin randomly chooses which sound to play to the player,
 #--------# based on the list below.
+
+# 1.12.2: https://jd.andross.fr/spigot-1.12.2-R0.1-SNAPSHOT/javadoc/org/bukkit/Sound.html
+# 1.13.2: https://jd.andross.fr/spigot-1.13.2-R0.1-SNAPSHOT/javadoc/org/bukkit/Sound.html
+# 1.14.4: https://jd.andross.fr/spigot-1.14.4-R0.1-SNAPSHOT/javadoc/org/bukkit/Sound.html
+# 1.15.2: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 sounds:
     enable: true
     list:
         - 'AMBIENT_CAVE'
-        - 'ENTITY_ENDER_DRAGON_DEATH'
-        - 'ENTITY_ENDERMAN_DEATH'

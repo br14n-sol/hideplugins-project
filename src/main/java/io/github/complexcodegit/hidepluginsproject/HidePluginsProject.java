@@ -1,12 +1,15 @@
 package io.github.complexcodegit.hidepluginsproject;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommandCompleter;
 import io.github.complexcodegit.hidepluginsproject.commands.InternalCommand;
 import io.github.complexcodegit.hidepluginsproject.events.PlayerRegister;
+import io.github.complexcodegit.hidepluginsproject.events.TabCompletes_v1_12_R1;
 import io.github.complexcodegit.hidepluginsproject.external.Updater;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.MetricManager;
@@ -38,6 +41,8 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     public String version = pdffile.getVersion();
 
     public ConsoleCommandSender console = Bukkit.getConsoleSender();
+    String a = getServer().getClass().getPackage().getName();
+    public String serverVersion = a.substring(a.lastIndexOf('.') + 1);
 
     public void onEnable() {
         registerConfig();
@@ -64,7 +69,11 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     public void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new LockedCommands(this, new Title()), this);
-        pm.registerEvents(new TabCompletes(this), this);
+        if(serverVersion.equalsIgnoreCase("v1_12_R1")){
+            pm.registerEvents(new TabCompletes_v1_12_R1(this), this);
+        } else {
+            pm.registerEvents(new TabCompletes(this), this);
+        }
         pm.registerEvents(new PlayerRegister(this), this);
     }
 

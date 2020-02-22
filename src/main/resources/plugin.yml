@@ -1,6 +1,6 @@
 name: HidePlugins_Project
 author: ComplexCode
-version: 2.7.2
+version: 2.7.3
 api-version: 1.13
 main: io.github.complexcodegit.hidepluginsproject.HidePluginsProject
 description: HidePlugins Project is perfect to hide all your plugins!

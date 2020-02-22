@@ -45,7 +45,7 @@ public class InternalCommand implements CommandExecutor {
                         List<String> history = plugin.getPlayers().getStringList("players." + arg + ".command-history");
                         Set<String> miSet = new HashSet<String>(history);
                         List<String> historyFinal = new ArrayList<>();
-                        for (String s : miSet) {
+                        for(String s : miSet) {
                             historyFinal.add(s + " (" + Collections.frequency(history, s) + ")");
                         }
                         List<String> historyFinal1 = new ArrayList<>();
