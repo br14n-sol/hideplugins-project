@@ -2,11 +2,25 @@ groups:
     default:
         custom-help:
             enable: true
-            list:
-                - "&e&l&mx------------------------------x"
-                - "&b/msg  &f- Send messages to your classmates."
-                - "&b/tell &f- whisper to your friends."
-                - "&e&l&mx------------------------------x"
+            pages:
+                '1':
+                    - "&e&l&mx------------&r&e&l[HELP]&e&l&m------------x"
+                    - "&fLorem ipsum dolor sit amet."
+                    - "&fconsectetur adipiscing elit."
+                    - "&e&l&mx------------&r&e&l1 of %pages%&e&l&m------------x"
+                    - "&cTo continue to the next page use: &b/help 2"
+                '2':
+                    - "&e&l&mx------------&r&e&l[HELP]&e&l&m------------x"
+                    - "&fNunc ut arcu eget odio porta."
+                    - "&fDonec molestie turpis nec felis."
+                    - "&e&l&mx------------&r&e&l2 of %pages%&e&l&m------------x"
+                    - "&cTo continue to the next page use: &b/help 3"
+                '3':
+                    - "&e&l&mx------------&r&e&l[HELP]&e&l&m------------x"
+                    - "&fPellentesque et tortor aliquet."
+                    - "&fAenean non urna quis lorem."
+                    - "&e&l&mx------------&r&e&l3 of %pages%&e&l&m------------x"
+                    - "&cThis is the last page."
         tab-completes:
             - 'help'
             - 'msg'

@@ -62,6 +62,7 @@ public class ChiefCommand implements CommandExecutor {
                 player.sendMessage(plugin.colors("&b/hproject groups &f| Show the list of available groups."));
                 player.sendMessage(plugin.colors("&b/hproject group &e<groupname> &f| Show detailed group information."));
                 player.sendMessage(plugin.colors("&b/hproject addcmd &e<groupname> <command> &f| Used to add commands to a group."));
+                player.sendMessage(plugin.colors("&b/hproject addtab &e<groupname> <command> &f| Used to add commands to the tab of a group."));
                 player.sendMessage(plugin.colors("&b/hproject sethelp &e<groupname> <true|false> &f| Activate or deactivate, the custom help in the indicated group."));
                 player.sendMessage(plugin.colors("&b/hproject player &e<playername> &f| Shows you the information of a player."));
             } else if(args[0].equalsIgnoreCase("groups")){
@@ -118,7 +119,9 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lLast command used: &bNo registered commands."));
                         } else {
                             player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lLast command used: &b" + plugin.getPlayers().getString("players." + arg + ".last-command")));
-                            InteractText.sendUser("playerHistory", arg, player, plugin);
+                            if(plugin.getConfig().getBoolean("player-command-history")){
+                                InteractText.sendUser("playerHistory", arg, player, plugin);
+                            }
                         }
                     }
                 } else {

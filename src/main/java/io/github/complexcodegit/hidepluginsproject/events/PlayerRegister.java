@@ -30,7 +30,9 @@ public class PlayerRegister implements Listener {
             plugin.getPlayers().set("players." + player.getName() + ".group", "default");
             plugin.getPlayers().set("players." + player.getName() + ".last-command", "none");
             plugin.getPlayers().set("players." + player.getName() + ".ips-history", list);
-            plugin.getPlayers().createSection("players." + player.getName() + ".command-history");
+            if(plugin.getConfig().getBoolean("player-command-history")){
+                plugin.getPlayers().createSection("players." + player.getName() + ".command-history");
+            }
             plugin.savePlayers();
         }
         if(!plugin.getPlayers().getStringList("players." + player.getName() + ".ips-history").contains(player.getAddress().getAddress().getHostAddress())) {

@@ -1,8 +1,10 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.complexcodegit.hidepluginsproject.managers.SoundManager;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -37,7 +39,7 @@ public class LockedCommands implements Listener {
 
         event.setCancelled(true);
 
-        if(player.isOp()){
+        if(player.isOp() || player.hasPermission("hidepluginsproject.bypass")){
             event.setCancelled(false);
             return false;
         }
@@ -46,28 +48,51 @@ public class LockedCommands implements Listener {
             player.sendMessage(plugin.colors(plugin.getConfig().getString("cooldown.message")).replaceAll("%timeRemaining%", String.valueOf(CooldownManager.getCooldown(player))));
         } else {
             String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
+            String pageNumber = event.getMessage().split(" ").length > 1 ? event.getMessage().split(" ")[1] : event.getMessage();
 
             List<String> commandsList = GroupManager.getCommandsList(player, plugin);
-            if(command.equalsIgnoreCase("/hprojectinternal")){
-                if(commandsList.contains("/hproject")){
-                    event.setCancelled(false);
-                    return false;
+            String group = GroupManager.getPlayerGroup(player, plugin);
+            if(plugin.getConfig().getBoolean("player-command-history")){
+                if(command.equalsIgnoreCase("/hprojectinternal")){
+                    if(commandsList.contains("/hproject")){
+                        event.setCancelled(false);
+                        return false;
+                    }
                 }
             }
             if(commandsList.contains(command)) {
                 if(command.equalsIgnoreCase("/help")){
                     if(commandsList.contains("/help")){
-                        if(plugin.getGroups().getBoolean("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.enable")){
+                        if(plugin.getGroups().getBoolean("groups."+group+".custom-help.enable")){
                             event.setCancelled(true);
-                            List<String> helpLines = plugin.getGroups().getStringList("groups."+GroupManager.getPlayerGroup(player, plugin)+".custom-help.list");
-                            for(int i=0; i < helpLines.size(); i++){
-                                player.sendMessage(plugin.colors(helpLines.get(i)));
+                            List<String> page;
+                            List<Integer> pages = new ArrayList<>();
+                            for(String s : plugin.getGroups().getConfigurationSection("groups."+group+".custom-help.pages").getKeys(false)){
+                                if(StringUtils.isNumeric(s)){
+                                    if(!pages.contains(Integer.valueOf(s))){
+                                        pages.add(Integer.valueOf(s));
+                                    }
+                                }
+                            }
+                            if(!(pageNumber.equals(command))){
+                                if(pages.contains(Integer.valueOf(pageNumber))){
+                                    page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages."+pageNumber);
+                                    for(int i=0; i < page.size(); i++){
+                                        player.sendMessage(plugin.colors(page.get(i)).replaceAll("%pages%", String.valueOf(pages.size())));
+                                    }
+                                } else {
+                                    player.sendMessage(plugin.colors("&cLa pagina &b"+pageNumber+" &cno existe."));
+                                }
+                            } else {
+                                page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages.1");
+                                for(int i=0; i < page.size(); i++){
+                                    player.sendMessage(plugin.colors(page.get(i)).replaceAll("%pages%", String.valueOf(pages.size())));
+                                }
                             }
                             return false;
                         }
                     }
                 }
-
                 event.setCancelled(false);
                 return false;
             } else {
@@ -81,7 +106,6 @@ public class LockedCommands implements Listener {
                         }
                     }
                 }
-
                 if(plugin.getConfig().getBoolean("potion-effect.enable")){
                     String name = plugin.getConfig().getString("potion-effect.effect");
                     PotionEffectType effect;
@@ -92,25 +116,21 @@ public class LockedCommands implements Listener {
                         player.addPotionEffect(new PotionEffect(effect, (plugin.getConfig().getInt("potion-effect.time")*20), plugin.getConfig().getInt("potion-effect.amplifier"), false, false, false));
                     }
                 }
-
                 if(plugin.getConfig().getBoolean("particles.enable")){
                     player.spawnParticle(Particle.valueOf(plugin.getConfig().getString("particles.particle")), player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 200);
                 }
 
                 SoundManager.checkSoundPlayer(plugin, player);
-
                 if(plugin.getConfig().getBoolean("cooldown.enable")){
                     CooldownManager.setCooldown(player, plugin.getConfig().getInt("cooldown.time"));
                 }
-
                 players.set("players." + player.getName() + ".reports", players.getInt("players." + player.getName() + ".reports")+1);
                 players.set("players." + player.getName() + ".last-command", command);
-
-                List<String> listCommands = players.getStringList("players." + player.getName() + ".command-history");
-                listCommands.add(command);
-
-                players.set("players." + player.getName() + ".command-history", listCommands);
-
+                if(plugin.getConfig().getBoolean("player-command-history")){
+                    List<String> listCommands = players.getStringList("players." + player.getName() + ".command-history");
+                    listCommands.add(command);
+                    players.set("players." + player.getName() + ".command-history", listCommands);
+                }
                 plugin.savePlayers();
             }
         }

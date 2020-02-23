@@ -16,6 +16,11 @@ updates: true
 #-----------------# Note: players with op rank, by default do not need any groups, will have access to all commands.
 locked-commands: true
 
+#------------------------#
+# PLAYER COMMAND HISTORY # If activated, the history of commands used by the user is being saved.
+#------------------------#
+player-command-history: true
+
 #-----------------# Here is the warning message the player receives when he tries to rummage through your commands.
 # WARNING MESSAGE # Note that the message the player receives depends on how you configure it.
 #-----------------# By default it will appear in title format

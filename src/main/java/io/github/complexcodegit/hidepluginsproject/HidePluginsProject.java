@@ -1,8 +1,6 @@
 package io.github.complexcodegit.hidepluginsproject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
