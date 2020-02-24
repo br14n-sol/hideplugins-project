@@ -66,22 +66,20 @@ public class LockedCommands implements Listener {
                         if(plugin.getGroups().getBoolean("groups."+group+".custom-help.enable")){
                             event.setCancelled(true);
                             List<String> page;
-                            List<Integer> pages = new ArrayList<>();
+                            List<String> pages = new ArrayList<>();
                             for(String s : plugin.getGroups().getConfigurationSection("groups."+group+".custom-help.pages").getKeys(false)){
-                                if(StringUtils.isNumeric(s)){
-                                    if(!pages.contains(Integer.valueOf(s))){
-                                        pages.add(Integer.valueOf(s));
-                                    }
+                                if(!pages.contains(s)){
+                                    pages.add(s);
                                 }
                             }
                             if(!(pageNumber.equals(command))){
-                                if(pages.contains(Integer.valueOf(pageNumber))){
+                                if(pages.contains(pageNumber)){
                                     page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages."+pageNumber);
                                     for(int i=0; i < page.size(); i++){
                                         player.sendMessage(plugin.colors(page.get(i)).replaceAll("%pages%", String.valueOf(pages.size())));
                                     }
                                 } else {
-                                    player.sendMessage(plugin.colors("&cLa pagina &b"+pageNumber+" &cno existe."));
+                                    player.sendMessage(plugin.colors("&cPage &b"+pageNumber+" &cdoes not exist."));
                                 }
                             } else {
                                 page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages.1");
