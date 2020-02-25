@@ -178,16 +178,16 @@ public class ChiefCommand implements CommandExecutor {
                             }
                         }
 
-                        for(int i=0; i < blacklist.size(); i++){
-                            if(cmds.contains(blacklist.get(i))){
-                                cmds.remove(blacklist.get(i));
+                        for(String s : blacklist){
+                            if(cmds.contains(s)){
+                                cmds.remove(s);
                             }
                         }
 
                         List<String> groupCommands = GroupManager.getGroupCommandsList(arg, plugin);
-                        for(int i=0; i < groupCommands.size(); i++){
-                            if(cmds.contains(groupCommands.get(i))){
-                                cmds.remove(groupCommands.get(i));
+                        for(String s : groupCommands){
+                            if(cmds.contains(s)){
+                                cmds.remove(s);
                             }
                         }
 
@@ -253,16 +253,16 @@ public class ChiefCommand implements CommandExecutor {
                             }
                         }
 
-                        for(int i=0; i < blacklist.size(); i++){
-                            if(cmds.contains(blacklist.get(i))){
-                                cmds.remove(blacklist.get(i));
+                        for(String s : blacklist){
+                            if(cmds.contains(s)){
+                                cmds.remove(s);
                             }
                         }
 
                         List<String> groupCommands = GroupManager.getTabList(arg, plugin);
-                        for(int i=0; i < groupCommands.size(); i++){
-                            if(cmds.contains(groupCommands.get(i))){
-                                cmds.remove(groupCommands.get(i));
+                        for(String s : groupCommands){
+                            if(cmds.contains(s)){
+                                cmds.remove(s);
                             }
                         }
 

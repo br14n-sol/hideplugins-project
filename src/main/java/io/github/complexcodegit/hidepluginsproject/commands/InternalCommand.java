@@ -53,10 +53,10 @@ public class InternalCommand implements CommandExecutor {
                         ArrayList<String> pageContent = new ArrayList<String>();
 
                         if(!historyFinal.isEmpty()) {
-                            for(int i=0; i < historyFinal.size(); i++){
+                            for(String s : historyFinal){
                                 if(!(pageContent.size() == 14)){
-                                    if(historyFinal.get(i) != null){
-                                        pageContent.add(historyFinal.get(i));
+                                    if(s != null){
+                                        pageContent.add(s);
                                     } else {
                                         String result = String.join("\n", pageContent);
                                         pages.add(result.replaceAll("\\n", "\n"));
@@ -65,7 +65,7 @@ public class InternalCommand implements CommandExecutor {
                                     String result = String.join("\n", pageContent);
                                     pages.add(result.replaceAll("\\n", "\n"));
                                     pageContent.clear();
-                                    pageContent.add(historyFinal.get(i));
+                                    pageContent.add(s);
                                 }
                             }
                         } else {

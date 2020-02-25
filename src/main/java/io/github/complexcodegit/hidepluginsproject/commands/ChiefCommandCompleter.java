@@ -31,9 +31,9 @@ public class ChiefCommandCompleter implements TabCompleter {
                 commands.add("help"); commands.add("groups"); commands.add("group"); commands.add("reload");
                 commands.add("player"); commands.add("addcmd"); commands.add("addtab"); commands.add("sethelp");
                 if(!args[0].equals("")){
-                    for(int i=0; i < commands.size(); i++){
-                        if(commands.get(i).toLowerCase().startsWith(args[0].toLowerCase())){
-                            cmds.add(commands.get(i));
+                    for(String s : commands){
+                        if(s.toLowerCase().startsWith(args[0].toLowerCase())){
+                            cmds.add(s);
                         }
                     }
                 } else {
@@ -47,9 +47,9 @@ public class ChiefCommandCompleter implements TabCompleter {
                         args[0].equalsIgnoreCase("addtab") || args[0].equalsIgnoreCase("sethelp")){
                     ArrayList<String> cmds = new ArrayList<>();
                     if(!args[1].equals("")){
-                        for(int i=0; i < groups.size(); i++){
-                            if(groups.get(i).toLowerCase().startsWith(args[1].toLowerCase())){
-                                cmds.add(groups.get(i));
+                        for(String s : groups){
+                            if(s.toLowerCase().startsWith(args[1].toLowerCase())){
+                                cmds.add(s);
                             }
                         }
                     } else {
@@ -62,9 +62,9 @@ public class ChiefCommandCompleter implements TabCompleter {
                     ArrayList<String> players = new ArrayList<>(plugin.getPlayers().getConfigurationSection("players").getKeys(false));
                     ArrayList<String> users = new ArrayList<>();
                     if(!args[1].equals("")){
-                        for(int i=0; i < players.size(); i++){
-                            if(players.get(i).toLowerCase().startsWith(args[1].toLowerCase())){
-                                users.add(players.get(i));
+                        for(String s : players){
+                            if(s.toLowerCase().startsWith(args[1].toLowerCase())){
+                                users.add(s);
                             }
                         }
                     } else {
@@ -78,9 +78,9 @@ public class ChiefCommandCompleter implements TabCompleter {
                     ArrayList<String> cmds = new ArrayList<>();
                     commands.add("playersfile"); commands.add("groupsfile"); commands.add("configfile");
                     if(!args[1].equals("")){
-                        for(int i=0; i < commands.size(); i++){
-                            if(commands.get(i).toLowerCase().startsWith(args[1].toLowerCase())){
-                                cmds.add(commands.get(i));
+                        for(String s : commands){
+                            if(s.toLowerCase().startsWith(args[1].toLowerCase())){
+                                cmds.add(s);
                             }
                         }
                     } else {
@@ -95,9 +95,9 @@ public class ChiefCommandCompleter implements TabCompleter {
                     ArrayList<String> cmds = new ArrayList<>();
                     commands.add("true"); commands.add("false");
                     if(!args[2].equals("")){
-                        for(int i=0; i < commands.size(); i++){
-                            if(commands.get(i).toLowerCase().startsWith(args[2].toLowerCase())){
-                                cmds.add(commands.get(i));
+                        for(String s : commands){
+                            if(s.toLowerCase().startsWith(args[2].toLowerCase())){
+                                cmds.add(s);
                             }
                         }
                     } else {
@@ -124,23 +124,23 @@ public class ChiefCommandCompleter implements TabCompleter {
                             commands.add(cmdLabel.getName().replaceAll("/", ""));
                         }
                     }
-                    for(int i=0; i < blackList.size(); i++){
-                        if(commands.contains(blackList.get(i))){
-                            commands.remove(blackList.get(i));
+                    for(String s : blackList){
+                        if(commands.contains(s)){
+                            commands.remove(s);
                         }
                     }
 
                     ArrayList<String> cmds = (ArrayList<String>) GroupManager.getTabList(args[1], plugin);
-                    for(int i=0; i < cmds.size(); i++){
-                        if(commands.contains(cmds.get(i))){
-                            commands.remove(cmds.get(i));
+                    for(String s : cmds){
+                        if(commands.contains(s)){
+                            commands.remove(s);
                         }
                     }
 
                     if(!args[2].equals("")){
-                        for(int i=0; i < commands.size(); i++){
-                            if(commands.get(i).toLowerCase().startsWith(args[2].toLowerCase())){
-                                cmdsfinal.add(commands.get(i));
+                        for(String s : commands){
+                            if(s.toLowerCase().startsWith(args[2].toLowerCase())){
+                                cmdsfinal.add(s);
                             }
                         }
                     } else {
@@ -169,23 +169,23 @@ public class ChiefCommandCompleter implements TabCompleter {
                             commands.add(cmdLabel.getName().replaceAll("/", ""));
                         }
                     }
-                    for(int i=0; i < blackList.size(); i++){
-                        if(commands.contains(blackList.get(i))){
-                            commands.remove(blackList.get(i));
+                    for(String s : blackList){
+                        if(commands.contains(s)){
+                            commands.remove(s);
                         }
                     }
 
                     ArrayList<String> cmds = (ArrayList<String>) GroupManager.getGroupCommandsList(args[1], plugin);
-                    for(int i=0; i < cmds.size(); i++){
-                        if(commands.contains(cmds.get(i))){
-                            commands.remove(cmds.get(i));
+                    for(String s : cmds){
+                        if(commands.contains(s)){
+                            commands.remove(s);
                         }
                     }
 
                     if(!args[2].equals("")){
-                        for(int i=0; i < commands.size(); i++){
-                            if(commands.get(i).toLowerCase().startsWith(args[2].toLowerCase())){
-                                cmdsfinal.add(commands.get(i));
+                        for(String s : commands){
+                            if(s.toLowerCase().startsWith(args[2].toLowerCase())){
+                                cmdsfinal.add(s);
                             }
                         }
                     } else {
