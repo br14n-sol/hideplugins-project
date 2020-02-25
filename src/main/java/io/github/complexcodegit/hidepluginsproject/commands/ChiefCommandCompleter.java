@@ -130,7 +130,7 @@ public class ChiefCommandCompleter implements TabCompleter {
                         }
                     }
 
-                    ArrayList<String> cmds = (ArrayList<String>) GroupManager.getGroupTabList(args[1], plugin);
+                    ArrayList<String> cmds = (ArrayList<String>) GroupManager.getTabList(args[1], plugin);
                     for(int i=0; i < cmds.size(); i++){
                         if(commands.contains(cmds.get(i))){
                             commands.remove(cmds.get(i));

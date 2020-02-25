@@ -67,6 +67,19 @@ public class GroupManager {
                 commandsList.add("/"+commands);
             }
         }
+        if(!plugin.getGroups().getStringList("groups."+getPlayerGroup(player, plugin)+".inheritance").isEmpty()){
+            List<String> inheritances = plugin.getGroups().getStringList("groups."+getPlayerGroup(player, plugin)+".inheritance");
+            List<String> groups = getGroups(plugin);
+            for(String inheritance : inheritances){
+                if(groups.contains(inheritance)){
+                    for(String commands : plugin.getGroups().getStringList("groups."+inheritance+".commands")){
+                        if(!commandsList.contains("/"+commands)) {
+                            commandsList.add("/"+commands);
+                        }
+                    }
+                }
+            }
+        }
         return commandsList;
     }
 
@@ -80,11 +93,24 @@ public class GroupManager {
         return commandsList;
     }
 
-    public static List<String> getGroupTabList(String group, HidePluginsProject plugin){
+    public static List<String> getTabList(String group, HidePluginsProject plugin){
         List<String> tabList = new ArrayList<>();
         for(String tab : plugin.getGroups().getStringList("groups."+group+".tab-completes")) {
             if(!tabList.contains(tab)) {
                 tabList.add(tab);
+            }
+        }
+        if(!plugin.getGroups().getStringList("groups."+group+".inheritance").isEmpty()){
+            List<String> inheritances = plugin.getGroups().getStringList("groups."+group+".inheritance");
+            List<String> groups = getGroups(plugin);
+            for(String inheritance : inheritances){
+                if(groups.contains(inheritance)){
+                    for(String tab : plugin.getGroups().getStringList("groups."+inheritance+".tab-completes")){
+                        if(!tabList.contains(tab)) {
+                            tabList.add(tab);
+                        }
+                    }
+                }
             }
         }
         return tabList;

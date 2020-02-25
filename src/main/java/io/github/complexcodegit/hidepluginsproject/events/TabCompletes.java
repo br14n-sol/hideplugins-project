@@ -14,6 +14,7 @@ import org.bukkit.event.server.TabCompleteEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class TabCompletes implements Listener {
@@ -37,7 +38,8 @@ public class TabCompletes implements Listener {
             }
             event.getCommands().clear();
             String group = GroupManager.getPlayerGroup(player, plugin);
-            for(String commands : plugin.getGroups().getStringList("groups."+group+".tab-completes")) {
+            List<String> tabList = GroupManager.getTabList(group, plugin);
+            for(String commands : tabList) {
                 event.getCommands().add(commands);
             }
         }

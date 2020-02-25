@@ -229,7 +229,7 @@ public class ChiefCommand implements CommandExecutor {
                 String arg = args[1];
                 String cmd = args[2];
                 if(groups.contains(arg)){
-                    List<String> groupTabs = GroupManager.getGroupTabList(arg, plugin);
+                    List<String> groupTabs = GroupManager.getTabList(arg, plugin);
                     if(!groupTabs.contains(cmd)){
                         List<String> blacklist = new ArrayList<>();
                         for(Plugin plugins : Bukkit.getServer().getPluginManager().getPlugins()){
@@ -259,7 +259,7 @@ public class ChiefCommand implements CommandExecutor {
                             }
                         }
 
-                        List<String> groupCommands = GroupManager.getGroupTabList(arg, plugin);
+                        List<String> groupCommands = GroupManager.getTabList(arg, plugin);
                         for(int i=0; i < groupCommands.size(); i++){
                             if(cmds.contains(groupCommands.get(i))){
                                 cmds.remove(groupCommands.get(i));
