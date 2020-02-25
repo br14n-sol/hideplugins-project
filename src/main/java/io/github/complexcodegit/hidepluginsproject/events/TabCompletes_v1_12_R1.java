@@ -29,12 +29,8 @@ public class TabCompletes_v1_12_R1 implements Listener {
                 return false;
             }
             String group = GroupManager.getPlayerGroup(player, plugin);
-            List<String> tabs = plugin.getGroups().getStringList("groups." + group + ".tab-completes");
-            List<String> completetions = new ArrayList<>();
-            for(int i=0; i < tabs.size(); i++) {
-                completetions.add("/"+tabs.get(i));
-            }
-            event.setCompletions(completetions);
+            List<String> tabs = GroupManager.getTabList(group, plugin);
+            event.setCompletions(tabs);
         }
         return false;
     }
