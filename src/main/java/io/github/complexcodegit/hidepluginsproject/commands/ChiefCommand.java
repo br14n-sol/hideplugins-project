@@ -70,6 +70,11 @@ public class ChiefCommand implements CommandExecutor {
                 player.sendMessage(plugin.colors(plugin.prefix + "&f&lGroups List:"));
 
                 InteractText.send("listGroups", player, plugin);
+            } else if(args[0].equalsIgnoreCase("reload")){
+                player.sendMessage(plugin.colors(plugin.prefix + "&bAll files &awere reloaded successfully."));
+                plugin.reloadConfig();
+                plugin.reloadGroups();
+                plugin.reloadPlayers();
             } else {
                 InteractText.send("commandExistUse", player, plugin);
             }
@@ -128,7 +133,7 @@ public class ChiefCommand implements CommandExecutor {
                     player.sendMessage(plugin.colors(plugin.prefix + "&b&l" + arg + " &cplayer was not found."));
                 }
             } else if(args[0].equalsIgnoreCase("reload")) {
-                if (args[1].equalsIgnoreCase("playersfile")) {
+                if(args[1].equalsIgnoreCase("playersfile")) {
                     player.sendMessage(plugin.colors(plugin.prefix + "&aThe &bPlayers &afile was reloaded correctly."));
                     plugin.reloadPlayers();
                 } else if(args[1].equalsIgnoreCase("groupsfile")) {
@@ -137,12 +142,7 @@ public class ChiefCommand implements CommandExecutor {
                 } else if(args[1].equalsIgnoreCase("configfile")) {
                     player.sendMessage(plugin.colors(plugin.prefix + "&aThe &bConfig &afile was reloaded correctly."));
                     plugin.reloadConfig();
-                } else if(args[1].equalsIgnoreCase("allfiles")){
-                    player.sendMessage(plugin.colors(plugin.prefix + "&bAll files &awere reloaded successfully."));
-                    plugin.reloadConfig();
-                    plugin.reloadGroups();
-                    plugin.reloadPlayers();
-                }else {
+                } else {
                     player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b&l" + args[1] + " &cfile does not exist, please try again."));
                 }
             } else {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.complexcodegit.hidepluginsproject.managers.SoundManager;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;

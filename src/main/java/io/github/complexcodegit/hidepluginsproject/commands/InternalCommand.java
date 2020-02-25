@@ -48,149 +48,28 @@ public class InternalCommand implements CommandExecutor {
                         for(String s : miSet) {
                             historyFinal.add(s + " (" + Collections.frequency(history, s) + ")");
                         }
-                        List<String> historyFinal1 = new ArrayList<>();
-                        List<String> historyFinal2 = new ArrayList<>();
-                        List<String> historyFinal3 = new ArrayList<>();
-                        List<String> historyFinal4 = new ArrayList<>();
-                        List<String> historyFinal5 = new ArrayList<>();
-                        List<String> historyFinal6 = new ArrayList<>();
-                        List<String> historyFinal7 = new ArrayList<>();
-                        List<String> historyFinal8 = new ArrayList<>();
-                        List<String> historyFinal9 = new ArrayList<>();
-                        List<String> historyFinal10 = new ArrayList<>();
 
-                        List<String> pages = new ArrayList<>();
-                        if(!historyFinal.isEmpty()){
-                            if(historyFinal.size() < 12){
-                                for(int i=0; i < historyFinal.size(); i++){
-                                    historyFinal1.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=0; i < 12; i++){
-                                    historyFinal1.add(historyFinal.get(i));
+                        ArrayList<String> pages = new ArrayList<String>();
+                        ArrayList<String> pageContent = new ArrayList<String>();
+
+                        if(!historyFinal.isEmpty()) {
+                            for(int i=0; i < historyFinal.size(); i++){
+                                if(!(pageContent.size() == 14)){
+                                    if(historyFinal.get(i) != null){
+                                        pageContent.add(historyFinal.get(i));
+                                    } else {
+                                        String result = String.join("\n", pageContent);
+                                        pages.add(result.replaceAll("\\n", "\n"));
+                                    }
+                                } else {
+                                    String result = String.join("\n", pageContent);
+                                    pages.add(result.replaceAll("\\n", "\n"));
+                                    pageContent.clear();
+                                    pageContent.add(historyFinal.get(i));
                                 }
                             }
-                            String result1 = String.join("\n", historyFinal1);
-                            pages.add(plugin.colors("&6&l" + arg + " &r&l- History&r\n\n" + result1).replaceAll("\\n", "\n"));
                         } else {
-                            pages.add(plugin.colors("&6&l" + arg + " &r&l- History"));
-                        }
-                        if(historyFinal1.size() == 12){
-                            if(historyFinal.size() > 26){
-                                for(int i=12; i < 26; i++){
-                                    historyFinal2.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=12; i < historyFinal.size(); i++){
-                                    historyFinal2.add(historyFinal.get(i));
-                                }
-                            }
-                            String result2 = String.join("\n", historyFinal2);
-                            pages.add(result2.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal2.size() == 14){
-                            if(historyFinal.size() > 40){
-                                for(int i=26; i < 40; i++){
-                                    historyFinal3.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=26; i < historyFinal.size(); i++){
-                                    historyFinal3.add(historyFinal.get(i));
-                                }
-                            }
-                            String result3 = String.join("\n", historyFinal3);
-                            pages.add(result3.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal3.size() == 14){
-                            if(historyFinal.size() > 54){
-                                for(int i=40; i < 54; i++){
-                                    historyFinal4.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=40; i < historyFinal.size(); i++){
-                                    historyFinal4.add(historyFinal.get(i));
-                                }
-                            }
-                            String result4 = String.join("\n", historyFinal4);
-                            pages.add(result4.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal4.size() == 14){
-                            if(historyFinal.size() > 68){
-                                for(int i=54; i < 68; i++){
-                                    historyFinal5.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=54; i < historyFinal.size(); i++){
-                                    historyFinal5.add(historyFinal.get(i));
-                                }
-                            }
-                            String result5 = String.join("\n", historyFinal5);
-                            pages.add(result5.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal5.size() == 14){
-                            if(historyFinal.size() > 82){
-                                for(int i=68; i < 82; i++){
-                                    historyFinal6.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=68; i < historyFinal.size(); i++){
-                                    historyFinal6.add(historyFinal.get(i));
-                                }
-                            }
-                            String result6 = String.join("\n", historyFinal6);
-                            pages.add(result6.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal6.size() == 14){
-                            if(historyFinal.size() > 96){
-                                for(int i=68; i < 96; i++){
-                                    historyFinal7.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=68; i < historyFinal.size(); i++){
-                                    historyFinal7.add(historyFinal.get(i));
-                                }
-                            }
-                            String result7 = String.join("\n", historyFinal7);
-                            pages.add(result7.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal7.size() == 14){
-                            if(historyFinal.size() > 110){
-                                for(int i=82; i < 110; i++){
-                                    historyFinal8.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=82; i < historyFinal.size(); i++){
-                                    historyFinal8.add(historyFinal.get(i));
-                                }
-                            }
-                            String result8 = String.join("\n", historyFinal8);
-                            pages.add(result8.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal8.size() == 14){
-                            if(historyFinal.size() > 124){
-                                for(int i=96; i < 124; i++){
-                                    historyFinal9.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=96; i < historyFinal.size(); i++){
-                                    historyFinal9.add(historyFinal.get(i));
-                                }
-                            }
-                            String result9 = String.join("\n", historyFinal9);
-                            pages.add(result9.replaceAll("\\n", "\n"));
-                        }
-                        if(historyFinal9.size() == 14){
-                            if(historyFinal.size() > 138){
-                                for(int i=110; i < 138; i++){
-                                    historyFinal10.add(historyFinal.get(i));
-                                }
-                            } else {
-                                for(int i=110; i < historyFinal.size(); i++){
-                                    historyFinal10.add(historyFinal.get(i));
-                                }
-                            }
-                            String result10 = String.join("\n", historyFinal10);
-                            pages.add(result10.replaceAll("\\n", "\n"));
+                            pages.add(plugin.colors("&c&lNo records."));
                         }
 
                         ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);

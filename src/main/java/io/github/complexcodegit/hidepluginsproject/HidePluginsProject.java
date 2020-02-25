@@ -1,6 +1,7 @@
 package io.github.complexcodegit.hidepluginsproject;
 
 import java.io.*;
+import java.lang.reflect.Field;
 
 import io.github.complexcodegit.hidepluginsproject.checkups.Checkups;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
@@ -13,6 +14,8 @@ import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.MetricManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -73,6 +76,20 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
             pm.registerEvents(new TabCompletes(this), this);
         }
         pm.registerEvents(new PlayerRegister(this), this);
+    }
+
+    private void register(Command pluginCommand) {
+        try {
+            Field f = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+            f.setAccessible(true);
+            Object commandMapObject = f.get(Bukkit.getPluginManager());
+            if (commandMapObject instanceof CommandMap) {
+                CommandMap commandMap = (CommandMap) commandMapObject;
+                commandMap.register(getName(), pluginCommand);
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.getStackTrace();
+        }
     }
 
     public void registerCommands(){

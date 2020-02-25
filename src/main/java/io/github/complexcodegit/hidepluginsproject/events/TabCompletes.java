@@ -1,5 +1,7 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,8 +11,10 @@ import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import org.bukkit.event.server.TabCompleteEvent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 public class TabCompletes implements Listener {
     private HidePluginsProject plugin;
