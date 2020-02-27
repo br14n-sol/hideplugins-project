@@ -76,7 +76,7 @@ public class ChiefCommandCompleter implements TabCompleter {
                 if(args[0].equalsIgnoreCase("reload")){
                     ArrayList<String> commands = new ArrayList<>();
                     ArrayList<String> cmds = new ArrayList<>();
-                    commands.add("playersfile"); commands.add("groupsfile"); commands.add("configfile");
+                    commands.add("playersfile"); commands.add("groupsfile"); commands.add("configfile"); commands.add("langsfile");
                     if(!args[1].equals("")){
                         for(String s : commands){
                             if(s.toLowerCase().startsWith(args[1].toLowerCase())){

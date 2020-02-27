@@ -2,6 +2,7 @@ package io.github.complexcodegit.hidepluginsproject.commands;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
+import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
 import io.github.complexcodegit.hidepluginsproject.utils.InteractText;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -36,6 +37,7 @@ public class ChiefCommand implements CommandExecutor {
                     plugin.reloadConfig();
                     plugin.reloadGroups();
                     plugin.reloadPlayers();
+                    plugin.reloadLanguages();
                 } else {
                     plugin.console.sendMessage(plugin.colors(plugin.prefix + "&cThe command does not exist, try using &f/hproject help"));
                 }
@@ -52,31 +54,29 @@ public class ChiefCommand implements CommandExecutor {
         }
 
         if(args.length == 0){
-            InteractText.send("useCommand", player, plugin);
+            player.sendMessage(LanguageManager.internalTranslate("command-use", plugin));
         } else if(args.length == 1){
             if(args[0].equalsIgnoreCase("help")){
-                player.sendMessage(plugin.colors(plugin.prefix + "&f&lAvailable commands:"));
-                player.sendMessage(plugin.colors("&b/hproject reload &e<filename> &f| Reload the configuration file you specify."));
-                player.sendMessage(plugin.colors("&fFiles: &eallfiles&f, &egroupsfile&f, &eplayersfile&f, &econfigfile&f."));
-                player.sendMessage("");
-                player.sendMessage(plugin.colors("&b/hproject groups &f| Show the list of available groups."));
-                player.sendMessage(plugin.colors("&b/hproject group &e<groupname> &f| Show detailed group information."));
-                player.sendMessage(plugin.colors("&b/hproject addcmd &e<groupname> <command> &f| Used to add commands to a group."));
-                player.sendMessage(plugin.colors("&b/hproject addtab &e<groupname> <command> &f| Used to add commands to the tab of a group."));
-                player.sendMessage(plugin.colors("&b/hproject sethelp &e<groupname> <true|false> &f| Activate or deactivate, the custom help in the indicated group."));
-                player.sendMessage(plugin.colors("&b/hproject player &e<playername> &f| Shows you the information of a player."));
+                player.sendMessage(LanguageManager.internalTranslate("commands.help.title", plugin));
+                List<String> lines = LanguageManager.internalTranslateList("commands.help.lines", plugin);
+                for(String line : lines){
+                    player.sendMessage(plugin.colors(line));
+                }
             } else if(args[0].equalsIgnoreCase("groups")){
-                player.sendMessage("");
-                player.sendMessage(plugin.colors(plugin.prefix + "&f&lGroups List:"));
-
-                InteractText.send("listGroups", player, plugin);
+                List<String> groups = GroupManager.getGroups(plugin);
+                player.sendMessage(LanguageManager.internalTranslate("commands.groups.title", plugin));
+                for(String group : groups) {
+                    player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.groups.format-base", plugin).replaceAll("%group%", group));
+                }
+                player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.more-information", plugin));
             } else if(args[0].equalsIgnoreCase("reload")){
-                player.sendMessage(plugin.colors(plugin.prefix + "&bAll files &awere reloaded successfully."));
+                player.sendMessage(LanguageManager.internalTranslate("commands.reload.allfiles", plugin));
                 plugin.reloadConfig();
                 plugin.reloadGroups();
                 plugin.reloadPlayers();
+                plugin.reloadLanguages();
             } else {
-                InteractText.send("commandExistUse", player, plugin);
+                player.sendMessage(LanguageManager.internalTranslate("command-not-exist", plugin));
             }
         } else if(args.length == 2){
             if(args[0].equalsIgnoreCase("group")){
@@ -84,23 +84,21 @@ public class ChiefCommand implements CommandExecutor {
                 String arg = args[1];
                 if(groups.contains(arg)){
                     if(args[1].equalsIgnoreCase(arg)){
-                        player.sendMessage("");
-                        player.sendMessage(plugin.colors(plugin.prefix + "&b&l"+ arg + " &f&lgroup information."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.group.title", plugin).replaceAll("%group%", arg));
                         if(arg.equalsIgnoreCase("default")){
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lPermission: &bYou don't need permission."));
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.default", plugin));
                         } else {
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lPermission: &b" + GroupManager.getGroupPermission(arg)));
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.not-default", plugin).replaceAll("%permission%", GroupManager.getGroupPermission(arg)));
                         }
-                        player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lOnline members: &b" + GroupManager.getMembersGroup(arg , plugin)));
-                        player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lCommands List:"));
+                        player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.online-members", plugin).replaceAll("%online%", String.valueOf(GroupManager.getMembersGroup(arg , plugin))));
+                        player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.commands-list", plugin));
 
                         List<String> list = GroupManager.getGroupCommandsList(arg, plugin);
                         String result = String.join("&f, &b", list);
-
                         player.sendMessage(plugin.colors("&b" + result));
                     }
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
+                    player.sendMessage(LanguageManager.internalTranslate("group-not-exist", plugin).replaceAll("%group%", arg));
                 }
             } else if(args[0].equalsIgnoreCase("player")){
                 String arg = args[1];
@@ -112,41 +110,41 @@ public class ChiefCommand implements CommandExecutor {
                 }
                 if(historyPlayers.contains(arg)){
                     if(args[1].equalsIgnoreCase(arg)){
-                        player.sendMessage("");
-                        player.sendMessage(plugin.colors(plugin.prefix + "&b&l"+ arg + " &f&lplayer information."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.player.title", plugin).replaceAll("%player%", arg));
                         if(player.isOp()){
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lGroup: &bAn operator does not need a group."));
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.player.op", plugin));
                         } else {
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lGroup: &b" + GroupManager.getPlayerGroup(Bukkit.getPlayer(arg) , plugin)));
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.player.not-op", plugin).replaceAll("%group%", GroupManager.getPlayerGroup(Bukkit.getPlayer(arg) , plugin)));
                         }
-                        player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lReports: &b" + plugin.getPlayers().getString("players." + arg + ".reports")));
-                        if(plugin.getPlayers().getString("players." + arg + ".last-command") == null){
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lLast command used: &bNo registered commands."));
+                        player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.player.reports", plugin).replaceAll("%reports%", String.valueOf(plugin.getPlayers().getInt("players." + arg + ".reports"))));
+                        if(plugin.getPlayers().getString("players." + arg + ".last-command").equals("none")){
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.player.no-last-command", plugin));
                         } else {
-                            player.sendMessage(plugin.colors("&6&l&m>>>&r &f&lLast command used: &b" + plugin.getPlayers().getString("players." + arg + ".last-command")));
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.player.last-command", plugin).replaceAll("%command%", plugin.getPlayers().getString("players." + arg + ".last-command")));
                             if(plugin.getConfig().getBoolean("player-command-history")){
                                 InteractText.sendUser("playerHistory", arg, player, plugin);
                             }
                         }
                     }
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&b&l" + arg + " &cplayer was not found."));
+                    player.sendMessage(LanguageManager.internalTranslate("commands.player.player-not-exist", plugin).replaceAll("%player%", arg));
                 }
             } else if(args[0].equalsIgnoreCase("reload")) {
                 if(args[1].equalsIgnoreCase("playersfile")) {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&aThe &bPlayers &afile was reloaded correctly."));
                     plugin.reloadPlayers();
                 } else if(args[1].equalsIgnoreCase("groupsfile")) {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&aThe &bGroups &afile was reloaded correctly."));
                     plugin.reloadGroups();
                 } else if(args[1].equalsIgnoreCase("configfile")) {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&aThe &bConfig &afile was reloaded correctly."));
                     plugin.reloadConfig();
+                } else if(args[1].equalsIgnoreCase("langsfile")) {
+                    plugin.reloadLanguages();
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b&l" + args[1] + " &cfile does not exist, please try again."));
+                    player.sendMessage(LanguageManager.internalTranslate("commands.reload.file-not-exist", plugin).replaceAll("%file%", args[1]));
+                    return false;
                 }
+                player.sendMessage(LanguageManager.internalTranslate("commands.reload.format-base", plugin).replaceAll("%file%", args[1]));
             } else {
-                InteractText.send("commandExistUse", player, plugin);
+                player.sendMessage(LanguageManager.internalTranslate("command-not-exist", plugin));
             }
         } else if(args.length == 3){
             if(args[0].equalsIgnoreCase("addcmd")){
@@ -195,15 +193,15 @@ public class ChiefCommand implements CommandExecutor {
                             groupCmds.add(cmd);
                             plugin.getGroups().set("groups." + arg + ".commands", groupCmds);
                             plugin.saveGroups();
-                            player.sendMessage(plugin.colors(plugin.prefix + "&aThe &b" + cmd + " &acommand was successfully added to the &b" + arg + " &agroup."));
+                            player.sendMessage(LanguageManager.internalTranslate("commands.addcmd.command-add", plugin).replaceAll("%command%", cmd).replaceAll("%group%", arg));
                         } else {
-                            player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + cmd + " &ccommand does not exist, please verify that it is well written."));
+                            player.sendMessage(LanguageManager.internalTranslate("commands.addcmd.command-not-exist", plugin).replaceAll("%command%", cmd));
                         }
                     } else {
-                        player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup already has the &b" + cmd + " &ccommand."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.addcmd.registered-command", plugin).replaceAll("%group%", arg).replaceAll("%command%", cmd));
                     }
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
+                    player.sendMessage(LanguageManager.internalTranslate("group-not-exist", plugin).replaceAll("%group%", arg));
                 }
             } else if(args[0].equalsIgnoreCase("sethelp")){
                 List<String> groups = GroupManager.getGroups(plugin);
@@ -213,16 +211,16 @@ public class ChiefCommand implements CommandExecutor {
                     if(swich.equalsIgnoreCase("true")){
                         plugin.getGroups().set("groups." + arg + ".custom-help.enable", true);
                         plugin.saveGroups();
-                        player.sendMessage(plugin.colors(plugin.prefix + "&aThe custom help was &benabled &afor the &b" + arg + " &agroup correctly."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.sethelp.enable-help", plugin).replaceAll("%group%", arg));
                     } else if(swich.equalsIgnoreCase("false")){
                         plugin.getGroups().set("groups." + arg + ".custom-help.enable", false);
                         plugin.saveGroups();
-                        player.sendMessage(plugin.colors(plugin.prefix + "&aThe custom help was &bdisabled &afor the &b" + arg + " &agroup correctly."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.sethelp.disable-help", plugin).replaceAll("%group%", arg));
                     } else {
-                        player.sendMessage(plugin.colors(plugin.prefix + "&b" + swich + " &cis not valid please use (true or false)."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.sethelp.invalid-option", plugin).replaceAll("%option%", swich));
                     }
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
+                    player.sendMessage(LanguageManager.internalTranslate("group-not-exist", plugin).replaceAll("%group%", arg));
                 }
             } else if(args[0].equalsIgnoreCase("addtab")){
                 List<String> groups = GroupManager.getGroups(plugin);
@@ -270,21 +268,21 @@ public class ChiefCommand implements CommandExecutor {
                             groupTabs.add(cmd);
                             plugin.getGroups().set("groups." + arg + ".tab-completes", groupTabs);
                             plugin.saveGroups();
-                            player.sendMessage(plugin.colors(plugin.prefix + "&aThe &b" + cmd + " &atab was successfully added to the &b" + arg + " &agroup."));
+                            player.sendMessage(LanguageManager.internalTranslate("commands.addtab.command-add", plugin).replaceAll("%command%", cmd).replaceAll("%group%", arg));
                         } else {
-                            player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + cmd + " &ccommand does not exist, please verify that it is well written."));
+                            player.sendMessage(LanguageManager.internalTranslate("commands.addtab.command-not-exist", plugin).replaceAll("%command%", cmd));
                         }
                     } else {
-                        player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup already has the &b" + cmd + " &ctab."));
+                        player.sendMessage(LanguageManager.internalTranslate("commands.addtab.registered-command", plugin).replaceAll("%group%", arg).replaceAll("%command%", cmd));
                     }
                 } else {
-                    player.sendMessage(plugin.colors(plugin.prefix + "&cThe &b" + arg + " &cgroup not exist."));
+                    player.sendMessage(LanguageManager.internalTranslate("group-not-exist", plugin).replaceAll("%group%", arg));
                 }
             } else {
-                InteractText.send("commandExistUse", player, plugin);
+                player.sendMessage(LanguageManager.internalTranslate("command-not-exist", plugin));
             }
         } else {
-            InteractText.send("commandExistUse", player, plugin);
+            player.sendMessage(LanguageManager.internalTranslate("command-not-exist", plugin));
         }
         return false;
     }

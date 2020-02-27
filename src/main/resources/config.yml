@@ -11,6 +11,18 @@
 #---------# Note: that these messages can only be seen by players with op rank.
 updates: true
 
+#----------#
+# LANGUAGE #
+#----------#
+language: 'english'
+
+#--------#
+# PREFIX #
+#--------#
+prefix:
+    enable: true
+    prefix: "&6&l&m[&e&lHPP&6&l&m]&r"
+
 #-----------------# If activated, the groups and commands defined in the groups.yml file are activated.
 # LOCKED COMMANDS # If disabled, the commands will work as usual, there will be no control.
 #-----------------# Note: players with op rank, by default do not need any groups, will have access to all commands.

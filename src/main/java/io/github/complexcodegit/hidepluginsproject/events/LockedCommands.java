@@ -3,6 +3,7 @@ package io.github.complexcodegit.hidepluginsproject.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
 import io.github.complexcodegit.hidepluginsproject.managers.SoundManager;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -74,16 +75,16 @@ public class LockedCommands implements Listener {
                             if(!(pageNumber.equals(command))){
                                 if(pages.contains(pageNumber)){
                                     page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages."+pageNumber);
-                                    for(String s : page){
-                                        player.sendMessage(plugin.colors(s).replaceAll("%pages%", String.valueOf(pages.size())));
+                                    for(String pag : page){
+                                        player.sendMessage(plugin.colors(pag).replaceAll("%pages%", String.valueOf(pages.size())));
                                     }
                                 } else {
-                                    player.sendMessage(plugin.colors("&cPage &b"+pageNumber+" &cdoes not exist."));
+                                    player.sendMessage(LanguageManager.translate("page-not-exist", plugin).replaceAll("%page%", pageNumber));
                                 }
                             } else {
                                 page = plugin.getGroups().getStringList("groups."+group+".custom-help.pages.1");
-                                for(String s : page){
-                                    player.sendMessage(plugin.colors(s).replaceAll("%pages%", String.valueOf(pages.size())));
+                                for(String pag : page){
+                                    player.sendMessage(plugin.colors(pag).replaceAll("%pages%", String.valueOf(pages.size())));
                                 }
                             }
                             return false;
@@ -98,8 +99,12 @@ public class LockedCommands implements Listener {
                         title.send(player, plugin.colors(plugin.getConfig().getString("warning-message.screen-title.title")), plugin.colors(plugin.getConfig().getString("warning-message.screen-title.subtitle")), 0, 0, 0);
                     } else if(plugin.getConfig().getString("warning-message.type").equals("chat-message")){
                         List<String> messages = plugin.getConfig().getStringList("warning-message.chat-message");
-                        for(String s : messages){
-                            player.sendMessage(plugin.colors(s));
+                        for(String message : messages){
+                            if(LanguageManager.checkPrefix(plugin)){
+                                player.sendMessage(plugin.colors(LanguageManager.getPrefix(plugin)+message));
+                            } else {
+                                player.sendMessage(plugin.colors(message));
+                            }
                         }
                     }
                 }

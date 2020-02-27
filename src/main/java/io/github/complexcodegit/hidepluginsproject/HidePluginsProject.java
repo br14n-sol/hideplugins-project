@@ -28,6 +28,8 @@ import io.github.complexcodegit.hidepluginsproject.utils.Title;
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
     private File groupsFile;
+    private FileConfiguration languages;
+    private File languagesFile;
     private FileConfiguration players;
     private File playersFile;
 
@@ -120,6 +122,38 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
             reloadGroups();
         }
         return groups;
+    }
+
+    public void reloadLanguages() {
+        if(languages == null) {
+            languagesFile = new File(getDataFolder(), "languages.yml");
+        }
+
+        languages = YamlConfiguration.loadConfiguration(languagesFile);
+        try {
+            Reader defConfigStream = new InputStreamReader(getResource("languages.yml"), "UTF8");
+            if(defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                languages.setDefaults(defConfig);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveLanguages() {
+        try {
+            languages.save(languagesFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public FileConfiguration getLanguages() {
+        if(languages == null) {
+            reloadLanguages();
+        }
+        return languages;
     }
 
     public FileConfiguration getPlayers() {

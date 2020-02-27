@@ -30,7 +30,7 @@ public class SoundManager {
         } else {
             for(Player op : Bukkit.getOnlinePlayers()){
                 if(op.isOp()){
-                    op.sendMessage(plugin.colors(plugin.prefix + "&cNo sound is valid, please make a review."));
+                    op.sendMessage(LanguageManager.internalTranslate("sound-not-valid", plugin));
                 }
             }
         }
