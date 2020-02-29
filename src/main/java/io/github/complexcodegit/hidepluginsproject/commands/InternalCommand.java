@@ -49,17 +49,18 @@ public class InternalCommand implements CommandExecutor {
                             historyFinal.add(s + " (" + Collections.frequency(history, s) + ")");
                         }
 
-                        ArrayList<String> pages = new ArrayList<String>();
-                        ArrayList<String> pageContent = new ArrayList<String>();
-
+                        List<String> pages = new ArrayList<>();
+                        List<String> pageContent = new ArrayList<>();
                         if(!historyFinal.isEmpty()) {
                             for(String s : historyFinal){
-                                if(!(pageContent.size() == 14)){
-                                    if(s != null){
+                                if(!(pageContent.size() == 14)) {
+                                    if(s != null) {
                                         pageContent.add(s);
-                                    } else {
-                                        String result = String.join("\n", pageContent);
-                                        pages.add(result.replaceAll("\\n", "\n"));
+                                        if(s.equals(historyFinal.get(historyFinal.size()-1))){
+                                            String result = String.join("\n", pageContent);
+                                            pages.add(result.replaceAll("\\n", "\n"));
+                                            pageContent.clear();
+                                        }
                                     }
                                 } else {
                                     String result = String.join("\n", pageContent);
@@ -76,8 +77,8 @@ public class InternalCommand implements CommandExecutor {
                         BookMeta meta = (BookMeta) book.getItemMeta();
 
                         meta.setPages(pages);
-                        meta.setAuthor("");
                         meta.setTitle("");
+                        meta.setAuthor("");
 
                         book.setItemMeta(meta);
                         player.openBook(book);

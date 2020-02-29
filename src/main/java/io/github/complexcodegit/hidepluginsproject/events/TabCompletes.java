@@ -48,9 +48,11 @@ public class TabCompletes implements Listener {
         String group = GroupManager.getPlayerGroup(player, plugin);
         if(plugin.getGroups().getBoolean("groups."+group+".custom-help.enable")){
             if(event.getBuffer().startsWith("/help")){
-                ArrayList<String> pages = new ArrayList<>(plugin.getGroups().getConfigurationSection("groups." + group + ".custom-help.pages").getKeys(false));
-                Collections.sort(pages);
-                event.setCompletions(pages);
+                if(!player.isOp()){
+                    ArrayList<String> pages = new ArrayList<>(plugin.getGroups().getConfigurationSection("groups." + group + ".custom-help.pages").getKeys(false));
+                    Collections.sort(pages);
+                    event.setCompletions(pages);
+                }
             }
         }
     }

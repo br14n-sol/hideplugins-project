@@ -12,12 +12,12 @@
 updates: true
 
 #----------#
-# LANGUAGE #
+# LANGUAGE # Specify the language of your choice here, remember that it must be in the languages.yml.
 #----------#
 language: 'english'
 
 #--------#
-# PREFIX #
+# PREFIX # This is the prefix used by the messages the player will receive.
 #--------#
 prefix:
     enable: true

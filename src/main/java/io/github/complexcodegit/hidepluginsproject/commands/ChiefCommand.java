@@ -68,7 +68,7 @@ public class ChiefCommand implements CommandExecutor {
                 for(String group : groups) {
                     player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.groups.format-base", plugin).replaceAll("%group%", group));
                 }
-                player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.more-information", plugin));
+                player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.groups.more-information", plugin));
             } else if(args[0].equalsIgnoreCase("reload")){
                 player.sendMessage(LanguageManager.internalTranslate("commands.reload.allfiles", plugin));
                 plugin.reloadConfig();
@@ -91,8 +91,14 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.not-default", plugin).replaceAll("%permission%", GroupManager.getGroupPermission(arg)));
                         }
                         player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.online-members", plugin).replaceAll("%online%", String.valueOf(GroupManager.getMembersGroup(arg , plugin))));
-                        player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.commands-list", plugin));
 
+                        if(!plugin.getGroups().getStringList("groups."+arg+".inheritance").isEmpty()){
+                            List<String> inheritances = GroupManager.getInheritances(arg, plugin);
+                            String results = String.join("&f, &e", inheritances);
+                            player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.inheritances", plugin)+plugin.colors(" &e" + results));
+                        }
+
+                        player.sendMessage(LanguageManager.internalTranslateNoPrefix("commands.group.commands-list", plugin));
                         List<String> list = GroupManager.getGroupCommandsList(arg, plugin);
                         String result = String.join("&f, &b", list);
                         player.sendMessage(plugin.colors("&b" + result));
@@ -177,16 +183,12 @@ public class ChiefCommand implements CommandExecutor {
                         }
 
                         for(String s : blacklist){
-                            if(cmds.contains(s)){
-                                cmds.remove(s);
-                            }
+                            cmds.remove(s);
                         }
 
                         List<String> groupCommands = GroupManager.getGroupCommandsList(arg, plugin);
                         for(String s : groupCommands){
-                            if(cmds.contains(s)){
-                                cmds.remove(s);
-                            }
+                            cmds.remove(s);
                         }
 
                         if(cmds.contains(cmd)){
@@ -252,16 +254,12 @@ public class ChiefCommand implements CommandExecutor {
                         }
 
                         for(String s : blacklist){
-                            if(cmds.contains(s)){
-                                cmds.remove(s);
-                            }
+                            cmds.remove(s);
                         }
 
                         List<String> groupCommands = GroupManager.getTabList(arg, plugin);
                         for(String s : groupCommands){
-                            if(cmds.contains(s)){
-                                cmds.remove(s);
-                            }
+                            cmds.remove(s);
                         }
 
                         if(cmds.contains(cmd)){

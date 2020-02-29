@@ -128,4 +128,11 @@ public class GroupManager {
         groups = groups.stream().filter(x -> x.equals(group)).collect(Collectors.toList());
         return groups.size();
     }
+
+    public static List<String> getInheritances(String group, HidePluginsProject plugin){
+        if(!plugin.getGroups().isConfigurationSection("groups."+group+".inheritance")){
+            plugin.getGroups().set("groups."+group+".inheritance", "");
+        }
+        return plugin.getGroups().getStringList("groups."+group+".inheritance");
+    }
 }
