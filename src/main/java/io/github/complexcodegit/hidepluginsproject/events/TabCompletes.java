@@ -1,61 +1,62 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandSendEvent;
-
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class TabCompletes implements Listener {
     private HidePluginsProject plugin;
-
-    public TabCompletes(HidePluginsProject plugin) {
+    private GroupManager groupManager;
+    public TabCompletes(HidePluginsProject plugin, GroupManager groupManager){
         this.plugin = plugin;
+        this.groupManager = groupManager;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public boolean onCommandTabSend(PlayerCommandSendEvent event) {
+        FileConfiguration config = plugin.getConfig();
         Player player = event.getPlayer();
-        if(plugin.getConfig().getBoolean("locked-commands")) {
-            if(player.isOp() || player.hasPermission("hidepluginsproject.tabusage")){
-                event.getCommands().remove("hprojectinternal");
-                event.getCommands().remove("hideplugins_project:hprojectinternal");
-                event.getCommands().remove("hideplugins_project:hproject");
-                event.getCommands().remove("hideplugins_project:hpp");
-                event.getCommands().remove("hideplugins_project:hpj");
+        if(config.getBoolean("locked-commands")) {
+            if(player.isOp() || player.hasPermission("hidepjpremium.tabusage")){
                 return false;
             }
             event.getCommands().clear();
-            String group = GroupManager.getPlayerGroup(player, plugin);
-            List<String> tabList = GroupManager.getTabList(group, plugin);
-            for(String commands : tabList) {
-                event.getCommands().add(commands);
-            }
+            List<String> tabList = groupManager.getTabs(player);
+            event.getCommands().addAll(tabList);
         }
         return false;
     }
-
-    @EventHandler
-    public void tabSuggest(TabCompleteEvent event){
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public boolean tabSuggest(TabCompleteEvent event){
+        FileConfiguration groups = plugin.getGroups();
         if(event.getSender() instanceof Player){
             Player player = (Player)event.getSender();
-            String group = GroupManager.getPlayerGroup(player, plugin);
-            if(plugin.getGroups().getBoolean("groups."+group+".custom-help.enable")){
-                if(event.getBuffer().startsWith("/help")){
-                    if(!player.isOp()){
-                        ArrayList<String> pages = new ArrayList<>(plugin.getGroups().getConfigurationSection("groups." + group + ".custom-help.pages").getKeys(false));
-                        Collections.sort(pages);
-                        event.setCompletions(pages);
+            if(event.getBuffer().startsWith("/help")){
+                String group = groupManager.getPlayerGroup(player);
+                if(groups.getBoolean("groups."+group+".options.custom-help.enable")){
+                    if(!player.hasPermission("hidepjpremium.viewhelp") && !player.isOp()){
+                        if(groups.contains("groups."+group+".options.custom-help.worlds."+player.getWorld().getName())){
+                            ArrayList<String> pages = new ArrayList<>(Objects.requireNonNull(groups.getConfigurationSection(
+                                    "groups."+group+".options.custom-help.worlds."+player.getWorld().getName()+".pages"))
+                                    .getKeys(false));
+                            Collections.sort(pages);
+                            event.setCompletions(pages);
+                        }
                     }
-                }
+               }
             }
         }
+        return false;
     }
 }

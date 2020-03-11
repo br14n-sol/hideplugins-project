@@ -1,9 +1,9 @@
 package io.github.complexcodegit.hidepluginsproject.managers;
 
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.UUID;
-
-import org.bukkit.entity.Player;
 
 public class CooldownManager {
     static HashMap<UUID, Double> cooldowns = new HashMap<>();
@@ -18,9 +18,6 @@ public class CooldownManager {
     }
 
     public static boolean checkCooldown(Player player) {
-        if(!cooldowns.containsKey(player.getUniqueId()) || cooldowns.get(player.getUniqueId()) <= System.currentTimeMillis()) {
-            return true;
-        }
-        return false;
+        return !cooldowns.containsKey(player.getUniqueId()) || cooldowns.get(player.getUniqueId()) <= System.currentTimeMillis();
     }
 }

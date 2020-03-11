@@ -5,7 +5,7 @@ import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import java.io.File;
 
 public class FileManager {
-    public static void registerFiles(HidePluginsProject plugin){
+    public static void save(HidePluginsProject plugin){
         File groupd = new File(plugin.getDataFolder(), "groups.yml");
         File playerd = new File(plugin.getDataFolder(), "players.yml");
         File languagesd = new File(plugin.getDataFolder(), "languages.yml");

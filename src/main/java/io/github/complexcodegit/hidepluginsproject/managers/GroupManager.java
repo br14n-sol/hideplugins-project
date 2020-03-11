@@ -1,138 +1,195 @@
 package io.github.complexcodegit.hidepluginsproject.managers;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.*;
 
 public class GroupManager {
-    static List<String> groupsPermissions = new ArrayList<>();
-    static List<String> playerPermissions = new ArrayList<>();
-    static List<String> groupsList = new ArrayList<>();
-    static String permission;
-    static String group;
+    private HidePluginsProject plugin;
+    public GroupManager(HidePluginsProject plugin){
+        this.plugin = plugin;
+    }
 
-    public static List<String> getGroups(HidePluginsProject plugin) {
-        for(String groups : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
-            if(!groupsList.contains(groups)) {
-                groupsList.add(groups);
+    public List<String> getGroups(){
+        return new ArrayList<>(Objects.requireNonNull(plugin.getGroups().getConfigurationSection("groups")).getKeys(false));
+    }
+    public List<String> getInheritsCmds(Player player){
+        List<String> list = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.inheritances")){
+            for(String inherit : Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".options.inheritances")).replace(" ", "").split(",")){
+                if(plugin.getGroups().contains("groups."+inherit+".worlds."+player.getWorld().getName())) {
+                    list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                            +inherit+".worlds."+player.getWorld().getName()+".commands")).replace(" ", "").split(",")));
+                }
+                if(plugin.getGroups().contains("groups."+inherit+".global")){
+                    list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                            +inherit+".global.commands")).replace(" ", "").split(",")));
+                }
             }
         }
-        return groupsList;
-    }
-
-    public static List<String> getGroupsPermissions(HidePluginsProject plugin) {
-        for(String groups : plugin.getGroups().getConfigurationSection("groups").getKeys(false)) {
-            if(!groupsPermissions.contains("hidepluginsproject.group."+groups)) {
-                groupsPermissions.add("hidepluginsproject.group."+groups);
+        if(list.contains("/help")){
+            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
+                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+                list.remove("/help");
             }
         }
-        return groupsPermissions;
+        return list;
     }
-
-    public static String getGroupPermission(String group) {
-        return "hidepluginsproject.group."+group;
-    }
-
-    public static String getPlayerGroupPermission(Player player, HidePluginsProject plugin) {
-        for(PermissionAttachmentInfo pio : player.getEffectivePermissions()) {
-            String perm = pio.getPermission();
-            playerPermissions.add(perm);
+    public List<String> getInheritsTabs(Player player){
+        List<String> list = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.inheritances")){
+            for(String inherit : Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".options.inheritances")).replace(" ", "").split(",")){
+                if(plugin.getGroups().contains("groups."+inherit+".worlds."+player.getWorld().getName())){
+                    list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+inherit
+                            +".worlds."+player.getWorld().getName()+".tab")).replace(" ", "").split(",")));
+                }
+                if(plugin.getGroups().contains("groups."+inherit+".global")){
+                    list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+inherit
+                            +".global.tab")).replace(" ", "").split(",")));
+                }
+            }
         }
-        for(int i=0; i < getGroupsPermissions(plugin).size(); i++) {
-            if(playerPermissions.contains(getGroupsPermissions(plugin).get(i))) {
-                permission = getGroupsPermissions(plugin).get(i);
+        if(list.contains("/help")){
+            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
+                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+                list.remove("/help");
+            }
+        }
+        for(String l : list){
+            result.add(l.replaceFirst("/", ""));
+        }
+        return result;
+    }
+    public List<String> getTabs(Player player){
+        List<String> list = new ArrayList<>();
+        List<String> result = getInheritsTabs(player);
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".worlds."+player.getWorld().getName())){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".worlds."+player.getWorld().getName()+".tab")).replace(" ", "").split(",")));
+        }
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".global")){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".global.tab")).replace(" ", "").split(",")));
+        }
+        if(list.contains("/help")){
+            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
+                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+                list.remove("/help");
+            }
+        }
+        for(String l : list){
+            result.add(l.replaceFirst("/", ""));
+        }
+        return result;
+    }
+    public List<String> getCommands(Player player){
+        List<String> list = getInheritsCmds(player);
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".worlds."+player.getWorld().getName())){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".worlds."+player.getWorld().getName()+".commands")).replace(" ", "").split(",")));
+        }
+        if(plugin.getGroups().contains("groups."+getPlayerGroup(player)+".global")){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
+                    +".global.commands")).replace(" ", "").split(",")));
+        }
+        if(list.contains("/help")){
+            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
+                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+                list.remove("/help");
+            }
+        }
+        return list;
+    }
+    public String getDefaultGroup(){
+        String def = null;
+        for(String group : getGroups()){
+            if(plugin.getGroups().contains("groups."+group+".options.default")){
+                if(plugin.getGroups().getBoolean("groups."+group+".options.default")){
+                    def = group;
+                }
+            }
+        }
+        return def;
+    }
+    public List<String> getGroupsPerms(){
+        List<String> permAndGroup = new ArrayList<>();
+        for(String group : getGroups()){
+            permAndGroup.add("hidepjpremium.group."+group);
+        }
+        return permAndGroup;
+    }
+    public String getPlayerGroupPerm(Player player) {
+        String permission = null;
+        for(String perm : getGroupsPerms()) {
+            if(player.hasPermission(perm)){
+                permission = perm;
             }
         }
         if(permission == null) {
-            permission = "hidepluginsproject.group.default";
+            if(getDefaultGroup() != null){
+                permission = "hidepjpremium.group."+getDefaultGroup();
+            }
         }
         return permission;
     }
-
-    public static String getPlayerGroup(Player player, HidePluginsProject plugin) {
-        String groupPerm = getPlayerGroupPermission(player, plugin);
-        group = groupPerm.substring(25, permission.length());
-        return group;
+    public String getPlayerGroup(Player player) {
+        return getPlayerGroupPerm(player).substring(20);
     }
-
-    public static List<String> getCommandsList(Player player, HidePluginsProject plugin){
-        List<String> commandsList = new ArrayList<>();
-        for(String commands : plugin.getGroups().getStringList("groups."+getPlayerGroup(player, plugin)+".commands")) {
-            if(!commandsList.contains("/"+commands)) {
-                commandsList.add("/"+commands);
-            }
+    public List<String> getWorlds(){
+        List<String> worlds = new ArrayList<>();
+        for(World world : Bukkit.getWorlds()){
+            worlds.add(world.getName());
         }
-        if(!plugin.getGroups().getStringList("groups."+getPlayerGroup(player, plugin)+".inheritance").isEmpty()){
-            List<String> inheritances = plugin.getGroups().getStringList("groups."+getPlayerGroup(player, plugin)+".inheritance");
-            List<String> groups = getGroups(plugin);
-            for(String inheritance : inheritances){
-                if(groups.contains(inheritance)){
-                    for(String commands : plugin.getGroups().getStringList("groups."+inheritance+".commands")){
-                        if(!commandsList.contains("/"+commands)) {
-                            commandsList.add("/"+commands);
-                        }
-                    }
-                }
-            }
-        }
-        return commandsList;
+        return worlds;
     }
-
-    public static List<String> getGroupCommandsList(String group, HidePluginsProject plugin){
-        List<String> commandsList = new ArrayList<>();
-        for(String commands : plugin.getGroups().getStringList("groups."+group+".commands")) {
-            if(!commandsList.contains(commands)) {
-                commandsList.add(commands);
-            }
+    public List<String> getGroupWorlds(String group){
+        List<String> worlds = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+group+".worlds")){
+            worlds.addAll(Objects.requireNonNull(plugin.getGroups().getConfigurationSection("groups."
+                    +group+".worlds")).getKeys(false));
         }
-        return commandsList;
+        return worlds;
     }
-
-    public static List<String> getTabList(String group, HidePluginsProject plugin){
-        List<String> tabList = new ArrayList<>();
-        for(String tab : plugin.getGroups().getStringList("groups."+group+".tab-completes")) {
-            if(!tabList.contains(tab)) {
-                tabList.add(tab);
-            }
+    public List<String> getGroupWorldCommands(String group, String world){
+        List<String> list = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+group+".worlds."+world)){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                    +group+".worlds."+world+".commands")).replace(" ", "").split(",")));
         }
-        if(!plugin.getGroups().getStringList("groups."+group+".inheritance").isEmpty()){
-            List<String> inheritances = plugin.getGroups().getStringList("groups."+group+".inheritance");
-            List<String> groups = getGroups(plugin);
-            for(String inheritance : inheritances){
-                if(groups.contains(inheritance)){
-                    for(String tab : plugin.getGroups().getStringList("groups."+inheritance+".tab-completes")){
-                        if(!tabList.contains(tab)) {
-                            tabList.add(tab);
-                        }
-                    }
-                }
-            }
-        }
-        return tabList;
+        return list;
     }
-
-    public static int getMembersGroup(String group, HidePluginsProject plugin){
-        List<String> groups = new ArrayList<>();
-        for(Player user : Bukkit.getOnlinePlayers()){
-            if(!user.isOp()){
-                String userGroup = getPlayerGroup(user, plugin);
-                groups.add(userGroup);
-            }
+    public List<String> getGroupWorldTab(String group, String world){
+        List<String> list = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+group+".worlds."+world)){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                    +group+".worlds."+world+".tab")).replace(" ", "").split(",")));
         }
-
-        groups = groups.stream().filter(x -> x.equals(group)).collect(Collectors.toList());
-        return groups.size();
+        return list;
     }
-
-    public static List<String> getInheritances(String group, HidePluginsProject plugin){
-        if(!plugin.getGroups().isConfigurationSection("groups."+group+".inheritance")){
-            plugin.getGroups().set("groups."+group+".inheritance", "");
+    public List<String> getGroupGlobalCommands(String group){
+        List<String> list = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+group+".global")){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                    +group+".global.commands")).replace(" ", "").split(",")));
         }
-        return plugin.getGroups().getStringList("groups."+group+".inheritance");
+        return list;
+    }
+    public List<String> getGroupGlobalTab(String group){
+        List<String> list = new ArrayList<>();
+        if(plugin.getGroups().contains("groups."+group+".global")){
+            list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                    +group+".global.tab")).replace(" ", "").split(",")));
+        }
+        return list;
+    }
+    public List<String> getInherit(String group){
+        return new ArrayList<>(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."
+                +group+".options.inheritances")).replace(" ", "").split(",")));
     }
 }

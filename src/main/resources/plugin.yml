@@ -1,12 +1,9 @@
 name: HidePlugins_Project
 author: ComplexCode
-version: 2.7.8
+version: 2.8.0
 api-version: 1.13
 main: io.github.complexcodegit.hidepluginsproject.HidePluginsProject
-description: HidePlugins Project is perfect to hide all your plugins!
+description:  HidePlugins Project is perfect to hide all your plugins!
 commands:
-    hproject:
-        description: Chief command of plugin.
-        aliases: [hpj, hpp]
-    hprojectinternal:
-        description: Internal command of plugin.
+  hproject:
+    description: awafwa
