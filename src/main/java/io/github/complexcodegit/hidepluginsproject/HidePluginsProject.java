@@ -30,8 +30,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration players;
     private File playersFile;
 
-    String rutaConfig;
-
     public void onEnable(){
         registerConfig();
         FileManager.save(this);
@@ -54,7 +52,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     }
     public void registerConfig() {
         File config = new File(getDataFolder(), "config.yml");
-        rutaConfig = config.getPath();
         if(!config.exists()) {
             getConfig().options().copyDefaults(true);
             saveDefaultConfig();

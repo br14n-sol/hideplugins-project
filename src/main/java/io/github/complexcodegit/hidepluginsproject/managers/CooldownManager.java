@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class CooldownManager {
-    static HashMap<UUID, Double> cooldowns = new HashMap<>();
+    private static HashMap<UUID, Double> cooldowns = new HashMap<>();
 
     public static void setCooldown(Player player, int seconds) {
         double delay = System.currentTimeMillis() + (seconds * 1000);

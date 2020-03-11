@@ -3,6 +3,7 @@ package io.github.complexcodegit.hidepluginsproject.commands;
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.utils.CommandChecker;
+import io.github.complexcodegit.hidepluginsproject.utils.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,9 +18,11 @@ public class ChiefCommand implements CommandExecutor {
     private HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
-    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager){
+    private Messages message;
+    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager, Messages messages){
         this.plugin = plugin;
         this.groupManager = groupManager;
+        this.message = messages;
     }
 
     @SuppressWarnings("NullableProblems")
@@ -58,14 +61,14 @@ public class ChiefCommand implements CommandExecutor {
                     selectWorld.remove(player.getUniqueId());
                     selectGlobal.remove(player.getUniqueId());
                 } else {
-                    commandNotExist(player);
+                    message.commandNotExist(player);
                 }
             } else if(args.length == 2) {
                 if(args[0].equalsIgnoreCase("remove")){
                     if(args[1].equalsIgnoreCase("global")){
                         if(groups.contains("groups."+selectGroup.get(player.getUniqueId())+".global")) {
                             if(selectGlobal.containsKey(player.getUniqueId())){
-                                selectGlobalMsg(player);
+                                message.selectGlobalMsg(player);
                                 selectGlobal.remove(player.getUniqueId());
                             }
                             player.sendMessage("");
@@ -77,29 +80,29 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage("§7The §e" + selectGroup.get(player.getUniqueId()) + " §7group does not own the §cglobal §7submenu.");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("select")) {
                     if(args[1].equalsIgnoreCase("global")) {
                         if(!selectGlobal.containsKey(player.getUniqueId())) {
                             if(selectWorld.containsKey(player.getUniqueId())) {
-                                selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
+                                message.selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
                                 selectWorld.remove(player.getUniqueId());
                             }
                             selectGlobal.put(player.getUniqueId(), "global");
-                            globalMessages(player, "select");
+                            message.globalMessages(player, "select");
                         } else {
                             player.sendMessage("");
                             player.sendMessage("§7You have already selected the §eglobal §7submenu.");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("set")) {
                     if(args[1].equalsIgnoreCase("global")) {
                         if(!groups.contains("groups." + selectGroup.get(player.getUniqueId()) + ".global")) {
                             selectGlobal.put(player.getUniqueId(), "global");
-                            globalMessages(player, "create");
+                            message.globalMessages(player, "create");
                             groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.commands", "");
                             groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.tab", "");
                             plugin.saveGroups();
@@ -108,7 +111,7 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage("§7The §eglobal §7submenu already exists in the group, to select it use §e/hproject select global");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 }
             } else if(args.length == 3) {
@@ -117,7 +120,7 @@ public class ChiefCommand implements CommandExecutor {
                         player.sendMessage("");
                         player.sendMessage("§7Before creating another group, first end with the §e" + selectGroup.get(player.getUniqueId()) + " §7group, using §e/hproject finish");
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("set")) {
                     if(args[1].equalsIgnoreCase("world")) {
@@ -125,15 +128,15 @@ public class ChiefCommand implements CommandExecutor {
                         if(serverWorlds.contains(world)) {
                             if(!groupWorlds.contains(world)) {
                                 if(selectWorld.containsKey(player.getUniqueId())) {
-                                    selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
+                                    message.selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    selectGlobalMsg(player);
+                                    message.selectGlobalMsg(player);
                                     selectGlobal.remove(player.getUniqueId());
                                 }
                                 selectWorld.put(player.getUniqueId(), world);
-                                worldMessages(player, "set", world);
+                                message.worldMessages(player, "set", world);
                                 groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + world + ".commands", "");
                                 groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + world + ".tab", "");
                                 plugin.saveGroups();
@@ -157,7 +160,7 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage("§7The option you entered is not valid.");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("select")) {
                     if(args[1].equalsIgnoreCase("world")) {
@@ -165,15 +168,15 @@ public class ChiefCommand implements CommandExecutor {
                         if(serverWorlds.contains(world)) {
                             if(groupWorlds.contains(world)) {
                                 if(selectWorld.containsKey(player.getUniqueId())) {
-                                    selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
+                                    message.selectWorldMsg(player, selectWorld.get(player.getUniqueId()));
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    selectGlobalMsg(player);
+                                    message.selectGlobalMsg(player);
                                     selectGlobal.remove(player.getUniqueId());
                                 }
                                 selectWorld.put(player.getUniqueId(), world);
-                                worldMessages(player, "select", world);
+                                message.worldMessages(player, "select", world);
                             } else {
                                 player.sendMessage("");
                                 player.sendMessage("§7The group does not have the §c" + world + " §7world, create it using the command §e/hproject create world " + world);
@@ -186,7 +189,7 @@ public class ChiefCommand implements CommandExecutor {
                         player.sendMessage("");
                         player.sendMessage("§7Before selecting another group, first end with the §e" + selectGroup.get(player.getUniqueId()) + " §7group, using §e/hproject finish");
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("add")) {
                     if(args[1].equalsIgnoreCase("inherit")){
@@ -255,7 +258,7 @@ public class ChiefCommand implements CommandExecutor {
                                 player.sendMessage("§7The §c" + command + " §7command does not exist, please verify that it is spelled correctly.");
                             }
                         } else {
-                            commandNotExist(player);
+                            message.commandNotExist(player);
                         }
                     } else if(selectGlobal.containsKey(player.getUniqueId())) {
                         if(args[1].equalsIgnoreCase("command")) {
@@ -295,7 +298,7 @@ public class ChiefCommand implements CommandExecutor {
                                 player.sendMessage("§7The §c" + command + " §7command does not exist, please verify that it is spelled correctly.");
                             }
                         } else {
-                            commandNotExist(player);
+                            message.commandNotExist(player);
                         }
                     } else {
                         player.sendMessage("");
@@ -331,7 +334,7 @@ public class ChiefCommand implements CommandExecutor {
                         if(serverWorlds.contains(world)) {
                             if(groupWorlds.contains(world)){
                                 if(selectWorld.containsKey(player.getUniqueId())){
-                                    selectWorldMsg(player, world);
+                                    message.selectWorldMsg(player, world);
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 player.sendMessage("");
@@ -386,7 +389,7 @@ public class ChiefCommand implements CommandExecutor {
                                 player.sendMessage("§7The §c" + command + " §7command does not exist, please verify that it is spelled correctly.");
                             }
                         } else {
-                            commandNotExist(player);
+                            message.commandNotExist(player);
                         }
                     } else if(selectGlobal.containsKey(player.getUniqueId())) {
                         if(args[1].equalsIgnoreCase("command")) {
@@ -426,17 +429,17 @@ public class ChiefCommand implements CommandExecutor {
                                 player.sendMessage("§7The §c" + command + " §7command does not exist, please verify that it is spelled correctly.");
                             }
                         } else {
-                            commandNotExist(player);
+                            message.commandNotExist(player);
                         }
                     } else {
                         player.sendMessage("");
                         player.sendMessage("§7You must select a world or the global submenu to use these commands, to select one use §e/hproject select <world, global> [groupname]");
                     }
                 } else {
-                    commandNotExist(player);
+                    message.commandNotExist(player);
                 }
             } else {
-                commandNotExist(player);
+                message.commandNotExist(player);
             }
         } else {
             if(args.length == 1) {
@@ -448,7 +451,7 @@ public class ChiefCommand implements CommandExecutor {
                     plugin.reloadPlayers();
                     plugin.reloadConfig();
                 } else {
-                    commandNotExist(player);
+                    message.commandNotExist(player);
                 }
             } else if(args.length == 3) {
                 if(args[0].equalsIgnoreCase("create")) {
@@ -456,7 +459,7 @@ public class ChiefCommand implements CommandExecutor {
                         String group = args[2];
                         if(!groupList.contains(group)) {
                             selectGroup.put(player.getUniqueId(), group);
-                            groupMessages(player, "create", group);
+                            message.groupMessages(player, "create", group);
                             groups.set("groups." + group + ".options.default", false);
                             groups.set("groups." + group + ".options.inheritances", "");
                             groups.set("groups." + group + ".options.custom-help.enable", true);
@@ -466,20 +469,20 @@ public class ChiefCommand implements CommandExecutor {
                             player.sendMessage("§7The §c" + group + " §7group already exists.");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("select")) {
                     if(args[1].equalsIgnoreCase("group")) {
                         String group = args[2];
                         if(groupList.contains(group)) {
                             selectGroup.put(player.getUniqueId(), group);
-                            groupMessages(player, "select", group);
+                            message.groupMessages(player, "select", group);
                         } else {
                             player.sendMessage("");
                             player.sendMessage("§7The §c" + group + " §7group does not exist.");
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else if(args[0].equalsIgnoreCase("remove")){
                     if(args[1].equalsIgnoreCase("group")){
@@ -491,70 +494,15 @@ public class ChiefCommand implements CommandExecutor {
                             plugin.saveGroups();
                         }
                     } else {
-                        commandNotExist(player);
+                        message.commandNotExist(player);
                     }
                 } else {
-                    commandNotExist(player);
+                    message.commandNotExist(player);
                 }
             } else {
-                commandNotExist(player);
+                message.commandNotExist(player);
             }
         }
         return false;
-    }
-
-    public void commandNotExist(Player player){
-        player.sendMessage("");
-        player.sendMessage("§7The command you entered does not exist.");
-    }
-    public void globalMessages(Player player, String string){
-        player.sendMessage("");
-        if(string.equals("select")){
-            player.sendMessage("§7The §eglobal §7submenu was selected correctly.");
-        } else if(string.equals("create")) {
-            player.sendMessage("§7The §eglobal §7submenu was created correctly.");
-        }
-        player.sendMessage("");
-        player.sendMessage("§7Available commands:");
-        player.sendMessage("§e/hproject add command [command] §7- To add a command to the global.");
-        player.sendMessage("§e/hproject add tab [command] §7- To add a tab suggestion to the global.");
-        player.sendMessage("§e/hproject remove command [command] §7- To remove a command to the global.");
-        player.sendMessage("§e/hproject remove tab [command] §7- To remove a tab suggestion to the global.");
-    }
-    public void worldMessages(Player player, String string, String world){
-        player.sendMessage("");
-        if(string.equals("select")){
-            player.sendMessage("§7The §e" + world + " §7world was selected successfully.");
-        } else if(string.equals("set")){
-            player.sendMessage("§7The §e" + world + " §7world was set successfully.");
-        }
-        player.sendMessage("");
-        player.sendMessage("§7Available commands:");
-        player.sendMessage("§e/hproject add command [command] §7- To add a command to the world.");
-        player.sendMessage("§e/hproject add tab [command] §7- To add a tab suggestion to the world.");
-        player.sendMessage("§e/hproject remove command [command] §7- To remove a command to the world.");
-        player.sendMessage("§e/hproject remove tab [command] §7- To remove a tab suggestion to the world.");
-        player.sendMessage("§e/hproject select world [worldname] §7- To select another world.");
-    }
-    public void groupMessages(Player player, String string, String group){
-        player.sendMessage("");
-        if(string.equals("select")){
-            player.sendMessage("§7The §e" + group + " §7group has been selected.");
-        } else if(string.equals("create")){
-            player.sendMessage("§7The §e" + group + " §7group was created successfully.");
-        }
-        player.sendMessage("");
-        player.sendMessage("§7Available commands:");
-        player.sendMessage("§e/hproject set world [worldname] §7- To add a world to the group.");
-        player.sendMessage("§e/hproject select world [worldname] §7- To select a world to the group.");
-        player.sendMessage("§e/hproject finish §7- To finish editing the group.");
-    }
-    public void selectWorldMsg(Player player, String world){
-        player.sendMessage("");
-        player.sendMessage("§7The §c" + world + " §7world is no longer selected.");
-    }
-    public void selectGlobalMsg(Player player){
-        player.sendMessage("");
-        player.sendMessage("§7The §cglobal §7submenu is no longer selected.");
     }
 }
