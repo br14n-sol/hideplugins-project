@@ -31,11 +31,9 @@ public class GroupManager {
                 }
             }
         }
-        if(list.contains("/help")){
-            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
-                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
-                list.remove("/help");
-            }
+        if(list.contains("/help") && !plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName()) &&
+                plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+            list.remove("/help");
         }
         return list;
     }
@@ -55,11 +53,9 @@ public class GroupManager {
                 }
             }
         }
-        if(list.contains("/help")){
-            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
-                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
-                list.remove("/help");
-            }
+        if(list.contains("/help") && !plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName()) &&
+                plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+            list.remove("/help");
         }
         for(String l : list){
             result.add(l.replaceFirst("/", ""));
@@ -77,11 +73,9 @@ public class GroupManager {
             list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
                     +".global.tab")).replace(" ", "").split(",")));
         }
-        if(list.contains("/help")){
-            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
-                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
-                list.remove("/help");
-            }
+        if(list.contains("/help") && !plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())&&
+                plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+            list.remove("/help");
         }
         for(String l : list){
             result.add(l.replaceFirst("/", ""));
@@ -98,21 +92,18 @@ public class GroupManager {
             list.addAll(Arrays.asList(Objects.requireNonNull(plugin.getGroups().getString("groups."+getPlayerGroup(player)
                     +".global.commands")).replace(" ", "").split(",")));
         }
-        if(list.contains("/help")){
-            if(!plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName())
-                    && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
-                list.remove("/help");
-            }
+        if(list.contains("/help") && !plugin.getGroups().contains("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName()) &&
+                plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable")){
+            list.remove("/help");
         }
         return list;
     }
     public String getDefaultGroup(){
         String def = null;
         for(String group : getGroups()){
-            if(plugin.getGroups().contains("groups."+group+".options.default")){
-                if(plugin.getGroups().getBoolean("groups."+group+".options.default")){
-                    def = group;
-                }
+            if(plugin.getGroups().contains("groups."+group+".options.default") &&
+                    plugin.getGroups().getBoolean("groups."+group+".options.default")){
+                def = group;
             }
         }
         return def;
@@ -131,10 +122,8 @@ public class GroupManager {
                 permission = perm;
             }
         }
-        if(permission == null) {
-            if(getDefaultGroup() != null){
-                permission = "hidepjpremium.group."+getDefaultGroup();
-            }
+        if(permission == null && getDefaultGroup() != null){
+            permission = "hidepjpremium.group."+getDefaultGroup();
         }
         return permission;
     }

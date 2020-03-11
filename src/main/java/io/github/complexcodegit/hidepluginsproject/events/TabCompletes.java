@@ -44,17 +44,13 @@ public class TabCompletes implements Listener {
             Player player = (Player)event.getSender();
             if(event.getBuffer().startsWith("/help")){
                 String group = groupManager.getPlayerGroup(player);
-                if(groups.getBoolean("groups."+group+".options.custom-help.enable")){
-                    if(!player.hasPermission("hidepjpremium.viewhelp") && !player.isOp()){
-                        if(groups.contains("groups."+group+".options.custom-help.worlds."+player.getWorld().getName())){
-                            ArrayList<String> pages = new ArrayList<>(Objects.requireNonNull(groups.getConfigurationSection(
-                                    "groups."+group+".options.custom-help.worlds."+player.getWorld().getName()+".pages"))
-                                    .getKeys(false));
-                            Collections.sort(pages);
-                            event.setCompletions(pages);
-                        }
-                    }
-               }
+                if(groups.getBoolean("groups."+group+".options.custom-help.enable") &&
+                        groups.contains("groups."+group+".options.custom-help.worlds."+player.getWorld().getName())){
+                    ArrayList<String> pages = new ArrayList<>(Objects.requireNonNull(groups.getConfigurationSection("groups."
+                            +group+".options.custom-help.worlds."+player.getWorld().getName()+".pages")).getKeys(false));
+                    Collections.sort(pages);
+                    event.setCompletions(pages);
+                }
             }
         }
         return false;

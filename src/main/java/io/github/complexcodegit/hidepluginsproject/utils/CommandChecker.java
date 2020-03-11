@@ -13,10 +13,8 @@ public class CommandChecker {
     public static ArrayList<String> commands(){
         ArrayList<String> blacklist = new ArrayList<>();
         for(Plugin plugins : Bukkit.getServer().getPluginManager().getPlugins()){
-            if(plugins != null){
-                if(!blacklist.contains(plugins.getName())){
-                    blacklist.add(plugins.getName());
-                }
+            if(plugins != null && !blacklist.contains(plugins.getName())){
+                blacklist.add(plugins.getName());
             }
         }
         blacklist.add("Aliases");

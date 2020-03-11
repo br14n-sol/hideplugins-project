@@ -1,12 +1,14 @@
 package io.github.complexcodegit.hidepluginsproject;
 
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
-import io.github.complexcodegit.hidepluginsproject.events.*;
+import io.github.complexcodegit.hidepluginsproject.events.LockedCommands;
+import io.github.complexcodegit.hidepluginsproject.events.PlayerChangeWorld;
+import io.github.complexcodegit.hidepluginsproject.events.PlayerJoinData;
+import io.github.complexcodegit.hidepluginsproject.events.PlayerQuitData;
+import io.github.complexcodegit.hidepluginsproject.events.TabCompletes;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -29,8 +31,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     private File playersFile;
 
     String rutaConfig;
-
-    public ConsoleCommandSender console = Bukkit.getConsoleSender();
 
     public void onEnable(){
         registerConfig();

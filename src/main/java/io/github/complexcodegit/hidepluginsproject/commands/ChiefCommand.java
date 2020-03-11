@@ -12,16 +12,15 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class ChiefCommand implements CommandExecutor {
+    private HashMap<UUID, String> selectGroup = new HashMap<>();
+    private HashMap<UUID, String> selectWorld = new HashMap<>();
+    private HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
     public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager){
         this.plugin = plugin;
         this.groupManager = groupManager;
     }
-
-    private HashMap<UUID, String> selectGroup = new HashMap<>();
-    private HashMap<UUID, String> selectWorld = new HashMap<>();
-    private HashMap<UUID, String> selectGlobal = new HashMap<>();
 
     @SuppressWarnings("NullableProblems")
     public boolean onCommand(CommandSender sender, Command cmd, String aliases, String[] args) {

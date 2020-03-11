@@ -26,7 +26,7 @@ public class LockedCommands implements Listener {
 
     @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.HIGHEST)
-    public boolean lockedCommands(PlayerCommandPreprocessEvent event){
+    public boolean locked(PlayerCommandPreprocessEvent event){
         FileConfiguration players = plugin.getPlayers();
         FileConfiguration config = plugin.getConfig();
         FileConfiguration groups = plugin.getGroups();
@@ -43,53 +43,44 @@ public class LockedCommands implements Listener {
         }
 
         if(!CooldownManager.checkCooldown(player)) {
-            player.sendMessage(plugin.colors(config.getString("cooldown.message"))
-                    .replaceAll("%time%", String.valueOf(CooldownManager.getCooldown(player))));
+            player.sendMessage(plugin.colors(config.getString("cooldown.message")).replaceAll("%time%", String.valueOf(CooldownManager.getCooldown(player))));
         } else {
-            String command = event.getMessage().split(" ").length > 0 ? event.getMessage()
-                    .split(" ")[0] : event.getMessage();
-            String pageNumber = event.getMessage().split(" ").length > 1 ? event.getMessage()
-                    .split(" ")[1] : event.getMessage();
+            String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
+            String pageNumber = event.getMessage().split(" ").length > 1 ? event.getMessage().split(" ")[1] : event.getMessage();
 
             List<String> commandList = groupManager.getCommands(player);
             String playerGroup = groupManager.getPlayerGroup(player);
             if(commandList.contains(command)){
-                if(command.equalsIgnoreCase("/help")){
-                    if(groups.contains("groups."+playerGroup+".options.custom-help") &&
-                            groups.getBoolean("groups."+playerGroup+".options.custom-help.enable") &&
-                            groups.contains("groups."+playerGroup+".options.custom-help"+".worlds."+player.getWorld().getName())){
-                        event.setCancelled(true);
-                        List<String> page;
-                        List<String> pages = new ArrayList<>();
-                        for(String pag : Objects.requireNonNull(groups.getConfigurationSection("groups."
-                                +playerGroup+".options.custom-help"+".worlds."+player.getWorld().getName()+".pages")).getKeys(false)){
-                            if(!pages.contains(pag)){
-                                pages.add(pag);
-                            }
+                if(command.equalsIgnoreCase("/help") && groups.contains("groups."+playerGroup+".options.custom-help") && groups.getBoolean("groups."+playerGroup+".options.custom-help.enable")
+                        && groups.contains("groups."+playerGroup+".options.custom-help.worlds." +player.getWorld().getName())){
+                    event.setCancelled(true);
+                    List<String> page;
+                    List<String> pages = new ArrayList<>();
+                    for(String pag : Objects.requireNonNull(groups.getConfigurationSection("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages")).getKeys(false)){
+                        if(!pages.contains(pag)){
+                            pages.add(pag);
                         }
-                        if(!(pageNumber.equals(command))){
-                            if(pages.contains(pageNumber)){
-                                page = groups.getStringList("groups."+playerGroup+".options.custom-help"+".worlds."
-                                        +player.getWorld().getName()+".pages."+pageNumber);
-                                for(String pag : page){
-                                    player.sendMessage(plugin.colors(pag));
-                                }
-                            } else {
-                                player.sendMessage("La pagina "+pageNumber+" no existe.");
+                    }
+                    if(!(pageNumber.equals(command))){
+                        if(pages.contains(pageNumber)){
+                            page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages."+pageNumber);
+                            for(String pag : page){
+                                player.sendMessage(plugin.colors(pag));
                             }
                         } else {
-                            if(pages.contains("1")){
-                                page = groups.getStringList("groups."+playerGroup+".options.custom-help"+".worlds."
-                                        +player.getWorld().getName()+".pages.1");
-                                for(String pag : page){
-                                    player.sendMessage(plugin.colors(pag));
-                                }
-                            } else {
-                                player.sendMessage("La pagina 1 no existe.");
-                            }
+                                player.sendMessage("La pagina "+pageNumber+" no existe.");
                         }
-                        return false;
+                    } else {
+                        if(pages.contains("1")){
+                            page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages.1");
+                            for(String pag : page){
+                                player.sendMessage(plugin.colors(pag));
+                            }
+                        } else {
+                            player.sendMessage("La pagina 1 no existe.");
+                        }
                     }
+                    return false;
                 }
                 event.setCancelled(false);
                 return false;
@@ -105,8 +96,7 @@ public class LockedCommands implements Listener {
                             String result = String.join("", list);
                             players.set("Players."+player.getName()+".command-history", result);
                         } else {
-                            String history = Objects.requireNonNull(players.getString("Players."+player.getName()
-                                    +".command-history")).replace(" ", "");
+                            String history = Objects.requireNonNull(players.getString("Players."+player.getName()+".command-history")).replace(" ", "");
                             List<String> list = new ArrayList<>();
                             list.add(command);
                             list.addAll(Arrays.asList(history.split(",")));
