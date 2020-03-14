@@ -15,13 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import java.io.*;
 
+@SuppressWarnings({"ConstantConditions", "CharsetObjectCanBeUsed"})
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
     private File groupsFile;
@@ -45,7 +41,7 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         pm.registerEvents(new PlayerQuitData(this, new GroupManager(this)), this);
     }
     public void registerCommands(){
-        Objects.requireNonNull(getCommand("hproject")).setExecutor(new ChiefCommand(this, new GroupManager(this)));
+        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this)));
     }
     public String colors(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
@@ -63,9 +59,15 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         }
 
         groups = YamlConfiguration.loadConfiguration(groupsFile);
-        Reader defConfigStream = new InputStreamReader(Objects.requireNonNull(getResource("groups.yml")), StandardCharsets.UTF_8);
-        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-        groups.setDefaults(defConfig);
+        try {
+            Reader defConfigStream = new InputStreamReader(getResource("groups.yml"), "UTF8");
+            if(defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                groups.setDefaults(defConfig);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
     public void saveGroups() {
         try {
@@ -86,9 +88,15 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         }
 
         languages = YamlConfiguration.loadConfiguration(languagesFile);
-        Reader defConfigStream = new InputStreamReader(Objects.requireNonNull(getResource("languages.yml")), StandardCharsets.UTF_8);
-        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-        languages.setDefaults(defConfig);
+        try {
+            Reader defConfigStream = new InputStreamReader(getResource("languages.yml"), "UTF8");
+            if(defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                languages.setDefaults(defConfig);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
     public void saveLanguages() {
         try {
@@ -115,9 +123,15 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         }
 
         players = YamlConfiguration.loadConfiguration(playersFile);
-        Reader defConfigStream = new InputStreamReader(Objects.requireNonNull(getResource("players.yml")), StandardCharsets.UTF_8);
-        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-        players.setDefaults(defConfig);
+        try {
+            Reader defConfigStream = new InputStreamReader(getResource("players.yml"), "UTF8");
+            if(defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                players.setDefaults(defConfig);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
     public void savePlayers() {
         try {

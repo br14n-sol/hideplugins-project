@@ -37,7 +37,7 @@ public class LockedCommands implements Listener {
 
         event.setCancelled(true);
 
-        if(player.isOp() || player.hasPermission("hidepjpremium.bypass")){
+        if(player.isOp() || player.hasPermission("hidepluginsproject.bypass")){
             event.setCancelled(false);
             return false;
         }

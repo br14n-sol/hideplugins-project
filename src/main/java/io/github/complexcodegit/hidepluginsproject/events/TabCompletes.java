@@ -28,7 +28,7 @@ public class TabCompletes implements Listener {
         FileConfiguration config = plugin.getConfig();
         Player player = event.getPlayer();
         if(config.getBoolean("locked-commands")) {
-            if(player.isOp() || player.hasPermission("hidepjpremium.tabusage")){
+            if(player.isOp() || player.hasPermission("hidepluginsproject.tabusage")){
                 return false;
             }
             event.getCommands().clear();
