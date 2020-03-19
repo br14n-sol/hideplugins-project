@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+
+@SuppressWarnings("ConstantConditions")
 public class PlayerDataManager {
     public static boolean checkPlayerRecord(String player, HidePluginsProject plugin){
         return playersRecord(plugin).contains(player);

@@ -8,7 +8,11 @@ import io.github.complexcodegit.hidepluginsproject.events.PlayerQuitData;
 import io.github.complexcodegit.hidepluginsproject.events.TabCompletes;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
+import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
+import io.github.complexcodegit.hidepluginsproject.utils.Command;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -16,6 +20,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({"ConstantConditions", "CharsetObjectCanBeUsed"})
 public class HidePluginsProject extends JavaPlugin implements Listener {
@@ -25,14 +32,21 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     private File languagesFile;
     private FileConfiguration players;
     private File playersFile;
+    public String prefix = "§a§lHPP§7§l>§r ";
 
     public void onEnable(){
         registerConfig();
+        commands();
         FileManager.save(this);
+        if(!LanguageManager.checkLanguage(this)){
+            getPluginLoader().disablePlugin(this);
+            getLogger().warning(prefix+"§cError 404, The language defined is not valid.");
+        }
         registerEvents();
         registerCommands();
+        getLogger().info(prefix+"§aHidePlugins Project is enabled.");
     }
-    public void registerEvents() {
+    private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new LockedCommands(this, new GroupManager(this)), this);
         pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
@@ -40,13 +54,36 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         pm.registerEvents(new PlayerJoinData(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerQuitData(this, new GroupManager(this)), this);
     }
-    public void registerCommands(){
-        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this)));
+    private void registerCommands(){
+        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new LanguageManager(this)));
+    }
+    private void commands(){
+        List<String> cmds = new ArrayList<>(getConfig().getConfigurationSection("custom-commands").getKeys(false));
+        if(cmds != null && !cmds.isEmpty()){
+            try {
+                final Field serverCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+                serverCommandMap.setAccessible(true);
+
+                CommandMap commandMap = (CommandMap)serverCommandMap.get(Bukkit.getServer());
+                for(String command : cmds){
+                    if(getConfig().getConfigurationSection("custom-commands."+command) != null){
+                        String description = getConfig().getString("custom-commands."+command+".description");
+                        String usageMessage = getConfig().getString("custom-commands."+command+".usageMessage");
+                        List<String> aliases = getConfig().getStringList("custom-commands."+command+".aliases");
+                        if(description != null && usageMessage != null){
+                            commandMap.register(command.replaceFirst("/", ""), new Command(command.replaceFirst("/", ""), description, usageMessage, aliases));
+                        }
+                    }
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
     public String colors(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
-    public void registerConfig() {
+    private void registerConfig() {
         File config = new File(getDataFolder(), "config.yml");
         if(!config.exists()) {
             getConfig().options().copyDefaults(true);
@@ -95,13 +132,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
                 languages.setDefaults(defConfig);
             }
         } catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
-    public void saveLanguages() {
-        try {
-            languages.save(languagesFile);
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

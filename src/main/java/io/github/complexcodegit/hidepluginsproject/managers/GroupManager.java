@@ -60,8 +60,7 @@ public class GroupManager {
         if(plugin.getGroups().get("groups."+getPlayerGroup(player)+".global") != null)
             commandsList.addAll(Arrays.asList(plugin.getGroups().getString("groups."+getPlayerGroup(player)+".global.commands")
                     .replace(" ", "").split(",")));
-        if(commandsList.contains("/help") && plugin.getGroups().get("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName()) == null
-                && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable"))
+        if(commandsList.contains("/help") && plugin.getGroups().get("groups."+getPlayerGroup(player)+".options.custom-help.worlds."+player.getWorld().getName()) == null && plugin.getGroups().getBoolean("groups."+getPlayerGroup(player)+".options.custom-help.enable"))
             commandsList.remove("/help");
         return commandsList;
     }

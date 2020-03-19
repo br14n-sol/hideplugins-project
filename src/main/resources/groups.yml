@@ -2,6 +2,19 @@ groups:
   default:
     options:
       default: true
+      custom-help:
+        enable: true
+        worlds:
+          world:
+            pages:
+              '1':
+                - 'line1..'
+                - 'line2..'
+          world_nether:
+            pages:
+              '1':
+                - 'line1..'
+                - 'line2..'
     global:
       commands: /about
       tab: /about

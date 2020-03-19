@@ -1,0 +1,93 @@
+languages:
+  english:
+    commands:
+      help:
+        no-group-selected:
+          - '&e&lHidePlugins Project &7Options: [] = Required'
+          - ''
+          - '  &e>> &f/hp select group &7[NAME] &8- &6Use it to select a group!'
+          - '  &e>> &f/hp create group &7[NAME] &8- &6Use it to create a new group!'
+          - '  &c>> &f/hp remove group &7[NAME] &8- &6Use it to delete a group!'
+          - ''
+          - '  &a>> &f/hp reload &8- &6Use it to reload the configuration.'
+        group-selected:
+          '1':
+            - '&e&lGroup Commands &7Options: [] = Required'
+            - ''
+            - '  &e>> &f/hp select world &7[NAME] &8- &6To select a world.'
+            - '  &e>> &f/hp set world &7[NAME] &8- &6To add a world.'
+            - '  &e>> &f/hp select global &8- &6Select the global subgroup.'
+            - '  &e>> &f/hp set global &8- &6Add the global subgroup.'
+            - '  &e>> &f/hp add inherit &7[NAME] &8- &6Add an inheritance.'
+            - '  &e>> &f/hp set help &7[BOOLEAN] &8- &6True or false customhelp.'
+            - ''
+            - '  &c>> &f/hp remove world &7[NAME] &8- &6Remove a world.'
+            - '  &c>> &f/hp remove global &8- &6Delete the global subgroup.'
+            - '  &c>> &f/hp remove inherit &7[NAME] &8- &6Remove an inheritance.'
+            - ''
+            - '  &c>> &f/hp finish &8- &6To finish editing the group.'
+            - ''
+            - '&cTo view the second help page, use &e/hp help 2'
+          '2':
+            - '&e&lGlobal and World Commands &7Options: [] = Required'
+            - ''
+            - '  &e>> &f/hp add command &7[CMD] &8- &6To add a command.'
+            - '  &e>> &f/hp add tab &7[CMD] &8- &6To add a tab suggestion.'
+            - ''
+            - '  &c>> &f/hp remove command &7[CMD] &8- &6To remove a command.'
+            - '  &c>> &f/hp remove tab &7[CMD] &8- &6To remove a tab suggestion.'
+      reload: "&7Configuration files reloaded successfully."
+      finish: "§7The §e[GROUP] §7group has been finalized."
+      global:
+        set: "§7The §e§lglobal §7subgroup was successfully added to the §e§l[GROUP] §7group, to see the available commands use: §e/hp help 2"
+        selected: "§7The §e§lglobal §7subgroup was selected correctly, to see the available commands use: §e/hp help 2"
+        deselected: "§7The §cglobal §7submenu is no longer selected."
+        already-set: "§7The §eglobal §7submenu already exists in the group, to select it use §e/hp select global"
+        already-selected: "§7You already have the §eglobal §7submenu selected!"
+        not-exist: "§7The §e[GROUP] §7group does not own the §cglobal §7submenu."
+      world:
+        set: "§7The world §e§l[WORLD] §7was successfully added to the §e§l[GROUP] §7group, to see the available commands use: §e/hp help 2"
+        selected: "§7The §e§l[WORLD] §7world was selected correctly, to see the available commands use: §e/hp help 2"
+        deselected: "§7The §c[WORLD] §7world is no longer selected."
+        not-exist: "§7The group does not have the §c[WORLD] §7world."
+        already-set: "§7The §e[GROUP] §7group already has the world §c[WORLD]§7."
+        server-not-exist: "§7The §c[WORLD] §7world does not exist on the server."
+      group:
+        set: "§7The §e§l[GROUP] §7group was created correctly, to see the available commands use: §e/hp help"
+        selected: "§7The §e§l[GROUP] §7group was selected correctly, to see the available commands use: §e/hp help"
+        not-exist: "§7The §c[GROUP] §7group does not exist."
+        already-set: "§7The §c[GROUP] §7group already exists."
+        first-ends-group: "§7Before selecting another group, first end with the §e[GROUP] §7group."
+      inherit:
+        add: "§7The §e[INHERIT] §7group was successfully added to the inheritance of the §e[GROUP] §7group."
+        not-valid: "§7The inheritance you entered is not valid."
+        already-add: "§7The §e[GROUP] §7group already inherits the §e[INHERIT] §7group."
+        you-can-not-inherit: "§7You cannot inherit the same group you have selected."
+      command:
+        add-from-global: "§7The §e[CMD] §7command was successfully added to the §eglobal §7submenu."
+        remove-from-global: "§7The §e[CMD] §7command was successfully removed from the §eglobal §7submenu."
+        not-defined-global: "§7The §c[CMD] §7command is not defined in the §cglobal §7submenu."
+        already-defined-global: "§7The §c[CMD] §7command is already defined in the §cglobal §7submenu."
+        add-from-world: "§7The §e[CMD] §7command was successfully added to the §e[WORLD] §7world."
+        remove-from-world: "§7The §e[CMD] §7command was successfully removed from the §e[WORLD] §7world."
+        not-defined-world: "§7The §c[CMD] §7command is not defined in the §c[WORLD] §7world."
+        already-defined-world: "§7The §c[CMD] §7command is already defined in the §c[WORLD] §7world."
+        not-exist: "§7The §c[CMD] §7command does not exist, please verify that it is spelled correctly."
+        select-world-or-global: "§7You must select a world or the global submenu first."
+      tab:
+        add-from-global: "§7The §e[CMD] §7tab was successfully added to the §eglobal §7submenu."
+        remove-from-global: "§7The §e[CMD] §7tab was successfully removed from the §eglobal §7submenu."
+        not-defined-global: "§7The §c[CMD] §7tab is not defined in the §cglobal §7submenu."
+        already-defined-global: "§7The §c[CMD] §7tab is already defined in the §cglobal §7submenu."
+        add-from-world: "§7The §e[CMD] §7tab was successfully added to the §e[WORLD] §7world."
+        remove-from-world: "§7The §e[CMD] §7tab was successfully removed from the §e[WORLD] §7world."
+        not-defined-world: "§7The §c[CMD] §7tab is not defined in the §c[WORLD] §7world."
+        already-defined-world: "§7The §c[CMD] §7tab is already defined in the §c[WORLD] §7world."
+        not-exist: "§7The §c[CMD] §7command does not exist, please verify that it is spelled correctly."
+        select-world-or-global: "§7You must select a world or the global submenu first."
+      custom-help:
+        set: "§7The custom help was configured correctly as: §e[BOOLEAN]"
+        not-valid: "§7The option you entered is not valid."
+      select-group-first: "§7You must select a group first."
+      command-not-exist: "§7The command you entered does not exist."
+      page-not-exist: "§7The page does not exist, use the command §e/hp help"

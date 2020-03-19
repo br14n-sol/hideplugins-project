@@ -38,7 +38,7 @@ public class PlayerQuitData implements Listener {
             players.set("Players."+player.getName()+".last-command", "none");
 
             players.set("Players."+player.getName()+".ips-history", "[]");
-            if(Objects.equals(players.getString("Players."+player.getName()+".ips-history"), "[]")){
+            if(Objects.equals(players.getString("Players."+player.getName()+".ips-history"), "")){
                 List<String> ips = new ArrayList<>();
                 ips.add(Objects.requireNonNull(player.getAddress()).getAddress().getHostAddress());
                 String result = String.join("", ips);
@@ -53,7 +53,7 @@ public class PlayerQuitData implements Listener {
             }
 
             if(config.getBoolean("player-command-history")){
-                players.set("Players."+player.getName()+".command-history", "[]");
+                players.set("Players."+player.getName()+".command-history", "");
             }
             plugin.savePlayers();
         } else if(players.contains("Players."+player.getName())){

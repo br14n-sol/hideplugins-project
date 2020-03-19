@@ -68,7 +68,7 @@ public class LockedCommands implements Listener {
                                 player.sendMessage(plugin.colors(pag));
                             }
                         } else {
-                                player.sendMessage("La pagina "+pageNumber+" no existe.");
+                                player.sendMessage(plugin.prefix+"§7The §c"+pageNumber+" §7page does not exist.");
                         }
                     } else {
                         if(pages.contains("1")){
@@ -77,7 +77,7 @@ public class LockedCommands implements Listener {
                                 player.sendMessage(plugin.colors(pag));
                             }
                         } else {
-                            player.sendMessage("La pagina 1 no existe.");
+                            player.sendMessage(plugin.prefix+"§7The §c1 §7page does not exist.");
                         }
                     }
                     return false;
@@ -104,13 +104,13 @@ public class LockedCommands implements Listener {
                             players.set("Players."+player.getName()+".command-history", result);
                         }
                     }
-                    player.sendMessage("No tienes permitido eso.");
+                    player.sendMessage(plugin.prefix+"§7You don't have permission to do that.");
                     players.set("Players."+player.getName()+".last-command", command);
                     int reports = players.getInt("Players."+player.getName()+".reports");
                     players.set("Players."+player.getName()+".reports", reports+1);
                     plugin.savePlayers();
                 } else {
-                    player.sendMessage("ese comando no existe.");
+                    player.sendMessage(plugin.prefix+"§7The command you entered does not exist.");
                 }
             }
         }
