@@ -1,7 +1,9 @@
 groups:
   default:
     options:
+      enable: true
       default: true
+      permission: 'hidepluginsproject.group.default'
       custom-help:
         enable: true
         worlds:
@@ -10,18 +12,20 @@ groups:
               '1':
                 - 'line1..'
                 - 'line2..'
-          world_nether:
-            pages:
-              '1':
-                - 'line1..'
-                - 'line2..'
     global:
+      enable: true
       commands: /about
       tab: /about
     worlds:
       world:
+        enable: true
         commands: /help, /tell
         tab: /help, /tell
       world_nether:
+        enable: true
         commands: /msg
         tab: /msg
+      world_the_end:
+        enable: true
+        commands: /?
+        tab: /?

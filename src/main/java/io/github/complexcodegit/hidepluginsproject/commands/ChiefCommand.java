@@ -3,19 +3,25 @@ package io.github.complexcodegit.hidepluginsproject.commands;
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
-import io.github.complexcodegit.hidepluginsproject.utils.CommandChecker;
+import io.github.complexcodegit.hidepluginsproject.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.*;
 
 public class ChiefCommand implements CommandExecutor {
-    private HashMap<UUID, String> selectGroup = new HashMap<>();
-    private HashMap<UUID, String> selectWorld = new HashMap<>();
-    private HashMap<UUID, String> selectGlobal = new HashMap<>();
+    HashMap<UUID, String> selectGroup = new HashMap<>();
+    HashMap<UUID, String> selectWorld = new HashMap<>();
+    HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
     private LanguageManager languageManager;
@@ -222,7 +228,7 @@ public class ChiefCommand implements CommandExecutor {
                 else if(args[1].equalsIgnoreCase("command")){
                     if(selectGroup.containsKey(player.getUniqueId())) {
                         if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())){
-                            if(CommandChecker.checkCommand(args[2])) {
+                            if(Utils.checkCommand(args[2])) {
                                 if(selectWorld.containsKey(player.getUniqueId())){
                                     List<String> commands = groupManager.getWorldCommands(selectGroup.get(player.getUniqueId()), selectWorld.get(player.getUniqueId()));
                                     if(commands.contains(args[2])) {
@@ -262,7 +268,7 @@ public class ChiefCommand implements CommandExecutor {
                 else if(args[1].equalsIgnoreCase("tab")){
                     if(selectGroup.containsKey(player.getUniqueId())) {
                         if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())){
-                            if(CommandChecker.checkCommand(args[2])) {
+                            if(Utils.checkCommand(args[2])) {
                                 if(selectWorld.containsKey(player.getUniqueId())){
                                     List<String> commands = groupManager.getWorldTab(selectGroup.get(player.getUniqueId()), selectWorld.get(player.getUniqueId()));
                                     if(commands.contains(args[2])) {
@@ -449,37 +455,37 @@ public class ChiefCommand implements CommandExecutor {
                     }
                 }
                 /*
-                 /hproject add command [command]
+                 /hproject add commands
                  */
-                else if(args[1].equalsIgnoreCase("command")){
+                else if(args[1].equalsIgnoreCase("commands")){
                     if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())){
-                            if(CommandChecker.checkCommand(args[2])) {
+                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
+                            if(Utils.getItem("§aAdd Commands §8- §7HidePlugins Project", player) != null){
+                                player.sendMessage(plugin.prefix+"§7You already have a book.");
+                                return false;
+                            }
+
+                            int slot = Utils.slotFree(player);
+                            if(!(slot == -1)){
+                                ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
+                                BookMeta meta = (BookMeta)book.getItemMeta();
+                                meta.setDisplayName("§aAdd Commands §8- §7HidePlugins Project");
                                 if(selectWorld.containsKey(player.getUniqueId())){
-                                    List<String> commands = groupManager.getWorldCommands(selectGroup.get(player.getUniqueId()), selectWorld.get(player.getUniqueId()));
-                                    if(!commands.contains(args[2])) {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.add-from-world").replace("[CMD]", args[2]).replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                        commands.add(args[2]);
-                                        groups.set("groups."+selectGroup.get(player.getUniqueId())+".worlds."+selectWorld.get(player.getUniqueId())+".commands", String.join(", ", commands));
-                                        plugin.saveGroups();
-                                        plugin.reloadGroups();
-                                    } else {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.already-defined-world").replace("[CMD]", args[2]).replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                    }
+                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
                                 } else {
-                                    List<String> commands = groupManager.getGlobalCommands(selectGroup.get(player.getUniqueId()));
-                                    if(!commands.contains(args[2])) {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.add-from-global").replace("[CMD]", args[2])));
-                                        commands.add(args[2]);
-                                        groups.set("groups."+selectGroup.get(player.getUniqueId())+".global.commands", String.join(", ", commands));
-                                        plugin.saveGroups();
-                                        plugin.reloadGroups();
-                                    } else {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.already-defined-global").replace("[CMD]", args[2])));
-                                    }
+                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                }
+                                book.setItemMeta(meta);
+                                player.getInventory().setItem(slot, book);
+                                if(player.getInventory().getHeldItemSlot() == slot){
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT_MAGIC, Utils.getHandLocation(player), 20), 4);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT, Utils.getHandLocation(player), 20), 4);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 3);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 5);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.not-exist").replace("[CMD]", args[2])));
+                                player.sendMessage(plugin.prefix+"§7There is no space in your hotbar.");
                             }
                         } else {
                             player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.select-world-or-global")));
@@ -489,40 +495,40 @@ public class ChiefCommand implements CommandExecutor {
                     }
                 }
                 /*
-                 /hproject add tab [command]
+                 /hproject add tabs
                  */
-                else if(args[1].equalsIgnoreCase("tab")){
+                else if(args[1].equalsIgnoreCase("tabs")){
                     if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())){
-                            if(CommandChecker.checkCommand(args[2])) {
+                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
+                            if(Utils.getItem("§aAdd Tabs §8- §7HidePlugins Project", player) != null){
+                                player.sendMessage(plugin.prefix+"§7You already have a book.");
+                                return false;
+                            }
+
+                            int slot = Utils.slotFree(player);
+                            if(!(slot == -1)){
+                                ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
+                                BookMeta meta = (BookMeta)book.getItemMeta();
+                                meta.setDisplayName("§aAdd Tabs §8- §7HidePlugins Project");
                                 if(selectWorld.containsKey(player.getUniqueId())){
-                                    List<String> commands = groupManager.getWorldTab(selectGroup.get(player.getUniqueId()), selectWorld.get(player.getUniqueId()));
-                                    if(!commands.contains(args[2])) {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.add-from-world").replace("[CMD]", args[2]).replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                        commands.add(args[2]);
-                                        groups.set("groups."+selectGroup.get(player.getUniqueId())+".worlds."+selectWorld.get(player.getUniqueId())+".tab", String.join(", ", commands));
-                                        plugin.saveGroups();
-                                        plugin.reloadGroups();
-                                    } else {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.already-defined-world").replace("[CMD]", args[2]).replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                    }
+                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
                                 } else {
-                                    List<String> commands = groupManager.getGlobalTab(selectGroup.get(player.getUniqueId()));
-                                    if(!commands.contains(args[2])) {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.add-from-global").replace("[CMD]", args[2])));
-                                        commands.add(args[2]);
-                                        groups.set("groups."+selectGroup.get(player.getUniqueId())+".global.tab", String.join(", ", commands));
-                                        plugin.saveGroups();
-                                        plugin.reloadGroups();
-                                    } else {
-                                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.already-defined-global").replace("[CMD]", args[2])));
-                                    }
+                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                }
+                                book.setItemMeta(meta);
+                                player.getInventory().setItem(slot, book);
+                                if(player.getInventory().getHeldItemSlot() == slot){
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT_MAGIC, Utils.getHandLocation(player), 20), 4);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT, Utils.getHandLocation(player), 20), 4);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 3);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 5);
+                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.not-exist").replace("[CMD]", args[2])));
+                                player.sendMessage(plugin.prefix+"§7There is no space in your hotbar.");
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.tab.select-world-or-global")));
+                            player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.select-world-or-global")));
                         }
                     } else {
                         player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.select-group-first")));

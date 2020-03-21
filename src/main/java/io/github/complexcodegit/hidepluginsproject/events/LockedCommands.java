@@ -3,13 +3,17 @@ package io.github.complexcodegit.hidepluginsproject.events;
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.CooldownManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import io.github.complexcodegit.hidepluginsproject.utils.CommandChecker;
+import io.github.complexcodegit.hidepluginsproject.utils.Utils;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +92,7 @@ public class LockedCommands implements Listener {
                 if(config.getBoolean("cooldown.enable")){
                     CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
                 }
-                if(CommandChecker.checkCommand(command)){
+                if(Utils.checkCommand(command)){
                     if(config.getBoolean("player-command-history")){
                         if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
                             List<String> list = new ArrayList<>();
@@ -104,6 +108,9 @@ public class LockedCommands implements Listener {
                             players.set("Players."+player.getName()+".command-history", result);
                         }
                     }
+                    player.spawnParticle(Particle.MOB_APPEARANCE, player.getLocation(), 2);
+                    player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100F, 100F);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 45, 1, false, false), false);
                     player.sendMessage(plugin.prefix+"§7You don't have permission to do that.");
                     players.set("Players."+player.getName()+".last-command", command);
                     int reports = players.getInt("Players."+player.getName()+".reports");

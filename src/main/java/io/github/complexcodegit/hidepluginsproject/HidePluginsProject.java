@@ -1,11 +1,7 @@
 package io.github.complexcodegit.hidepluginsproject;
 
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
-import io.github.complexcodegit.hidepluginsproject.events.LockedCommands;
-import io.github.complexcodegit.hidepluginsproject.events.PlayerChangeWorld;
-import io.github.complexcodegit.hidepluginsproject.events.PlayerJoinData;
-import io.github.complexcodegit.hidepluginsproject.events.PlayerQuitData;
-import io.github.complexcodegit.hidepluginsproject.events.TabCompletes;
+import io.github.complexcodegit.hidepluginsproject.events.*;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
@@ -39,15 +35,17 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         commands();
         FileManager.save(this);
         if(!LanguageManager.checkLanguage(this)){
+            getLogger().severe("The language defined is not valid.");
             getPluginLoader().disablePlugin(this);
-            getLogger().warning(prefix+"§cError 404, The language defined is not valid.");
+        } else {
+            registerEvents();
+            registerCommands();
+            getLogger().info("§aHidePlugins Project is enabled.");
         }
-        registerEvents();
-        registerCommands();
-        getLogger().info(prefix+"§aHidePlugins Project is enabled.");
     }
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerEditBook(this, new GroupManager(this)), this);
         pm.registerEvents(new LockedCommands(this, new GroupManager(this)), this);
         pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerChangeWorld(), this);

@@ -39,8 +39,6 @@ custom-commands:
   /test:
     description: test
     usageMessage: /test
-    aliases:
-      - 't'
 
 sounds:
   enable: true
