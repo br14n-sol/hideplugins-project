@@ -57,6 +57,8 @@ public class PlayerEditBook implements Listener {
             String action = nameParts[0].substring(2); String option = nameParts[1];
 
             String group = lore.get(0).substring(11); String world = lore.get(1).substring(11);
+
+            player.sendMessage(action+" "+option+" "+group+" "+world);
             if(world.equals("global")){
                 if(option.equalsIgnoreCase("Tabs")){
                     commands = groupManager.getGlobalTab(group);
