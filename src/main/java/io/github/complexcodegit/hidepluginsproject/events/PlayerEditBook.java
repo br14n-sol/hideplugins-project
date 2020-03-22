@@ -30,50 +30,73 @@ public class PlayerEditBook implements Listener {
     @EventHandler
     public void editCheck(PlayerEditBookEvent event){
         Player player = event.getPlayer();
-        if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Commands §8- §7HidePlugins Project") || event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project")){
+        if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Commands §8- §7HidePlugins Project") ||
+                event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project") ||
+                event.getPreviousBookMeta().getDisplayName().equals("§aRemove Commands §8- §7HidePlugins Project") ||
+                event.getPreviousBookMeta().getDisplayName().equals("§aRemove Tabs §8- §7HidePlugins Project")){
             List<String> content = event.getNewBookMeta().getPages();
             List<String> lore = event.getPreviousBookMeta().getLore();
 
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().removeItem(Utils.getItem(event.getPreviousBookMeta().getDisplayName(), player)),1);
-            player.spawnParticle(Particle.CRIT_MAGIC, Utils.getHandLocation(player), 20);
-            player.spawnParticle(Particle.CRIT, Utils.getHandLocation(player), 20);
-            player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 2);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 4);
-
             List<String> commands;
-            if(lore.get(1).substring(11).equals("global")){
-                if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project")){
-                    commands = groupManager.getGlobalTab(lore.get(0).substring(11));
-                } else {
-                    commands = groupManager.getGlobalCommands(lore.get(0).substring(11));
-                }
-            } else {
-                if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project")){
-                    commands = groupManager.getWorldTab(lore.get(0).substring(11), lore.get(1).substring(11));
-                } else {
-                    commands = groupManager.getWorldCommands(lore.get(0).substring(11), lore.get(1).substring(11));
-                }
-            }
 
             List<String> contentCommands = new ArrayList<>();
             List<String> alreadyExist = new ArrayList<>();
             List<String> successfully = new ArrayList<>();
             List<String> notExist = new ArrayList<>();
 
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().removeItem(Utils.getItem(event.getPreviousBookMeta().getDisplayName(), player)),1);
+
+            player.spawnParticle(Particle.CRIT_MAGIC, Utils.getHandLocation(player), 20);
+            player.spawnParticle(Particle.CRIT, Utils.getHandLocation(player), 20);
+            player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F);
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 2);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 4);
+
+            String[] nameParts = event.getPreviousBookMeta().getDisplayName().split(" ");
+            String action = nameParts[0].substring(2); String option = nameParts[1];
+
+            String group = lore.get(0).substring(11); String world = lore.get(1).substring(11);
+            if(world.equals("global")){
+                if(option.equalsIgnoreCase("Tabs")){
+                    commands = groupManager.getGlobalTab(group);
+                } else {
+                    commands = groupManager.getGlobalCommands(group);
+                }
+            } else {
+                if(option.equalsIgnoreCase("Tabs")){
+                    commands = groupManager.getWorldTab(group, world);
+                } else {
+                    commands = groupManager.getWorldCommands(group, world);
+                }
+            }
+
             for(String cmds : content){
                 contentCommands.addAll(Arrays.asList(cmds.replace(" ", "").split(",")));
             }
             for(String command : contentCommands) {
                 if(Utils.checkCommand(command)) {
-                    if(!commands.contains(command)) {
-                        commands.add(command);
-                        if(!successfully.contains(command)){
-                            successfully.add(command);
+                    if(action.equalsIgnoreCase("Add")){
+                        if(!commands.contains(command)) {
+                            commands.add(command);
+                            if(!successfully.contains(command)){
+                                successfully.add(command);
+                            }
+                        } else {
+                            if(!alreadyExist.contains(command)){
+                                alreadyExist.add(command);
+                            }
                         }
                     } else {
-                        if(!alreadyExist.contains(command)){
-                            alreadyExist.add(command);
+                        if(commands.contains(command)) {
+                            commands.remove(command);
+                            if(!successfully.contains(command)){
+                                successfully.add(command);
+                            }
+                        } else {
+                            if(!alreadyExist.contains(command)){
+                                alreadyExist.add(command);
+                            }
                         }
                     }
                 } else {
@@ -83,17 +106,17 @@ public class PlayerEditBook implements Listener {
                 }
             }
 
-            if(lore.get(1).substring(11).equals("global")){
-                if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project")){
-                    plugin.getGroups().set("groups."+lore.get(0).substring(11)+".global.tab", String.join(", ", commands));
+            if(world.equals("global")){
+                if(option.equalsIgnoreCase("Tabs")){
+                    plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
                 } else {
-                    plugin.getGroups().set("groups."+lore.get(0).substring(11)+".global.commands", String.join(", ", commands));
+                    plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
                 }
             } else {
-                if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project")){
-                    plugin.getGroups().set("groups."+lore.get(0).substring(11)+".worlds."+lore.get(1).substring(11)+".tabs", String.join(", ", commands));
+                if(option.equalsIgnoreCase("Tabs")){
+                    plugin.getGroups().set("groups."+group+".worlds."+world+".tabs", String.join(", ", commands));
                 } else {
-                    plugin.getGroups().set("groups."+lore.get(0).substring(11)+".worlds."+lore.get(1).substring(11)+".commands", String.join(", ", commands));
+                    plugin.getGroups().set("groups."+group+".worlds."+world+".commands", String.join(", ", commands));
                 }
             }
             plugin.saveGroups();
@@ -127,10 +150,18 @@ public class PlayerEditBook implements Listener {
                 size.setText(plugin.prefix+"§7"+successfully.size());
                 if(successfully.size() > 1){
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", successfully)).create()));
-                    message.setText(" §acommands added successfully.");
+                    if(action.equalsIgnoreCase("Add")){
+                        message.setText(" §acommands added successfully.");
+                    } else {
+                        message.setText(" §acommands remove successfully.");
+                    }
                 } else {
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(successfully.get(0)).create()));
-                    message.setText(" §acommand was successfully added.");
+                    if(action.equalsIgnoreCase("Add")){
+                        message.setText(" §acommand was successfully added.");
+                    } else {
+                        message.setText(" §acommand was successfully remove.");
+                    }
                 }
                 player.spigot().sendMessage(size, message);
             }
