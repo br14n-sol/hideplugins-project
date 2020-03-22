@@ -57,8 +57,6 @@ public class PlayerEditBook implements Listener {
             String action = nameParts[0].substring(2); String option = nameParts[1];
 
             String group = lore.get(0).substring(11); String world = lore.get(1).substring(11);
-
-            player.sendMessage(action+" "+option+" "+group+" "+world);
             if(world.equals("global")){
                 if(option.equalsIgnoreCase("Tabs")){
                     commands = groupManager.getGlobalTab(group);
@@ -141,10 +139,18 @@ public class PlayerEditBook implements Listener {
                 size.setText(plugin.prefix+"§7"+alreadyExist.size());
                 if(alreadyExist.size() > 1){
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", alreadyExist)).create()));
-                    message.setText(" §ecommands were already configured.");
+                    if(action.equalsIgnoreCase("Add")){
+                        message.setText(" §ecommands were already configured.");
+                    } else {
+                        message.setText(" §ecommands are not configured.");
+                    }
                 } else {
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(alreadyExist.get(0)).create()));
-                    message.setText(" §ecommand was already configured.");
+                    if(action.equalsIgnoreCase("Add")){
+                        message.setText(" §ecommand was already configured.");
+                    } else {
+                        message.setText(" §ecommand is not configured.");
+                    }
                 }
                 player.spigot().sendMessage(size, message);
             }
