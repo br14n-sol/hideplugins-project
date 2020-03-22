@@ -39,41 +39,34 @@ public class Utils {
         PlayerInventory inv = player.getInventory();
         int slot = -1;
         for(int i=0; i < 9; i++){
-            if(inv.getItem(i) != null){
-                if(inv.getItem(i).getItemMeta().getDisplayName().equals(displayName)){
-                    slot = i;
-                    break;
-                }
+            if(inv.getItem(i) != null && inv.getItem(i).getItemMeta().getDisplayName().equals(displayName)){
+                slot = i;
+                break;
             }
         }
         return slot;
     }
     public static ItemStack getItem(String displayname, Player player){
         int slot = getItemSlot(displayname, player);
-        if(!(slot == -1))
+        if(slot != -1)
             return player.getInventory().getItem(slot);
         return null;
     }
     public static boolean checkCommand(String command){
+        ArrayList<String> commands = new ArrayList<>();
         ArrayList<String> blacklist = new ArrayList<>();
         for(Plugin plugins : Bukkit.getServer().getPluginManager().getPlugins()){
-            if(plugins != null && !blacklist.contains(plugins.getName())){
+            if(plugins != null && !blacklist.contains(plugins.getName()))
                 blacklist.add(plugins.getName());
-            }
         }
         blacklist.add("Aliases");
         blacklist.add("Bukkit");
         blacklist.add("Minecraft");
 
-        ArrayList<String> cmds = new ArrayList<>();
         for(HelpTopic cmdLabel : Bukkit.getServer().getHelpMap().getHelpTopics()){
-            if(!cmds.contains(cmdLabel.getName())){
-                cmds.add(cmdLabel.getName());
-            }
+            if(!commands.contains(cmdLabel.getName()) && !blacklist.contains(cmdLabel.getName()))
+                commands.add(cmdLabel.getName());
         }
-        for(String black : blacklist){
-            cmds.remove(black);
-        }
-        return cmds.contains(command);
+        return commands.contains(command);
     }
 }

@@ -19,9 +19,9 @@ import org.bukkit.inventory.meta.BookMeta;
 import java.util.*;
 
 public class ChiefCommand implements CommandExecutor {
-    HashMap<UUID, String> selectGroup = new HashMap<>();
-    HashMap<UUID, String> selectWorld = new HashMap<>();
-    HashMap<UUID, String> selectGlobal = new HashMap<>();
+    private HashMap<UUID, String> selectGroup = new HashMap<>();
+    private HashMap<UUID, String> selectWorld = new HashMap<>();
+    private HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
     private LanguageManager languageManager;
@@ -455,61 +455,25 @@ public class ChiefCommand implements CommandExecutor {
                     }
                 }
                 /*
-                 /hproject add commands
+                 /hproject add <commands, tabs>
                  */
-                else if(args[1].equalsIgnoreCase("commands")){
+                else if(args[1].equalsIgnoreCase("commands") || args[1].equalsIgnoreCase("tabs")){
                     if(selectGroup.containsKey(player.getUniqueId())) {
                         if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
-                            if(Utils.getItem("§aAdd Commands §8- §7HidePlugins Project", player) != null){
+                            if(Utils.getItem("§aAdd Commands §8- §7HidePlugins Project", player) != null || Utils.getItem("§aAdd Tabs §8- §7HidePlugins Project", player) != null){
                                 player.sendMessage(plugin.prefix+"§7You already have a book.");
                                 return false;
                             }
 
                             int slot = Utils.slotFree(player);
-                            if(!(slot == -1)){
+                            if(slot != -1){
                                 ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
                                 BookMeta meta = (BookMeta)book.getItemMeta();
-                                meta.setDisplayName("§aAdd Commands §8- §7HidePlugins Project");
-                                if(selectWorld.containsKey(player.getUniqueId())){
-                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
+                                if(args[1].equalsIgnoreCase("commands")){
+                                    meta.setDisplayName("§aAdd Commands §8- §7HidePlugins Project");
                                 } else {
-                                    meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                    meta.setDisplayName("§aAdd Tabs §8- §7HidePlugins Project");
                                 }
-                                book.setItemMeta(meta);
-                                player.getInventory().setItem(slot, book);
-                                if(player.getInventory().getHeldItemSlot() == slot){
-                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT_MAGIC, Utils.getHandLocation(player), 20), 4);
-                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.spawnParticle(Particle.CRIT, Utils.getHandLocation(player), 20), 4);
-                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 3);
-                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 5);
-                                    Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
-                                }
-                            } else {
-                                player.sendMessage(plugin.prefix+"§7There is no space in your hotbar.");
-                            }
-                        } else {
-                            player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.command.select-world-or-global")));
-                        }
-                    } else {
-                        player.sendMessage(plugin.prefix+plugin.colors(languageManager.getInternal("commands.select-group-first")));
-                    }
-                }
-                /*
-                 /hproject add tabs
-                 */
-                else if(args[1].equalsIgnoreCase("tabs")){
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
-                            if(Utils.getItem("§aAdd Tabs §8- §7HidePlugins Project", player) != null){
-                                player.sendMessage(plugin.prefix+"§7You already have a book.");
-                                return false;
-                            }
-
-                            int slot = Utils.slotFree(player);
-                            if(!(slot == -1)){
-                                ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
-                                BookMeta meta = (BookMeta)book.getItemMeta();
-                                meta.setDisplayName("§aAdd Tabs §8- §7HidePlugins Project");
                                 if(selectWorld.containsKey(player.getUniqueId())){
                                     meta.setLore(Arrays.asList("§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
                                 } else {
