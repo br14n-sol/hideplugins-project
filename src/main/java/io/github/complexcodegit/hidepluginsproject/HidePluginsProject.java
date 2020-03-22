@@ -49,8 +49,8 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         pm.registerEvents(new LockedCommands(this, new GroupManager(this)), this);
         pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerChangeWorld(), this);
-        pm.registerEvents(new PlayerJoinData(this, new GroupManager(this)), this);
-        pm.registerEvents(new PlayerQuitData(this, new GroupManager(this)), this);
+        pm.registerEvents(new PlayerJoinData(this), this);
+        pm.registerEvents(new PlayerQuitData(this), this);
     }
     private void registerCommands(){
         getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new LanguageManager(this)));

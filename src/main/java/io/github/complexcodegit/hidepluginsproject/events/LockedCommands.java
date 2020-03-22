@@ -52,7 +52,7 @@ public class LockedCommands implements Listener {
             String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
             String pageNumber = event.getMessage().split(" ").length > 1 ? event.getMessage().split(" ")[1] : event.getMessage();
 
-            List<String> commandList = groupManager.getCommands(player);
+            List<String> commandList = groupManager.getCommands(player, false);
             String playerGroup = groupManager.getPlayerGroup(player);
             if(commandList.contains(command)){
                 if(command.equalsIgnoreCase("/help") && groups.contains("groups."+playerGroup+".options.custom-help") && groups.getBoolean("groups."+playerGroup+".options.custom-help.enable")

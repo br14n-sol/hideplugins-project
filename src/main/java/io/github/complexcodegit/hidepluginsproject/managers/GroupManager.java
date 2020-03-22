@@ -43,7 +43,8 @@ public class GroupManager {
         }
         return groupName;
     }
-    private String getPlayerGroup(Player player) {
+
+    public String getPlayerGroup(Player player) {
         String playerGroup = null;
         for(String group : getGroups()) {
             if(groups.get("groups."+group+".options.permission") != null && player.hasPermission(groups.getString("groups."+group+".options.permission"))){
@@ -55,7 +56,6 @@ public class GroupManager {
             playerGroup = getDefault();
         return playerGroup;
     }
-
     public List<String> getCommands(Player player, Boolean tab){
         List<String> commands = new ArrayList<>();
         String group = getPlayerGroup(player);

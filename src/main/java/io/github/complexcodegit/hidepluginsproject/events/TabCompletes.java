@@ -13,7 +13,6 @@ import org.bukkit.event.server.TabCompleteEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class TabCompletes implements Listener {
     private HidePluginsProject plugin;
@@ -32,22 +31,23 @@ public class TabCompletes implements Listener {
                 return false;
             }
             event.getCommands().clear();
-            List<String> tabList = groupManager.getTabs(player);
+            List<String> tabList = groupManager.getCommands(player, true);
             event.getCommands().addAll(tabList);
         }
         return false;
     }
+    @SuppressWarnings("ConstantConditions")
     @EventHandler(priority = EventPriority.HIGHEST)
     public boolean tabSuggest(TabCompleteEvent event){
-        FileConfiguration groups = plugin.getGroups();
         if(event.getSender() instanceof Player){
+            FileConfiguration groups = plugin.getGroups();
             Player player = (Player)event.getSender();
             if(event.getBuffer().startsWith("/help")){
                 String group = groupManager.getPlayerGroup(player);
                 if(groups.getBoolean("groups."+group+".options.custom-help.enable") &&
                         groups.contains("groups."+group+".options.custom-help.worlds."+player.getWorld().getName())){
-                    ArrayList<String> pages = new ArrayList<>(Objects.requireNonNull(groups.getConfigurationSection("groups."
-                            +group+".options.custom-help.worlds."+player.getWorld().getName()+".pages")).getKeys(false));
+                    ArrayList<String> pages = new ArrayList<>(groups.getConfigurationSection("groups."
+                            +group+".options.custom-help.worlds."+player.getWorld().getName()+".pages").getKeys(false));
                     Collections.sort(pages);
                     event.setCompletions(pages);
                 }

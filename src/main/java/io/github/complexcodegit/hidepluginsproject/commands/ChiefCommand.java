@@ -41,8 +41,7 @@ public class ChiefCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        List<String> hprojectGroup = groupManager.getCommands(player);
-        if(!player.hasPermission("hidepluginsproject.hproject") && !hprojectGroup.contains("/hproject")) {
+        if(!player.hasPermission("hidepluginsproject.hproject") && !groupManager.getCommands(player, false).contains("/hproject")) {
             return false;
         }
 
