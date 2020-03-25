@@ -1,4 +1,4 @@
-updates: true
+#updates: true
 
 language: 'english'
 
@@ -8,17 +8,18 @@ player-command-history: true
 
 prefix:
   enable: true
-  prefix: "§a§lHPP§7§l>§r"
+  prefix: "&a&lHPP&7&l>&r"
 
 warning-message:
-  enable: true
-  type: 'screen-title'
-  screen-title:
-    title: "&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2"
-    subtitle: "&cYou are not allowed to use that command, contact staff if this is a mistake."
-  chat-message:
-    - '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
-    - '&cYou are not allowed to use that command, contact staff if this is a mistake.'
+  title:
+    enable: true
+    top: "&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2"
+    bottom: "&cYou are not allowed to use that command, contact staff if this is a mistake."
+  message:
+    enable: true
+    lines:
+      - '&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2'
+      - '&cYou are not allowed to use that command, contact staff if this is a mistake.'
 
 potion-effect:
   enable: true
@@ -28,19 +29,15 @@ potion-effect:
 
 particles:
   enable: true
-  particle: 'SMOKE_LARGE'
+  particle: 'MOB_APPEARANCE'
+  amount: 2
 
 cooldown:
-  enable: false
+  enable: true
   message: "&cYou can't use another command for &f%time% &cseconds."
   time: 6
 
-custom-commands:
-  /test:
-    description: test
-    usageMessage: /test
-
-sounds:
-  enable: true
-  list:
-    - 'AMBIENT_CAVE'
+#sounds:
+  #enable: true
+  #list:
+    #- 'AMBIENT_CAVE'

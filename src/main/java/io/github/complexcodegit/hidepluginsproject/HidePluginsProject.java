@@ -7,7 +7,6 @@ import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Command;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -26,6 +25,8 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
     private File groupsFile;
     private FileConfiguration languages;
     private File languagesFile;
+    private FileConfiguration commands;
+    private File commandsFile;
     private FileConfiguration players;
     private File playersFile;
     public String prefix = "§a§lHPP§7§l>§r ";
@@ -50,13 +51,12 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerChangeWorld(), this);
         pm.registerEvents(new PlayerJoinData(this), this);
-        pm.registerEvents(new PlayerQuitData(this), this);
     }
     private void registerCommands(){
         getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new LanguageManager(this)));
     }
     private void commands(){
-        List<String> cmds = new ArrayList<>(getConfig().getConfigurationSection("custom-commands").getKeys(false));
+        List<String> cmds = new ArrayList<>(getCommands().getConfigurationSection("custom-commands").getKeys(false));
         if(cmds != null && !cmds.isEmpty()){
             try {
                 final Field serverCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -64,9 +64,9 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
 
                 CommandMap commandMap = (CommandMap)serverCommandMap.get(Bukkit.getServer());
                 for(String command : cmds){
-                    if(getConfig().getConfigurationSection("custom-commands."+command) != null){
-                        String description = getConfig().getString("custom-commands."+command+".description");
-                        String usageMessage = getConfig().getString("custom-commands."+command+".usageMessage");
+                    if(getCommands().getConfigurationSection("custom-commands."+command) != null){
+                        String description = getCommands().getString("custom-commands."+command+".description");
+                        String usageMessage = getCommands().getString("custom-commands."+command+".usageMessage");
                         List<String> aliases = getConfig().getStringList("custom-commands."+command+".aliases");
                         if(description != null && usageMessage != null){
                             commandMap.register(command.replaceFirst("/", ""), new Command(command.replaceFirst("/", ""), description, usageMessage, aliases));
@@ -77,9 +77,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
                 e.printStackTrace();
             }
         }
-    }
-    public String colors(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
     }
     private void registerConfig() {
         File config = new File(getDataFolder(), "config.yml");
@@ -138,6 +135,28 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
             reloadLanguages();
         }
         return languages;
+    }
+    public void reloadCommands() {
+        if(commands == null) {
+            commandsFile = new File(getDataFolder(), "commands.yml");
+        }
+
+        commands = YamlConfiguration.loadConfiguration(commandsFile);
+        try {
+            Reader defConfigStream = new InputStreamReader(getResource("commands.yml"), "UTF8");
+            if(defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                commands.setDefaults(defConfig);
+            }
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+    public FileConfiguration getCommands() {
+        if(commands == null) {
+            reloadCommands();
+        }
+        return commands;
     }
     public FileConfiguration getPlayers() {
         if(players == null) {

@@ -28,7 +28,6 @@ public class LockedCommands implements Listener {
         this.groupManager = groupManager;
     }
 
-    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.HIGHEST)
     public boolean locked(PlayerCommandPreprocessEvent event){
         FileConfiguration players = plugin.getPlayers();
@@ -47,7 +46,7 @@ public class LockedCommands implements Listener {
         }
 
         if(!CooldownManager.checkCooldown(player)) {
-            player.sendMessage(plugin.colors(config.getString("cooldown.message")).replaceAll("%time%", String.valueOf(CooldownManager.getCooldown(player))));
+            player.sendMessage(Utils.colors(config.getString("cooldown.message")).replaceAll("%time%", String.valueOf(CooldownManager.getCooldown(player))));
         } else {
             String command = event.getMessage().split(" ").length > 0 ? event.getMessage().split(" ")[0] : event.getMessage();
             String pageNumber = event.getMessage().split(" ").length > 1 ? event.getMessage().split(" ")[1] : event.getMessage();
@@ -56,7 +55,7 @@ public class LockedCommands implements Listener {
             String playerGroup = groupManager.getPlayerGroup(player);
             if(commandList.contains(command)){
                 if(command.equalsIgnoreCase("/help") && groups.contains("groups."+playerGroup+".options.custom-help") && groups.getBoolean("groups."+playerGroup+".options.custom-help.enable")
-                        && groups.contains("groups."+playerGroup+".options.custom-help.worlds." +player.getWorld().getName())){
+                        && groups.contains("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName())){
                     event.setCancelled(true);
                     List<String> page;
                     List<String> pages = new ArrayList<>();
@@ -68,18 +67,16 @@ public class LockedCommands implements Listener {
                     if(!(pageNumber.equals(command))){
                         if(pages.contains(pageNumber)){
                             page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages."+pageNumber);
-                            for(String pag : page){
-                                player.sendMessage(plugin.colors(pag));
-                            }
+                            for(String pag : page)
+                                player.sendMessage(Utils.colors(pag));
                         } else {
-                                player.sendMessage(plugin.prefix+"§7The §c"+pageNumber+" §7page does not exist.");
+                            player.sendMessage(plugin.prefix+"§7The §c"+pageNumber+" §7page does not exist.");
                         }
                     } else {
                         if(pages.contains("1")){
                             page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages.1");
-                            for(String pag : page){
-                                player.sendMessage(plugin.colors(pag));
-                            }
+                            for(String pag : page)
+                                player.sendMessage(Utils.colors(pag));
                         } else {
                             player.sendMessage(plugin.prefix+"§7The §c1 §7page does not exist.");
                         }
@@ -108,10 +105,28 @@ public class LockedCommands implements Listener {
                             players.set("Players."+player.getName()+".command-history", result);
                         }
                     }
-                    player.spawnParticle(Particle.MOB_APPEARANCE, player.getLocation(), 2);
+                    if(config.getBoolean("warning-message.title.enable")){
+                        player.sendTitle(Utils.colors("warning-message.title.top"), Utils.colors("warning-message.title.bottom"), 10, 70, 20);
+                    }
+                    if(config.getBoolean("warning-message.message.enable")){
+                        for(String line : config.getStringList("warning-message.message.list")){
+                            if(config.getBoolean("prefix.enable")){
+                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+line));
+                            } else {
+                                player.sendMessage(Utils.colors(line));
+                            }
+                        }
+                    }
+                    if(config.getBoolean("potion-effect.enable")){
+                        PotionEffectType effect = PotionEffectType.getByName(Objects.requireNonNull(config.getString("potion-effect.effect")));
+                        player.addPotionEffect(new PotionEffect(effect, config.getInt("potion-effect.time")*20, config.getInt("potion-effect.amplifier"), false, false, false));
+                    }
+                    if(config.getBoolean("particles.enable")){
+                        player.spawnParticle(Particle.valueOf(config.getString("particles.particle")), player.getLocation(), config.getInt("particles.amount"));
+                    }
+
                     player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100F, 100F);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 45, 1, false, false), false);
-                    player.sendMessage(plugin.prefix+"§7You don't have permission to do that.");
+
                     players.set("Players."+player.getName()+".last-command", command);
                     int reports = players.getInt("Players."+player.getName()+".reports");
                     players.set("Players."+player.getName()+".reports", reports+1);

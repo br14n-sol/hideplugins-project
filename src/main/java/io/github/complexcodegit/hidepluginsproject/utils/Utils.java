@@ -1,16 +1,23 @@
 package io.github.complexcodegit.hidepluginsproject.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Utils {
+    public static String colors(String s){
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
     public static Location getHandLocation(Player player){
         Location loc = player.getLocation().clone();
 
@@ -34,7 +41,6 @@ public class Utils {
         }
         return slot;
     }
-    @SuppressWarnings("ConstantConditions")
     public static Integer getItemSlot(String displayName, Player player){
         PlayerInventory inv = player.getInventory();
         int slot = -1;
@@ -68,5 +74,14 @@ public class Utils {
                 commands.add(cmdLabel.getName());
         }
         return commands.contains(command);
+    }
+    public static ItemStack createBook(String displayname, String...lore){
+        ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
+        BookMeta meta = (BookMeta)book.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(displayname);
+        meta.setLore(Arrays.asList(lore));
+        book.setItemMeta(meta);
+        return book;
     }
 }
