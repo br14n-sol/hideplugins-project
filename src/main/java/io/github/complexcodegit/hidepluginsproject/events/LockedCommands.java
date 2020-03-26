@@ -57,28 +57,28 @@ public class LockedCommands implements Listener {
                 if(command.equalsIgnoreCase("/help") && groups.contains("groups."+playerGroup+".options.custom-help") && groups.getBoolean("groups."+playerGroup+".options.custom-help.enable")
                         && groups.contains("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName())){
                     event.setCancelled(true);
-                    List<String> page;
-                    List<String> pages = new ArrayList<>();
-                    for(String pag : Objects.requireNonNull(groups.getConfigurationSection("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages")).getKeys(false)){
-                        if(!pages.contains(pag)){
-                            pages.add(pag);
-                        }
-                    }
+                    List<String> pages = new ArrayList<>(Objects.requireNonNull(groups.getConfigurationSection("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages")).getKeys(false));
                     if(!(pageNumber.equals(command))){
                         if(pages.contains(pageNumber)){
-                            page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages."+pageNumber);
-                            for(String pag : page)
+                            for(String pag : groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages."+pageNumber))
                                 player.sendMessage(Utils.colors(pag));
                         } else {
-                            player.sendMessage(plugin.prefix+"§7The §c"+pageNumber+" §7page does not exist.");
+                            if(config.getBoolean("prefix.enable")){
+                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", pageNumber)));
+                            } else {
+                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", pageNumber)));
+                            }
                         }
                     } else {
                         if(pages.contains("1")){
-                            page = groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages.1");
-                            for(String pag : page)
+                            for(String pag : groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages.1"))
                                 player.sendMessage(Utils.colors(pag));
                         } else {
-                            player.sendMessage(plugin.prefix+"§7The §c1 §7page does not exist.");
+                            if(config.getBoolean("prefix.enable")){
+                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", "1")));
+                            } else {
+                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", "1")));
+                            }
                         }
                     }
                     return false;
@@ -89,8 +89,8 @@ public class LockedCommands implements Listener {
                 if(config.getBoolean("cooldown.enable")){
                     CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
                 }
-                if(Utils.checkCommand(command)){
-                    if(config.getBoolean("player-command-history")){
+                if(config.getBoolean("player-command-history")){
+                    if(Utils.checkCommand(command)){
                         if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
                             List<String> list = new ArrayList<>();
                             list.add(command);
@@ -105,35 +105,34 @@ public class LockedCommands implements Listener {
                             players.set("Players."+player.getName()+".command-history", result);
                         }
                     }
-                    if(config.getBoolean("warning-message.title.enable")){
-                        player.sendTitle(Utils.colors("warning-message.title.top"), Utils.colors("warning-message.title.bottom"), 10, 70, 20);
-                    }
-                    if(config.getBoolean("warning-message.message.enable")){
-                        for(String line : config.getStringList("warning-message.message.list")){
-                            if(config.getBoolean("prefix.enable")){
-                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+line));
-                            } else {
-                                player.sendMessage(Utils.colors(line));
-                            }
+                }
+                if(config.getBoolean("warning-message.title.enable")){
+                    player.sendTitle(Utils.colors("warning-message.title.top"), Utils.colors("warning-message.title.bottom"), 10, 70, 20);
+                }
+                if(config.getBoolean("warning-message.message.enable")){
+                    for(String line : config.getStringList("warning-message.message.list")){
+                        if(config.getBoolean("prefix.enable")){
+                            player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+line));
+                        } else {
+                            player.sendMessage(Utils.colors(line));
                         }
                     }
-                    if(config.getBoolean("potion-effect.enable")){
-                        PotionEffectType effect = PotionEffectType.getByName(Objects.requireNonNull(config.getString("potion-effect.effect")));
-                        player.addPotionEffect(new PotionEffect(effect, config.getInt("potion-effect.time")*20, config.getInt("potion-effect.amplifier"), false, false, false));
-                    }
-                    if(config.getBoolean("particles.enable")){
-                        player.spawnParticle(Particle.valueOf(config.getString("particles.particle")), player.getLocation(), config.getInt("particles.amount"));
-                    }
-
-                    player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100F, 100F);
-
-                    players.set("Players."+player.getName()+".last-command", command);
-                    int reports = players.getInt("Players."+player.getName()+".reports");
-                    players.set("Players."+player.getName()+".reports", reports+1);
-                    plugin.savePlayers();
-                } else {
-                    player.sendMessage(plugin.prefix+"§7The command you entered does not exist.");
                 }
+                if(config.getBoolean("potion-effect.enable")){
+                    PotionEffectType effect = PotionEffectType.getByName(Objects.requireNonNull(config.getString("potion-effect.effect")));
+                    assert effect != null;
+                    player.addPotionEffect(new PotionEffect(effect, config.getInt("potion-effect.time")*20, config.getInt("potion-effect.amplifier"), false, false, false));
+                }
+                if(config.getBoolean("particles.enable")){
+                    player.spawnParticle(Particle.valueOf(config.getString("particles.particle")), player.getLocation(), config.getInt("particles.amount"));
+                }
+
+                player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100F, 100F);
+
+                players.set("Players."+player.getName()+".last-command", command);
+                int reports = players.getInt("Players."+player.getName()+".reports");
+                players.set("Players."+player.getName()+".reports", reports+1);
+                plugin.savePlayers();
             }
         }
         return false;

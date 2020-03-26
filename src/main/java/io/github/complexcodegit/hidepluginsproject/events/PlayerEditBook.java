@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,10 +27,8 @@ public class PlayerEditBook implements Listener {
         this.groupManager = groupManager;
     }
 
-    @SuppressWarnings({"unused", "ConstantConditions"})
     @EventHandler
     public void editCheck(PlayerEditBookEvent event){
-        Player player = event.getPlayer();
         if(event.getPreviousBookMeta().getDisplayName().equals("§aAdd Commands §8- §7HidePlugins Project") ||
                 event.getPreviousBookMeta().getDisplayName().equals("§aAdd Tabs §8- §7HidePlugins Project") ||
                 event.getPreviousBookMeta().getDisplayName().equals("§aRemove Commands §8- §7HidePlugins Project") ||
@@ -43,6 +42,8 @@ public class PlayerEditBook implements Listener {
             List<String> alreadyExist = new ArrayList<>();
             List<String> successfully = new ArrayList<>();
             List<String> notExist = new ArrayList<>();
+
+            Player player = event.getPlayer();
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().removeItem(Utils.getItem(event.getPreviousBookMeta().getDisplayName(), player)),1);
 
@@ -106,17 +107,19 @@ public class PlayerEditBook implements Listener {
                 }
             }
 
+            FileConfiguration groups = plugin.getGroups();
+            FileConfiguration messages = plugin.getMessages();
             if(world.equals("global")){
                 if(option.equalsIgnoreCase("Tabs")){
-                    plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
+                    groups.set("groups."+group+".global.tab", String.join(", ", commands));
                 } else {
-                    plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
+                    groups.set("groups."+group+".global.commands", String.join(", ", commands));
                 }
             } else {
                 if(option.equalsIgnoreCase("Tabs")){
-                    plugin.getGroups().set("groups."+group+".worlds."+world+".tabs", String.join(", ", commands));
+                    groups.set("groups."+group+".worlds."+world+".tabs", String.join(", ", commands));
                 } else {
-                    plugin.getGroups().set("groups."+group+".worlds."+world+".commands", String.join(", ", commands));
+                    groups.set("groups."+group+".worlds."+world+".commands", String.join(", ", commands));
                 }
             }
             plugin.saveGroups();
@@ -125,50 +128,50 @@ public class PlayerEditBook implements Listener {
             TextComponent size = new TextComponent();
             TextComponent message = new TextComponent();
             if(!notExist.isEmpty()){
-                size.setText(plugin.prefix+"§7"+notExist.size());
+                size.setText(plugin.prefix+"§7"+notExist.size()+" ");
                 if(notExist.size() > 1){
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", notExist)).create()));
-                    message.setText(" §ccommands are not valid.");
+                    message.setText(Utils.colors(messages.getString("commands-not-valid")));
                 } else {
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(notExist.get(0)).create()));
-                    message.setText(" §ccommand is invalid.");
+                    message.setText(Utils.colors(messages.getString("command-not-valid")));
                 }
                 player.spigot().sendMessage(size, message);
             }
             if(!alreadyExist.isEmpty()){
-                size.setText(plugin.prefix+"§7"+alreadyExist.size());
+                size.setText(plugin.prefix+"§7"+alreadyExist.size()+" ");
                 if(alreadyExist.size() > 1){
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", alreadyExist)).create()));
                     if(action.equalsIgnoreCase("Add")){
-                        message.setText(" §ecommands were already configured.");
+                        message.setText(Utils.colors(messages.getString("commands-already-exist")));
                     } else {
-                        message.setText(" §ecommands are not configured.");
+                        message.setText(Utils.colors(messages.getString("command-not-exist")));
                     }
                 } else {
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(alreadyExist.get(0)).create()));
                     if(action.equalsIgnoreCase("Add")){
-                        message.setText(" §ecommand was already configured.");
+                        message.setText(Utils.colors(messages.getString("command-already-exist")));
                     } else {
-                        message.setText(" §ecommand is not configured.");
+                        message.setText(Utils.colors(messages.getString("commands-not-exist")));
                     }
                 }
                 player.spigot().sendMessage(size, message);
             }
             if(!successfully.isEmpty()){
-                size.setText(plugin.prefix+"§7"+successfully.size());
+                size.setText(plugin.prefix+"§7"+successfully.size()+" ");
                 if(successfully.size() > 1){
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", successfully)).create()));
                     if(action.equalsIgnoreCase("Add")){
-                        message.setText(" §acommands added successfully.");
+                        message.setText(Utils.colors(messages.getString("commands-added")));
                     } else {
-                        message.setText(" §acommands remove successfully.");
+                        message.setText(Utils.colors(messages.getString("commands-removed")));
                     }
                 } else {
                     size.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(successfully.get(0)).create()));
                     if(action.equalsIgnoreCase("Add")){
-                        message.setText(" §acommand was successfully added.");
+                        message.setText(Utils.colors(messages.getString("command-added")));
                     } else {
-                        message.setText(" §acommand was successfully remove.");
+                        message.setText(Utils.colors(messages.getString("command-removed")));
                     }
                 }
                 player.spigot().sendMessage(size, message);

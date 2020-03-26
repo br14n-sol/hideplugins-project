@@ -2,10 +2,8 @@ package io.github.complexcodegit.hidepluginsproject.commands;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -13,8 +11,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.*;
 
@@ -24,16 +20,15 @@ public class ChiefCommand implements CommandExecutor {
     private HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
-    private LanguageManager languageManager;
-    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager, LanguageManager languageManager){
+    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager){
         this.plugin = plugin;
         this.groupManager = groupManager;
-        this.languageManager = languageManager;
     }
 
     @SuppressWarnings({"NullableProblems", "ConstantConditions"})
     public boolean onCommand(CommandSender sender, Command cmd, String aliases, String[] args) {
         FileConfiguration groups = plugin.getGroups();
+        FileConfiguration messages = plugin.getMessages();
         List<String> groupList = groupManager.getGroups();
         List<String> serverWorlds = groupManager.getWorlds();
         if(!cmd.getName().equalsIgnoreCase("hproject") || !(sender instanceof Player)) {
@@ -50,23 +45,16 @@ public class ChiefCommand implements CommandExecutor {
              /hproject help
              */
             if(args[0].equalsIgnoreCase("help")){
-                if(!selectGroup.containsKey(player.getUniqueId())){
-                    List<String> lines = languageManager.getList("commands.help.no-group-selected");
-                    for(String line : lines)
-                        player.sendMessage(Utils.colors(line));
-                } else {
-                    List<String> lines = languageManager.getList("commands.help.group-selected.1");
-                    for(String line : lines)
-                        player.sendMessage(Utils.colors(line));
-                }
+                for(String line : messages.getStringList("help-pages.1"))
+                    player.sendMessage(Utils.colors(line));
             }
             /*
              /hproject reload
              */
             else if(args[0].equalsIgnoreCase("reload")) {
-                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.reload")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("reload-config")));
                 plugin.reloadGroups();
-                plugin.reloadLanguages();
+                plugin.reloadMessages();
                 plugin.reloadPlayers();
                 plugin.reloadConfig();
             }
@@ -75,16 +63,16 @@ public class ChiefCommand implements CommandExecutor {
              */
             else if(args[0].equalsIgnoreCase("finish")) {
                 if(selectGroup.containsKey(player.getUniqueId())) {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.finish").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-finish").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                     selectGroup.remove(player.getUniqueId());
                     selectWorld.remove(player.getUniqueId());
                     selectGlobal.remove(player.getUniqueId());
                 } else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
             }
         }
         else if(args.length == 2){
@@ -92,20 +80,12 @@ public class ChiefCommand implements CommandExecutor {
              /hproject help <page>
              */
             if(args[0].equalsIgnoreCase("help")){
-                if(selectGroup.containsKey(player.getUniqueId())){
-                    if(args[1].equalsIgnoreCase("1")){
-                        List<String> lines1 = languageManager.getList("commands.help.group-selected.1");
-                        for(String line : lines1)
-                            player.sendMessage(Utils.colors(line));
-                    } else if(args[1].equalsIgnoreCase("2")){
-                        List<String> lines2 = languageManager.getList("commands.help.group-selected.2");
-                        for(String line : lines2)
-                            player.sendMessage(Utils.colors(line));
-                    } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.page-not-exist")));
-                    }
+                List<String> pages = new ArrayList<>(messages.getConfigurationSection("help-pages").getKeys(false));
+                if(pages.contains(args[1])){
+                    for(String pag : messages.getStringList("help-pages."+args[1]))
+                        player.sendMessage(Utils.colors(pag));
                 } else {
-                    player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("page-does-not-exist")));
                 }
             }
             /*
@@ -117,23 +97,23 @@ public class ChiefCommand implements CommandExecutor {
                         if(!selectGlobal.containsKey(player.getUniqueId())) {
                             if(groups.get("groups." + selectGroup.get(player.getUniqueId()) + ".global", true) != null) {
                                 if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.world.deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
+                                    player.sendMessage(plugin.prefix + Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 selectGlobal.put(player.getUniqueId(), "global");
-                                player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.global.selected")));
+                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-selected")));
                             } else {
-                                player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.global.not-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-not-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.global.already-selected")));
+                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-already-selected")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix + Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix + Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -148,7 +128,7 @@ public class ChiefCommand implements CommandExecutor {
                         if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
                             if(Utils.getItem("§aAdd Commands §8- §7HidePlugins Project", player) != null ||
                                     Utils.getItem("§aAdd Tabs §8- §7HidePlugins Project", player) != null){
-                                player.sendMessage(plugin.prefix+"§7You already have a book.");
+                                player.sendMessage(plugin.prefix+messages.getString("already-have-book"));
                                 return false;
                             }
 
@@ -177,13 +157,13 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+"§7There is no space in your hotbar.");
+                                player.sendMessage(plugin.prefix+messages.getString("have-no-space-in-hotbar"));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command.select-world-or-global")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("select-world-or-global")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 /*
@@ -193,20 +173,20 @@ public class ChiefCommand implements CommandExecutor {
                     if(selectGroup.containsKey(player.getUniqueId())) {
                         if(!groups.contains("groups."+selectGroup.get(player.getUniqueId())+".global", true)) {
                             selectGlobal.put(player.getUniqueId(), "global");
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.global.set").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-added").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                             groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.commands", "");
                             groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.tab", "");
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.global.already-set")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-already-exist")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -218,7 +198,7 @@ public class ChiefCommand implements CommandExecutor {
                         if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
                             if(Utils.getItem("§aRemove Commands §8- §7HidePlugins Project", player) != null ||
                                     Utils.getItem("§aRemove Tabs §8- §7HidePlugins Project", player) != null){
-                                player.sendMessage(plugin.prefix+"§7You already have a book.");
+                                player.sendMessage(plugin.prefix+messages.getString("already-have-book"));
                                 return false;
                             }
 
@@ -247,21 +227,21 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+"§7There is no space in your hotbar.");
+                                player.sendMessage(plugin.prefix+messages.getString("have-no-space-in-hotbar"));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command.select-world-or-global")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("select-world-or-global")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
             }
         }
         else if(args.length == 3) {
@@ -284,24 +264,24 @@ public class ChiefCommand implements CommandExecutor {
                                         groups.set("groups."+selectGroup.get(player.getUniqueId())+".options.inheritances", String.join(", ", list));
                                         plugin.saveGroups();
                                         plugin.reloadGroups();
-                                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.add").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-added").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                                     } else {
-                                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.already-add").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[INHERIT]", args[2])));
+                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-already-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[INHERIT]", args[2])));
                                     }
                                 } else {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.add").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-added").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                                     groups.set("groups."+selectGroup.get(player.getUniqueId())+".options.inheritances", args[2]);
                                     plugin.saveGroups();
                                     plugin.reloadGroups();
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.you-can-not-inherit")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 /*
@@ -313,31 +293,31 @@ public class ChiefCommand implements CommandExecutor {
                         if(serverWorlds.contains(args[2])) {
                             if(!groupWorlds.contains(args[2])) {
                                 if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.global.deselected")));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-deselected")));
                                     selectGlobal.remove(player.getUniqueId());
                                 }
                                 selectWorld.put(player.getUniqueId(), args[2]);
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.set").replace("[WORLD]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-added").replace("[WORLD]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                                 groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + args[2] + ".commands", "");
                                 groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + args[2] + ".tab", "");
                                 plugin.saveGroups();
                                 plugin.reloadGroups();
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.already-set").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[WORLD]", args[2])));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-already-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[WORLD]", args[2])));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.server-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-server-not-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -349,7 +329,7 @@ public class ChiefCommand implements CommandExecutor {
                         if(groupList.contains(args[2])){
                             if(!args[2].equals(selectGroup.get(player.getUniqueId()))){
                                 if(groupManager.getInherit(selectGroup.get(player.getUniqueId())).contains(args[2])) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.remove").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit.removed").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                                     String inherit = groups.getString("groups." + selectGroup.get(player.getUniqueId()) + ".options.inheritances").replace(" ", "");
                                     List<String> list = new ArrayList<>(Arrays.asList(inherit.split(",")));
                                     list.remove(args[2]);
@@ -357,20 +337,20 @@ public class ChiefCommand implements CommandExecutor {
                                     plugin.saveGroups();
                                     plugin.reloadGroups();
                                 } else {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.not-valid")));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.inherit.you-can-not-inherit")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -386,23 +366,23 @@ public class ChiefCommand implements CommandExecutor {
                         if(serverWorlds.contains(args[2])) {
                             if(groupWorlds.contains(args[2])) {
                                 if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
                                     selectWorld.remove(player.getUniqueId());
                                 }
                                 if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.global.deselected")));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-deselected")));
                                     selectGlobal.remove(player.getUniqueId());
                                 }
                                 selectWorld.put(player.getUniqueId(), args[2]);
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.selected").replace("[WORLD]", args[2])));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-selected").replace("[WORLD]", args[2])));
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.not-exist")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-not-exist")));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.world.server-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-server-not-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 /*
@@ -412,16 +392,16 @@ public class ChiefCommand implements CommandExecutor {
                     if(!selectGroup.containsKey(player.getUniqueId())) {
                         if(groupList.contains(args[2])) {
                             selectGroup.put(player.getUniqueId(), args[2]);
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.selected").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-selected").replace("[GROUP]", args[2])));
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.first-ends-group").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-end-first").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -431,19 +411,19 @@ public class ChiefCommand implements CommandExecutor {
                 if(args[1].equalsIgnoreCase("help")) {
                     if(selectGroup.containsKey(player.getUniqueId())) {
                         if(args[2].equals("true") || args[2].equals("false")) {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.custom-help.set").replace("[BOOLEAN]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("help-set").replace("[BOOLEAN]", args[2])));
                             groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".options.custom-help.enable", Boolean.valueOf(args[2]));
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.custom-help.not-valid")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("help-set-not-valid")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.select-group-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             /*
@@ -454,7 +434,7 @@ public class ChiefCommand implements CommandExecutor {
                     if(!selectGroup.containsKey(player.getUniqueId())) {
                         if(!groupList.contains(args[2])) {
                             selectGroup.put(player.getUniqueId(), args[2]);
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.set").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-created").replace("[GROUP]", args[2])));
                             groups.set("groups." + args[2] + ".options.inheritances", "");
                             groups.set("groups." + args[2] + ".options.custom-help.enable", true);
                             groups.createSection("groups."+args[2]+".options.custom-help.worlds");
@@ -462,22 +442,22 @@ public class ChiefCommand implements CommandExecutor {
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.already-set").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-already-exist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.group.first-ends-group").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-end-first").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
             }
         }
         else {
-            player.sendMessage(plugin.prefix+Utils.colors(languageManager.getInternal("commands.command-not-exist")));
+            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
         }
         return false;
     }

@@ -4,7 +4,6 @@ import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
 import io.github.complexcodegit.hidepluginsproject.events.*;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import io.github.complexcodegit.hidepluginsproject.managers.LanguageManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
@@ -23,8 +22,8 @@ import java.util.List;
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
     private File groupsFile;
-    private FileConfiguration languages;
-    private File languagesFile;
+    private FileConfiguration messages;
+    private File messagesFile;
     private FileConfiguration commands;
     private File commandsFile;
     private FileConfiguration players;
@@ -35,14 +34,9 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         registerConfig();
         commands();
         FileManager.save(this);
-        if(!LanguageManager.checkLanguage(this)){
-            getLogger().severe("The language defined is not valid.");
-            getPluginLoader().disablePlugin(this);
-        } else {
-            registerEvents();
-            registerCommands();
-            getLogger().info("§aHidePlugins Project is enabled.");
-        }
+        registerEvents();
+        registerCommands();
+        getLogger().info("§aHidePlugins Project is enabled.");
     }
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
@@ -53,7 +47,7 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         pm.registerEvents(new PlayerJoinData(this), this);
     }
     private void registerCommands(){
-        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new LanguageManager(this)));
+        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this)));
     }
     private void commands(){
         List<String> cmds = new ArrayList<>(getCommands().getConfigurationSection("custom-commands").getKeys(false));
@@ -114,27 +108,27 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         }
         return groups;
     }
-    public void reloadLanguages() {
-        if(languages == null) {
-            languagesFile = new File(getDataFolder(), "languages.yml");
+    public void reloadMessages() {
+        if(messages == null) {
+            messagesFile = new File(getDataFolder(), "messages.yml");
         }
 
-        languages = YamlConfiguration.loadConfiguration(languagesFile);
+        messages = YamlConfiguration.loadConfiguration(messagesFile);
         try {
-            Reader defConfigStream = new InputStreamReader(getResource("languages.yml"), "UTF8");
+            Reader defConfigStream = new InputStreamReader(getResource("messages.yml"), "UTF8");
             if(defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                languages.setDefaults(defConfig);
+                messages.setDefaults(defConfig);
             }
         } catch(UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
-    public FileConfiguration getLanguages() {
-        if(languages == null) {
-            reloadLanguages();
+    public FileConfiguration getMessages() {
+        if(messages == null) {
+            reloadMessages();
         }
-        return languages;
+        return messages;
     }
     public void reloadCommands() {
         if(commands == null) {

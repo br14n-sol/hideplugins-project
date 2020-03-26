@@ -1,7 +1,5 @@
 #updates: true
 
-language: 'english'
-
 locked-commands: true
 
 player-command-history: true
