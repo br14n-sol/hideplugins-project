@@ -1,18 +1,16 @@
 package io.github.complexcodegit.hidepluginsproject.utils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class Utils {
     public static String colors(String s){
@@ -83,5 +81,18 @@ public class Utils {
         meta.setLore(Arrays.asList(lore));
         book.setItemMeta(meta);
         return book;
+    }
+    public static void randomSound(Player player){
+        List<String> validSounds = new ArrayList<>(Collections.singleton(Arrays.toString(Sound.values())));
+        List<String> configSounds = JavaPlugin.getPlugin(HidePluginsProject.class).getConfig().getStringList("sounds.list");
+        if(!configSounds.isEmpty()){
+            configSounds.removeIf(sound -> !validSounds.contains(sound));
+
+            Random random = new Random(System.currentTimeMillis());
+            int intRandom = random.nextInt(configSounds.size());
+
+            String sound = configSounds.get(intRandom);
+            player.playSound(player.getLocation(), Sound.valueOf(sound), 100.0F, 100.0F);
+        }
     }
 }

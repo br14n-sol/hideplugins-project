@@ -2,6 +2,7 @@ package io.github.complexcodegit.hidepluginsproject;
 
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
 import io.github.complexcodegit.hidepluginsproject.events.*;
+import io.github.complexcodegit.hidepluginsproject.external.UpdateChecker;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Command;
@@ -18,7 +19,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"ConstantConditions", "CharsetObjectCanBeUsed"})
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
     private File groupsFile;
@@ -37,6 +37,15 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         registerEvents();
         registerCommands();
         getLogger().info("§aHidePlugins Project is enabled.");
+        if(getConfig().getBoolean("updates")){
+            new UpdateChecker(this, 25317).getVersion(version -> {
+                if(this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                    getLogger().warning("There is not a new update available.");
+                } else {
+                    getLogger().warning("There is a new update available.");
+                }
+            });
+        }
     }
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();

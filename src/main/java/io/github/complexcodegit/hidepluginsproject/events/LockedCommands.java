@@ -5,7 +5,6 @@ import io.github.complexcodegit.hidepluginsproject.managers.CooldownManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Utils;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +39,7 @@ public class LockedCommands implements Listener {
 
         event.setCancelled(true);
 
-        if(player.isOp() || player.hasPermission("hidepluginsproject.bypass")){
+        if(player.isOp() || player.hasPermission(Objects.requireNonNull(config.getString("bypass-permission")))){
             event.setCancelled(false);
             return false;
         }
@@ -89,21 +88,19 @@ public class LockedCommands implements Listener {
                 if(config.getBoolean("cooldown.enable")){
                     CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
                 }
-                if(config.getBoolean("player-command-history")){
-                    if(Utils.checkCommand(command)){
-                        if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
-                            List<String> list = new ArrayList<>();
-                            list.add(command);
-                            String result = String.join("", list);
-                            players.set("Players."+player.getName()+".command-history", result);
-                        } else {
-                            String history = Objects.requireNonNull(players.getString("Players."+player.getName()+".command-history")).replace(" ", "");
-                            List<String> list = new ArrayList<>();
-                            list.add(command);
-                            list.addAll(Arrays.asList(history.split(",")));
-                            String result = String.join(", ", list);
-                            players.set("Players."+player.getName()+".command-history", result);
-                        }
+                if(config.getBoolean("player-command-history") && Utils.checkCommand(command)){
+                    if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
+                        List<String> list = new ArrayList<>();
+                        list.add(command);
+                        String result = String.join("", list);
+                        players.set("Players."+player.getName()+".command-history", result);
+                    } else {
+                        String history = Objects.requireNonNull(players.getString("Players."+player.getName()+".command-history")).replace(" ", "");
+                        List<String> list = new ArrayList<>();
+                        list.add(command);
+                        list.addAll(Arrays.asList(history.split(",")));
+                        String result = String.join(", ", list);
+                        players.set("Players."+player.getName()+".command-history", result);
                     }
                 }
                 if(config.getBoolean("warning-message.title.enable")){
@@ -126,8 +123,9 @@ public class LockedCommands implements Listener {
                 if(config.getBoolean("particles.enable")){
                     player.spawnParticle(Particle.valueOf(config.getString("particles.particle")), player.getLocation(), config.getInt("particles.amount"));
                 }
-
-                player.playSound(player.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 100F, 100F);
+                if(config.getBoolean("sounds.enable")){
+                    Utils.randomSound(player);
+                }
 
                 players.set("Players."+player.getName()+".last-command", command);
                 int reports = players.getInt("Players."+player.getName()+".reports");

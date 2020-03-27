@@ -1,6 +1,10 @@
-#updates: true
+updates: true
 
 locked-commands: true
+
+tab-usage-permission: 'hidepluginsproject.tabusage'
+
+bypass-permission: 'hidepluginsproject.bypass'
 
 player-command-history: true
 
@@ -35,7 +39,8 @@ cooldown:
   message: "&cYou can't use another command for &f%time% &cseconds."
   time: 6
 
-#sounds:
-  #enable: true
-  #list:
-    #- 'AMBIENT_CAVE'
+sounds:
+  enable: true
+  list:
+    - 'AMBIENT_CAVE'
+    - 'ENTITY_ELDER_GUARDIAN_CURSE'
