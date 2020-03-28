@@ -82,17 +82,27 @@ public class Utils {
         book.setItemMeta(meta);
         return book;
     }
+    private static <E extends Enum<E>> boolean isValidSound(String paramString){
+        if(paramString == null)
+            return false;
+        try {
+            Enum.valueOf(Sound.class, paramString);
+            return true;
+        } catch (IllegalArgumentException ignored){}
+        return false;
+    }
     public static void randomSound(Player player){
-        List<String> validSounds = new ArrayList<>(Collections.singleton(Arrays.toString(Sound.values())));
         List<String> configSounds = JavaPlugin.getPlugin(HidePluginsProject.class).getConfig().getStringList("sounds.list");
         if(!configSounds.isEmpty()){
-            configSounds.removeIf(sound -> !validSounds.contains(sound));
+            configSounds.removeIf(sound -> !isValidSound(sound));
+            if(!configSounds.isEmpty()){
+                Random random = new Random(System.currentTimeMillis());
+                int intRandom = random.nextInt(configSounds.size());
 
-            Random random = new Random(System.currentTimeMillis());
-            int intRandom = random.nextInt(configSounds.size());
-
-            String sound = configSounds.get(intRandom);
-            player.playSound(player.getLocation(), Sound.valueOf(sound), 100.0F, 100.0F);
+                String sound = configSounds.get(intRandom);
+                player.playSound(player.getLocation(), Sound.valueOf(sound), 100.0F, 100.0F);
+                random.setSeed(System.currentTimeMillis());
+            }
         }
     }
 }

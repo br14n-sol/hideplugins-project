@@ -3,7 +3,6 @@ groups:
     options:
       enable: true
       default: true
-      permission: 'hidepluginsproject.group.default'
       custom-help:
         enable: true
         worlds:
@@ -29,3 +28,33 @@ groups:
         enable: true
         commands: /?
         tab: /?
+  members:
+    options:
+      enable: true
+      default: true
+      permission: 'hidepluginsproject.group.members'
+      custom-help:
+        enable: true
+        worlds:
+          world:
+            pages:
+              '1':
+                - 'line1..'
+                - 'line2..'
+    global:
+      enable: true
+      commands: /fill
+      tab: /fill
+    worlds:
+      world:
+        enable: true
+        commands: /setblock, /tp
+        tab: /setblock, /tp
+      world_nether:
+        enable: true
+        commands: /test
+        tab: /test
+      world_the_end:
+        enable: true
+        commands: /time
+        tab: /time

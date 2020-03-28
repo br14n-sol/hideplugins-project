@@ -1,10 +1,8 @@
 package io.github.complexcodegit.hidepluginsproject;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
 import io.github.complexcodegit.hidepluginsproject.events.*;
-import io.github.complexcodegit.hidepluginsproject.external.UpdateChecker;
+import io.github.complexcodegit.hidepluginsproject.external.UpdateCheck;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.packetadapters.PlayClientTabComplete;
@@ -37,9 +35,9 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         FileManager.save(this);
         commands();
         registerEvents();
-        if(!getServer().getVersion().contains("1.13") || !getServer().getVersion().contains("1.14") || !getServer().getVersion().contains("1.15")){
+        if(!Bukkit.getVersion().contains("1.13") && !Bukkit.getVersion().contains("1.14") && !Bukkit.getVersion().contains("1.15")){
             if(getServer().getPluginManager().getPlugin("ProtocolLib") != null){
-                ProtocolLibrary.getProtocolManager().addPacketListener(new PlayClientTabComplete(this, new GroupManager(this), PacketType.Play.Client.TAB_COMPLETE));
+                new PlayClientTabComplete(this, new GroupManager(this));
             } else {
                 getLogger().warning("You need ProtocolLib 4.5.0 to use the message replacement system and 1.8-1.12.2 tab completion blocker.");
                 getServer().getPluginManager().disablePlugin(this);
@@ -50,13 +48,14 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         registerCommands();
         getLogger().info("§aHidePlugins Project is enabled.");
         if(getConfig().getBoolean("updates")){
-            new UpdateChecker(this, 25317).getVersion(version -> {
-                if(this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    getLogger().warning("There is not a new update available.");
-                } else {
-                    getLogger().warning("There is a new update available.");
-                }
-            });
+            UpdateCheck updater = new UpdateCheck(this, 25317);
+            try {
+                if(updater.checkForUpdates())
+                    getLogger().warning("An update was found! New version: " + updater.getLatestVersion() + " download: " + updater.getResourceURL());
+            } catch (Exception e) {
+                getLogger().severe("Could not check for updates! Stacktrace:");
+                e.printStackTrace();
+            }
         }
     }
     private void registerEvents() {

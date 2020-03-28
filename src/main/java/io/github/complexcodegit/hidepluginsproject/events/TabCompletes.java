@@ -12,6 +12,7 @@ import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class TabCompletes implements Listener {
@@ -30,7 +31,8 @@ public class TabCompletes implements Listener {
                 return false;
             }
             event.getCommands().clear();
-            event.getCommands().addAll(groupManager.getCommands(player, true));
+            List<String> commands = groupManager.getCommands(player, true);
+            event.getCommands().addAll(commands);
         }
         return false;
     }

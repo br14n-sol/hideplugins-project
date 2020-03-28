@@ -104,10 +104,10 @@ public class LockedCommands implements Listener {
                     }
                 }
                 if(config.getBoolean("warning-message.title.enable")){
-                    player.sendTitle(Utils.colors("warning-message.title.top"), Utils.colors("warning-message.title.bottom"), 10, 70, 20);
+                    player.sendTitle(Utils.colors(config.getString("warning-message.title.top")), Utils.colors(config.getString("warning-message.title.bottom")), 10, 70, 20);
                 }
                 if(config.getBoolean("warning-message.message.enable")){
-                    for(String line : config.getStringList("warning-message.message.list")){
+                    for(String line : config.getStringList("warning-message.message.lines")){
                         if(config.getBoolean("prefix.enable")){
                             player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+line));
                         } else {
