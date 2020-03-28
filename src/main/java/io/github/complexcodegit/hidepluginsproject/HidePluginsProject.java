@@ -1,10 +1,13 @@
 package io.github.complexcodegit.hidepluginsproject;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
 import io.github.complexcodegit.hidepluginsproject.events.*;
 import io.github.complexcodegit.hidepluginsproject.external.UpdateChecker;
 import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
+import io.github.complexcodegit.hidepluginsproject.packetadapters.PlayClientTabComplete;
 import io.github.complexcodegit.hidepluginsproject.utils.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
@@ -16,8 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class HidePluginsProject extends JavaPlugin implements Listener {
     private FileConfiguration groups;
@@ -32,9 +34,19 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
 
     public void onEnable(){
         registerConfig();
-        commands();
         FileManager.save(this);
+        commands();
         registerEvents();
+        if(!getServer().getVersion().contains("1.13") || !getServer().getVersion().contains("1.14") || !getServer().getVersion().contains("1.15")){
+            if(getServer().getPluginManager().getPlugin("ProtocolLib") != null){
+                ProtocolLibrary.getProtocolManager().addPacketListener(new PlayClientTabComplete(this, new GroupManager(this), PacketType.Play.Client.TAB_COMPLETE));
+            } else {
+                getLogger().warning("You need ProtocolLib 4.5.0 to use the message replacement system and 1.8-1.12.2 tab completion blocker.");
+                getServer().getPluginManager().disablePlugin(this);
+            }
+        } else {
+            getServer().getPluginManager().registerEvents(new TabCompletes(this, new GroupManager(this)), this);
+        }
         registerCommands();
         getLogger().info("§aHidePlugins Project is enabled.");
         if(getConfig().getBoolean("updates")){
@@ -51,7 +63,6 @@ public class HidePluginsProject extends JavaPlugin implements Listener {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerEditBook(this, new GroupManager(this)), this);
         pm.registerEvents(new LockedCommands(this, new GroupManager(this)), this);
-        pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerChangeWorld(), this);
         pm.registerEvents(new PlayerJoinData(this), this);
     }
