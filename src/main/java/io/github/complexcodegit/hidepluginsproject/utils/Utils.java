@@ -13,6 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 public class Utils {
+    private static Random random = new Random(System.currentTimeMillis());
+    private static ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
+
     public static String colors(String s){
         return ChatColor.translateAlternateColorCodes('&', s);
     }
@@ -42,11 +45,14 @@ public class Utils {
     public static Integer getItemSlot(String displayName, Player player){
         PlayerInventory inv = player.getInventory();
         int slot = -1;
-        for(int i=0; i < 9; i++){
+        for(int i=0; i < 36; i++){
             if(inv.getItem(i) != null && inv.getItem(i).getItemMeta().getDisplayName().equals(displayName)){
                 slot = i;
                 break;
             }
+        }
+        if(inv.getItem(-106) != null && inv.getItem(-106).getItemMeta().getDisplayName().equals(displayName)){
+            slot = -106;
         }
         return slot;
     }
@@ -74,7 +80,6 @@ public class Utils {
         return commands.contains(command);
     }
     public static ItemStack createBook(String displayname, String...lore){
-        ItemStack book = new ItemStack(Material.WRITABLE_BOOK, 1);
         BookMeta meta = (BookMeta)book.getItemMeta();
         assert meta != null;
         meta.setDisplayName(displayname);
@@ -96,7 +101,6 @@ public class Utils {
         if(!configSounds.isEmpty()){
             configSounds.removeIf(sound -> !isValidSound(sound));
             if(!configSounds.isEmpty()){
-                Random random = new Random(System.currentTimeMillis());
                 int intRandom = random.nextInt(configSounds.size());
 
                 String sound = configSounds.get(intRandom);

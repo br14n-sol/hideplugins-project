@@ -43,12 +43,12 @@ public class PlayerJoinData implements Listener {
                 String result = String.join(", ", ips);
                 players.set("Players."+player.getName()+".ips-history", result);
             }
-            if(config.getBoolean("player-command-history")){
+            if(config.getBoolean("playerCommandHistory")){
                 players.set("Players."+player.getName()+".command-history", "");
             }
             plugin.savePlayers();
         } else if(players.contains("Players."+player.getName())){
-            String history = groups.getString("Players."+player.getName()+".ips-history").replace(" ", "");
+            String history = players.getString("Players."+player.getName()+".ips-history").replace(" ", "");
             List<String> ips = new ArrayList<>(Arrays.asList(history.split(",")));
             if(!ips.contains(player.getAddress().getAddress().getHostAddress())){
                 ips.add(player.getAddress().getAddress().getHostAddress());

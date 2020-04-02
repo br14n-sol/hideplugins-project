@@ -1,9 +1,9 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
-import io.github.complexcodegit.hidepluginsproject.managers.CooldownManager;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Utils;
+import io.github.complexcodegit.hidepluginsproject.managers.CooldownManager;
 import org.bukkit.Particle;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -33,13 +33,13 @@ public class LockedCommands implements Listener {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration groups = plugin.getGroups();
         Player player = event.getPlayer();
-        if(!config.getBoolean("locked-commands")) {
+        if(!config.getBoolean("lockedCommands")) {
             return false;
         }
 
         event.setCancelled(true);
 
-        if(player.isOp() || player.hasPermission(Objects.requireNonNull(config.getString("bypass-permission")))){
+        if(player.isOp() || player.hasPermission(Objects.requireNonNull(config.getString("bypassPermission")))){
             event.setCancelled(false);
             return false;
         }
@@ -60,23 +60,22 @@ public class LockedCommands implements Listener {
                     if(!(pageNumber.equals(command))){
                         if(pages.contains(pageNumber)){
                             for(String pag : groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages."+pageNumber))
-                                player.sendMessage(Utils.colors(pag));
+                                player.sendMessage(Utils.colors(pag).replace("[PAGE]", pageNumber).replace("[LASTPAGE]", String.valueOf(pages.size())));
                         } else {
                             if(config.getBoolean("prefix.enable")){
-                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", pageNumber)));
+                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("helpPageNotExist")).replace("[PAGE]", pageNumber)));
                             } else {
-                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", pageNumber)));
-                            }
-                        }
+                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("helpPageNotExist")).replace("[PAGE]", pageNumber)));
+                            }                        }
                     } else {
                         if(pages.contains("1")){
                             for(String pag : groups.getStringList("groups."+playerGroup+".options.custom-help.worlds."+player.getWorld().getName()+".pages.1"))
-                                player.sendMessage(Utils.colors(pag));
+                                player.sendMessage(Utils.colors(pag).replace("[PAGE]", "1").replace("[LASTPAGE]", String.valueOf(pages.size())));
                         } else {
                             if(config.getBoolean("prefix.enable")){
-                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", "1")));
+                                player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+ Objects.requireNonNull(plugin.getMessages().getString("helpPageNotExist")).replace("[PAGE]", "1")));
                             } else {
-                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("help-page-not-exist")).replace("[PAGE]", "1")));
+                                player.sendMessage(Utils.colors(Objects.requireNonNull(plugin.getMessages().getString("helpPageNotExist")).replace("[PAGE]", "1")));
                             }
                         }
                     }
@@ -88,7 +87,7 @@ public class LockedCommands implements Listener {
                 if(config.getBoolean("cooldown.enable")){
                     CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
                 }
-                if(config.getBoolean("player-command-history") && Utils.checkCommand(command)){
+                if(config.getBoolean("playerCommandHistory") && Utils.checkCommand(command)){
                     if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
                         List<String> list = new ArrayList<>();
                         list.add(command);
@@ -103,11 +102,11 @@ public class LockedCommands implements Listener {
                         players.set("Players."+player.getName()+".command-history", result);
                     }
                 }
-                if(config.getBoolean("warning-message.title.enable")){
-                    player.sendTitle(Utils.colors(config.getString("warning-message.title.top")), Utils.colors(config.getString("warning-message.title.bottom")), 10, 70, 20);
+                if(config.getBoolean("warningMessage.title.enable")){
+                    player.sendTitle(Utils.colors(config.getString("warningMessage.title.top")), Utils.colors(config.getString("warningMessage.title.bottom")), 10, 70, 20);
                 }
-                if(config.getBoolean("warning-message.message.enable")){
-                    for(String line : config.getStringList("warning-message.message.lines")){
+                if(config.getBoolean("warningMessage.message.enable")){
+                    for(String line : config.getStringList("warningMessage.message.lines")){
                         if(config.getBoolean("prefix.enable")){
                             player.sendMessage(Utils.colors(config.getString("prefix.prefix")+" "+line));
                         } else {
@@ -115,10 +114,10 @@ public class LockedCommands implements Listener {
                         }
                     }
                 }
-                if(config.getBoolean("potion-effect.enable")){
-                    PotionEffectType effect = PotionEffectType.getByName(Objects.requireNonNull(config.getString("potion-effect.effect")));
+                if(config.getBoolean("potionEffect.enable")){
+                    PotionEffectType effect = PotionEffectType.getByName(Objects.requireNonNull(config.getString("potionEffect.effect")));
                     assert effect != null;
-                    player.addPotionEffect(new PotionEffect(effect, config.getInt("potion-effect.time")*20, config.getInt("potion-effect.amplifier"), false, false, false));
+                    player.addPotionEffect(new PotionEffect(effect, config.getInt("potionEffect.time")*20, config.getInt("potionEffect.amplifier"), false, false, false));
                 }
                 if(config.getBoolean("particles.enable")){
                     player.spawnParticle(Particle.valueOf(config.getString("particles.particle")), player.getLocation(), config.getInt("particles.amount"));

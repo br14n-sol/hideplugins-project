@@ -9,32 +9,24 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class UpdateCheck {
-    private int project = 0;
     private URL checkURL;
     private String newVersion = "";
     private JavaPlugin plugin;
 
-    public UpdateCheck(JavaPlugin plugin, int projectID) {
+    public UpdateCheck(JavaPlugin plugin) {
         this.plugin = plugin;
         this.newVersion = plugin.getDescription().getVersion();
-        this.project = projectID;
         try {
-            this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
+            this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + 25317);
         } catch (MalformedURLException ignored) {
         }
     }
 
-    public int getProjectID() {
-        return project;
-    }
-    public JavaPlugin getPlugin() {
-        return plugin;
-    }
     public String getLatestVersion() {
         return newVersion;
     }
     public String getResourceURL() {
-        return "https://www.spigotmc.org/resources/" + project;
+        return "https://www.spigotmc.org/resources/" + 25317;
     }
     public boolean checkForUpdates() throws Exception {
         URLConnection con = checkURL.openConnection();

@@ -1,4 +1,0 @@
-custom-commands:
-  /test:
-    description: test
-    usageMessage: /test

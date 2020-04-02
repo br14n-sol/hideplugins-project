@@ -8,21 +8,22 @@
 # ###    ### ###         ###        ###    ###  ########   #####      ##########  ########      ###     #
 #-------------------------------------------------------------------------------------------------------#
 
+# Do you want to check for new updates to HidePlugins Project?
 updates: true
-
-locked-commands: true
-
-tab-usage-permission: 'hidepluginsproject.tabusage'
-
-bypass-permission: 'hidepluginsproject.bypass'
-
-player-command-history: true
-
+# Do you want to protect your commands?
+lockedCommands: true
+# Set up your permission to use the tab suggestions.
+tabUsagePermission: 'hidepluginsproject.tabusage'
+# Set your permission to use the commands.
+bypassPermission: 'hidepluginsproject.bypass'
+# Do you want to record what commands your players use without permission?
+playerCommandHistory: true
+# Set the prefix that will have the messages that the player will receive.
 prefix:
   enable: true
   prefix: "&a&lHPP&7&l>&r"
-
-warning-message:
+# Set the warning messages the player will receive when using a command without permission.
+warningMessage:
   title:
     enable: true
     top: "&e&k2&r&l(ﾉ◕ヮ◕)ﾉ*:･ﾟ &c&lError 404&r&e&k2"
@@ -31,23 +32,23 @@ warning-message:
     enable: true
     lines:
       - '&cYou are not allowed to use that command, contact staff if this is a mistake.'
-
-potion-effect:
+# Set the potion effect the player will receive when using a command without permission.
+potionEffect:
   enable: true
   effect: 'BLINDNESS'
   time: 6
   amplifier: 1
-
+# Set the particle type the player will see when using a command without permission.
 particles:
   enable: true
   particle: 'MOB_APPEARANCE'
   amount: 2
-
+# Set the cooldown time the player will have to wait to use another command after using one without permission.
 cooldown:
   enable: true
   message: "&cYou can't use another command for &f%time% &cseconds."
   time: 6
-
+# Set the sounds the player will receive when using a command without permission.
 sounds:
   enable: true
   list:

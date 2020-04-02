@@ -2,6 +2,7 @@ package io.github.complexcodegit.hidepluginsproject.commands;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
+import io.github.complexcodegit.hidepluginsproject.managers.SelectorManager;
 import io.github.complexcodegit.hidepluginsproject.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -15,14 +16,13 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class ChiefCommand implements CommandExecutor {
-    private HashMap<UUID, String> selectGroup = new HashMap<>();
-    private HashMap<UUID, String> selectWorld = new HashMap<>();
-    private HashMap<UUID, String> selectGlobal = new HashMap<>();
     private HidePluginsProject plugin;
     private GroupManager groupManager;
-    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager){
+    private SelectorManager selectorManager;
+    public ChiefCommand(HidePluginsProject plugin, GroupManager groupManager, SelectorManager selectorManager){
         this.plugin = plugin;
         this.groupManager = groupManager;
+        this.selectorManager = selectorManager;
     }
 
     @SuppressWarnings({"NullableProblems", "ConstantConditions"})
@@ -45,14 +45,14 @@ public class ChiefCommand implements CommandExecutor {
              /hproject help
              */
             if(args[0].equalsIgnoreCase("help")){
-                for(String line : messages.getStringList("help-pages.1"))
+                for(String line : messages.getStringList("helpPages.1"))
                     player.sendMessage(Utils.colors(line));
             }
             /*
              /hproject reload
              */
             else if(args[0].equalsIgnoreCase("reload")) {
-                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("reload-config")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("reloadConfig")));
                 plugin.reloadGroups();
                 plugin.reloadMessages();
                 plugin.reloadPlayers();
@@ -62,17 +62,17 @@ public class ChiefCommand implements CommandExecutor {
              /hproject finish
              */
             else if(args[0].equalsIgnoreCase("finish")) {
-                if(selectGroup.containsKey(player.getUniqueId())) {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-finish").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
-                    selectGroup.remove(player.getUniqueId());
-                    selectWorld.remove(player.getUniqueId());
-                    selectGlobal.remove(player.getUniqueId());
+                if(selectorManager.containsGroup(player)) {
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupFinish").replace("[GROUP]", selectorManager.getGroup(player))));
+                    selectorManager.removeGroup(player);
+                    selectorManager.removeWorld(player);
+                    selectorManager.removeGlobal(player);
                 } else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
             }
         }
         else if(args.length == 2){
@@ -80,12 +80,12 @@ public class ChiefCommand implements CommandExecutor {
              /hproject help <page>
              */
             if(args[0].equalsIgnoreCase("help")){
-                List<String> pages = new ArrayList<>(messages.getConfigurationSection("help-pages").getKeys(false));
+                List<String> pages = new ArrayList<>(messages.getConfigurationSection("helpPages").getKeys(false));
                 if(pages.contains(args[1])){
-                    for(String pag : messages.getStringList("help-pages."+args[1]))
+                    for(String pag : messages.getStringList("helpPages."+args[1]))
                         player.sendMessage(Utils.colors(pag));
                 } else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("page-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("pageDoesNotExist")));
                 }
             }
             /*
@@ -93,27 +93,27 @@ public class ChiefCommand implements CommandExecutor {
              */
             else if(args[0].equalsIgnoreCase("select")) {
                 if(args[1].equalsIgnoreCase("global")) {
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(!selectGlobal.containsKey(player.getUniqueId())) {
-                            if(groups.get("groups." + selectGroup.get(player.getUniqueId()) + ".global", true) != null) {
-                                if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix + Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                    selectWorld.remove(player.getUniqueId());
+                    if(selectorManager.containsGroup(player)) {
+                        if(!selectorManager.containsGlobal(player)) {
+                            if(groups.get("groups." + selectorManager.getGroup(player) + ".global", true) != null) {
+                                if(selectorManager.containsWorld(player)) {
+                                    player.sendMessage(plugin.prefix + Utils.colors(messages.getString("worldDeselected").replace("[WORLD]", selectorManager.getWorld(player))));
+                                    selectorManager.removeWorld(player);
                                 }
-                                selectGlobal.put(player.getUniqueId(), "global");
-                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-selected")));
+                                selectorManager.putGlobal(player, "global");
+                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalSelected")));
                             } else {
-                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-not-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalNotExist").replace("[GROUP]", selectorManager.getGroup(player))));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("global-already-selected")));
+                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalAlreadySelected")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix + Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix + Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
@@ -124,27 +124,27 @@ public class ChiefCommand implements CommandExecutor {
                  /hproject add <commands, tabs>
                  */
                 if(args[1].equalsIgnoreCase("commands") || args[1].equalsIgnoreCase("tabs")){
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
+                    if(selectorManager.containsGroup(player)) {
+                        if(selectorManager.containsWorld(player) || selectorManager.containsGlobal(player)) {
                             if(Utils.getItem("§aAdd Commands §8- §7HidePlugins Project", player) != null ||
                                     Utils.getItem("§aAdd Tabs §8- §7HidePlugins Project", player) != null){
-                                player.sendMessage(plugin.prefix+messages.getString("already-have-book"));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("alreadyHaveBook")));
                                 return false;
                             }
 
                             int slot = Utils.slotFree(player);
                             if(slot != -1){
                                 if(args[1].equalsIgnoreCase("commands")){
-                                    if(selectWorld.containsKey(player.getUniqueId())){
-                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
+                                    if(selectorManager.containsWorld(player)){
+                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getWorld(player)));
                                     } else {
-                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getGlobal(player)));
                                     }
                                 } else {
-                                    if(selectWorld.containsKey(player.getUniqueId())){
-                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
+                                    if(selectorManager.containsWorld(player)){
+                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getWorld(player)));
                                     } else {
-                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                        player.getInventory().setItem(slot, Utils.createBook("§aAdd Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getGlobal(player)));
                                     }
                                 }
                                 if(player.getInventory().getHeldItemSlot() == slot){
@@ -157,36 +157,36 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+messages.getString("have-no-space-in-hotbar"));
+                                player.sendMessage(plugin.prefix+messages.getString("haveNoSpaceInHotbar"));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("select-world-or-global")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("selectWorldOrGlobal")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 /*
                  /hproject add global
                  */
-                if(args[1].equalsIgnoreCase("global")) {
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(!groups.contains("groups."+selectGroup.get(player.getUniqueId())+".global", true)) {
-                            selectGlobal.put(player.getUniqueId(), "global");
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-added").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
-                            groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.commands", "");
-                            groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".global.tab", "");
+                else if(args[1].equalsIgnoreCase("global")) {
+                    if(selectorManager.containsGroup(player)) {
+                        if(!groups.contains("groups."+selectorManager.getGroup(player)+".global", true)) {
+                            selectorManager.putGlobal(player, "global");
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("globalAdded").replace("[GROUP]", selectorManager.getGroup(player))));
+                            groups.set("groups." + selectorManager.getGroup(player) + ".global.commands", "");
+                            groups.set("groups." + selectorManager.getGroup(player) + ".global.tab", "");
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-already-exist")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("globalAlreadyExist")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
@@ -194,27 +194,27 @@ public class ChiefCommand implements CommandExecutor {
              */
             else if(args[0].equalsIgnoreCase("remove")){
                 if(args[1].equalsIgnoreCase("commands") || args[1].equalsIgnoreCase("tabs")){
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        if(selectWorld.containsKey(player.getUniqueId()) || selectGlobal.containsKey(player.getUniqueId())) {
+                    if(selectorManager.containsGroup(player)) {
+                        if(selectorManager.containsWorld(player) || selectorManager.containsGlobal(player)) {
                             if(Utils.getItem("§aRemove Commands §8- §7HidePlugins Project", player) != null ||
                                     Utils.getItem("§aRemove Tabs §8- §7HidePlugins Project", player) != null){
-                                player.sendMessage(plugin.prefix+messages.getString("already-have-book"));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("alreadyHaveBook")));
                                 return false;
                             }
 
                             int slot = Utils.slotFree(player);
                             if(slot != -1){
                                 if(args[1].equalsIgnoreCase("commands")){
-                                    if(selectWorld.containsKey(player.getUniqueId())){
-                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
+                                    if(selectorManager.containsWorld(player)){
+                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getWorld(player)));
                                     } else {
-                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Commands §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getGlobal(player)));
                                     }
                                 } else {
-                                    if(selectWorld.containsKey(player.getUniqueId())){
-                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectWorld.get(player.getUniqueId())));
+                                    if(selectorManager.containsWorld(player)){
+                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getWorld(player)));
                                     } else {
-                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectGroup.get(player.getUniqueId()), "§eWorld: §r"+selectGlobal.get(player.getUniqueId())));
+                                        player.getInventory().setItem(slot, Utils.createBook("§aRemove Tabs §8- §7HidePlugins Project", "§eGroup: §r"+selectorManager.getGroup(player), "§eWorld: §r"+selectorManager.getGlobal(player)));
                                     }
                                 }
                                 if(player.getInventory().getHeldItemSlot() == slot){
@@ -227,21 +227,21 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+messages.getString("have-no-space-in-hotbar"));
+                                player.sendMessage(plugin.prefix+messages.getString("haveNoSpaceInHotbar"));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("select-world-or-global")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("selectWorldOrGlobal")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
             }
         }
         else if(args.length == 3) {
@@ -253,71 +253,74 @@ public class ChiefCommand implements CommandExecutor {
                  /hproject add inherit [inheritname]
                  */
                 if(args[1].equalsIgnoreCase("inherit")){
-                    if(selectGroup.containsKey(player.getUniqueId())) {
+                    if(selectorManager.containsGroup(player)) {
                         if(groupList.contains(args[2])){
-                            if(!args[2].equals(selectGroup.get(player.getUniqueId()))){
-                                if(groups.contains("groups."+selectGroup.get(player.getUniqueId())+".options.inheritances", true)){
-                                    String inherit = groups.getString("groups." + selectGroup.get(player.getUniqueId()) + ".options.inheritances").replace(" ", "");
-                                    List<String> list = new ArrayList<>(Arrays.asList(inherit.split(",")));
+                            if(!args[2].equals(selectorManager.getGroup(player))){
+                                if(groups.contains("groups."+selectorManager.getGroup(player)+".options.inheritances", true)){
+                                    List<String> list = new ArrayList<>();
+                                    if(!groups.getString("groups." + selectorManager.getGroup(player) + ".options.inheritances").equals("")){
+                                        String inherit = groups.getString("groups." + selectorManager.getGroup(player) + ".options.inheritances").replace(" ", "");
+                                        list.addAll(Arrays.asList(inherit.split(",")));
+                                    }
                                     if(!list.contains(args[2])){
                                         list.add(args[2]);
-                                        groups.set("groups."+selectGroup.get(player.getUniqueId())+".options.inheritances", String.join(", ", list));
+                                        groups.set("groups."+selectorManager.getGroup(player)+".options.inheritances", String.join(", ", list));
                                         plugin.saveGroups();
                                         plugin.reloadGroups();
-                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-added").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritAdded").replace("[INHERIT]", args[2]).replace("[GROUP]", selectorManager.getGroup(player))));
                                     } else {
-                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-already-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[INHERIT]", args[2])));
+                                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritAlreadyExist").replace("[GROUP]", selectorManager.getGroup(player)).replace("[INHERIT]", args[2])));
                                     }
                                 } else {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-added").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
-                                    groups.set("groups."+selectGroup.get(player.getUniqueId())+".options.inheritances", args[2]);
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritAdded").replace("[INHERIT]", args[2]).replace("[GROUP]", selectorManager.getGroup(player))));
+                                    groups.set("groups."+selectorManager.getGroup(player)+".options.inheritances", args[2]);
                                     plugin.saveGroups();
                                     plugin.reloadGroups();
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritNotValid")));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupNotExist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 /*
                  /hproject add world [worldname]
                  */
-                if(args[1].equalsIgnoreCase("world")) {
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        List<String> groupWorlds = groupManager.getGroupWorlds(selectGroup.get(player.getUniqueId()));
+                else if(args[1].equalsIgnoreCase("world")) {
+                    if(selectorManager.containsGroup(player)) {
+                        List<String> groupWorlds = groupManager.getGroupWorlds(selectorManager.getGroup(player));
                         if(serverWorlds.contains(args[2])) {
                             if(!groupWorlds.contains(args[2])) {
-                                if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                    selectWorld.remove(player.getUniqueId());
+                                if(selectorManager.containsWorld(player)) {
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldDeselected").replace("[WORLD]", selectorManager.getWorld(player))));
+                                    selectorManager.removeWorld(player);
                                 }
-                                if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-deselected")));
-                                    selectGlobal.remove(player.getUniqueId());
+                                if(selectorManager.containsGlobal(player)) {
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("globalDeselected")));
+                                    selectorManager.removeGlobal(player);
                                 }
-                                selectWorld.put(player.getUniqueId(), args[2]);
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-added").replace("[WORLD]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
-                                groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + args[2] + ".commands", "");
-                                groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".worlds." + args[2] + ".tab", "");
+                                selectorManager.putWorld(player, args[2]);
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldAdded").replace("[WORLD]", args[2]).replace("[GROUP]", selectorManager.getGroup(player))));
+                                groups.set("groups." + selectorManager.getGroup(player) + ".worlds." + args[2] + ".commands", "");
+                                groups.set("groups." + selectorManager.getGroup(player) + ".worlds." + args[2] + ".tab", "");
                                 plugin.saveGroups();
                                 plugin.reloadGroups();
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-already-exist").replace("[GROUP]", selectGroup.get(player.getUniqueId())).replace("[WORLD]", args[2])));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldAlreadyExist").replace("[GROUP]", selectorManager.getGroup(player)).replace("[WORLD]", args[2])));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-server-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldServerNotExist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
@@ -325,32 +328,32 @@ public class ChiefCommand implements CommandExecutor {
              */
             else if(args[0].equalsIgnoreCase("remove")){
                 if(args[1].equalsIgnoreCase("inherit")){
-                    if(selectGroup.containsKey(player.getUniqueId())) {
+                    if(selectorManager.containsGroup(player)) {
                         if(groupList.contains(args[2])){
-                            if(!args[2].equals(selectGroup.get(player.getUniqueId()))){
-                                if(groupManager.getInherit(selectGroup.get(player.getUniqueId())).contains(args[2])) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit.removed").replace("[INHERIT]", args[2]).replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
-                                    String inherit = groups.getString("groups." + selectGroup.get(player.getUniqueId()) + ".options.inheritances").replace(" ", "");
+                            if(!args[2].equals(selectorManager.getGroup(player))){
+                                if(groupManager.getInherit(selectorManager.getGroup(player)).contains(args[2])) {
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritRemoved").replace("[INHERIT]", args[2]).replace("[GROUP]", selectorManager.getGroup(player))));
+                                    String inherit = groups.getString("groups." + selectorManager.getGroup(player) + ".options.inheritances").replace(" ", "");
                                     List<String> list = new ArrayList<>(Arrays.asList(inherit.split(",")));
                                     list.remove(args[2]);
-                                    groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".options.inheritances", String.join(", ", list));
+                                    groups.set("groups." + selectorManager.getGroup(player) + ".options.inheritances", String.join(", ", list));
                                     plugin.saveGroups();
                                     plugin.reloadGroups();
                                 } else {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritNotValid")));
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inherit-not-valid")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("inheritNotValid")));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupNotExist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
@@ -361,69 +364,85 @@ public class ChiefCommand implements CommandExecutor {
                  /hproject select world [worldname]
                  */
                 if(args[1].equalsIgnoreCase("world")) {
-                    if(selectGroup.containsKey(player.getUniqueId())) {
-                        List<String> groupWorlds = groupManager.getGroupWorlds(selectGroup.get(player.getUniqueId()));
+                    if(selectorManager.containsGroup(player)) {
+                        List<String> groupWorlds = groupManager.getGroupWorlds(selectorManager.getGroup(player));
                         if(serverWorlds.contains(args[2])) {
                             if(groupWorlds.contains(args[2])) {
-                                if(selectWorld.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-deselected").replace("[WORLD]", selectWorld.get(player.getUniqueId()))));
-                                    selectWorld.remove(player.getUniqueId());
+                                if(selectorManager.containsWorld(player)) {
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldDeselected").replace("[WORLD]", selectorManager.getWorld(player))));
+                                    selectorManager.removeWorld(player);
                                 }
-                                if(selectGlobal.containsKey(player.getUniqueId())) {
-                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("global-deselected")));
-                                    selectGlobal.remove(player.getUniqueId());
+                                if(selectorManager.containsGlobal(player)) {
+                                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("globalDeselected")));
+                                    selectorManager.removeGlobal(player);
                                 }
-                                selectWorld.put(player.getUniqueId(), args[2]);
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-selected").replace("[WORLD]", args[2])));
+                                selectorManager.putWorld(player, args[2]);
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldSelected").replace("[WORLD]", args[2])));
                             } else {
-                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-not-exist")));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldNotExist").replace("[WORLD]", args[2])));
                             }
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("world-server-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("worldServerNotExist").replace("[WORLD]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 /*
                  /hproject select group [groupname]
                  */
                 else if(args[1].equalsIgnoreCase("group")) {
-                    if(!selectGroup.containsKey(player.getUniqueId())) {
+                    if(!selectorManager.containsGroup(player)) {
                         if(groupList.contains(args[2])) {
-                            selectGroup.put(player.getUniqueId(), args[2]);
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-selected").replace("[GROUP]", args[2])));
+                            selectorManager.putGroup(player, args[2]);
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelected").replace("[GROUP]", args[2])));
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-not-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupNotExist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-end-first").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupEndFirst").replace("[GROUP]", selectorManager.getGroup(player))));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
-             /hproject set help [true, false]
+             /hproject set <help, permission> <[true, false], [permission]>
              */
             else if(args[0].equalsIgnoreCase("set")) {
+                /*
+                 /hproject set help [true, false]
+                 */
                 if(args[1].equalsIgnoreCase("help")) {
-                    if(selectGroup.containsKey(player.getUniqueId())) {
+                    if(selectorManager.containsGroup(player)) {
                         if(args[2].equals("true") || args[2].equals("false")) {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("help-set").replace("[BOOLEAN]", args[2])));
-                            groups.set("groups." + selectGroup.get(player.getUniqueId()) + ".options.custom-help.enable", Boolean.valueOf(args[2]));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("helpSet").replace("[BOOLEAN]", args[2])));
+                            groups.set("groups." + selectorManager.getGroup(player) + ".options.custom-help.enable", Boolean.valueOf(args[2]));
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("help-set-not-valid")));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("setNotValid")));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-select-first")));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
+                    }
+                }
+                /*
+                 /hproject set permission [permission]
+                 */
+                else if(args[1].equalsIgnoreCase("permission")){
+                    if(selectorManager.containsGroup(player)){
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSetPermission").replace("[PERMISSION]", args[2])));
+                        groups.set("groups." + selectorManager.getGroup(player) + ".options.permission", args[2]);
+                        plugin.saveGroups();
+                        plugin.reloadGroups();
+                    } else {
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSelectFirst")));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             /*
@@ -431,33 +450,36 @@ public class ChiefCommand implements CommandExecutor {
              */
             else if(args[0].equalsIgnoreCase("create")) {
                 if(args[1].equalsIgnoreCase("group")) {
-                    if(!selectGroup.containsKey(player.getUniqueId())) {
+                    if(!selectorManager.containsGroup(player)) {
                         if(!groupList.contains(args[2])) {
-                            selectGroup.put(player.getUniqueId(), args[2]);
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-created").replace("[GROUP]", args[2])));
+                            selectorManager.putGroup(player, args[2]);
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupCreated").replace("[GROUP]", args[2])));
                             groups.set("groups." + args[2] + ".options.inheritances", "");
+                            groups.set("groups." + args[2] + ".options.permission", "hidepluginsproject.group."+args[2]);
                             groups.set("groups." + args[2] + ".options.custom-help.enable", true);
                             groups.createSection("groups."+args[2]+".options.custom-help.worlds");
+                            groups.set("groups."+args[2]+".global.commands", "");
+                            groups.set("groups."+args[2]+".global.tab", "");
                             groups.createSection("groups."+args[2]+".worlds");
                             plugin.saveGroups();
                             plugin.reloadGroups();
                         } else {
-                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-already-exist").replace("[GROUP]", args[2])));
+                            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupAlreadyExist").replace("[GROUP]", args[2])));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("group-end-first").replace("[GROUP]", selectGroup.get(player.getUniqueId()))));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupEndFirst").replace("[GROUP]", selectorManager.getGroup(player))));
                     }
                 }
                 else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
                 }
             }
             else {
-                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
             }
         }
         else {
-            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("command-does-not-exist")));
+            player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
         }
         return false;
     }

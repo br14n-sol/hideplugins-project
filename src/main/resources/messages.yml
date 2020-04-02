@@ -1,92 +1,87 @@
-#
-# HidePlugins Project Messages
-#
-help-pages:
+#-------------------------------------------------------------------------------------------------------#
+# :::    ::: :::::::::   :::::::::  :::::::::   ::::::::  ::::::::::: ::::::::::  ::::::::  ::::::::::: #
+# :+:    :+: :+:    :+:  :+:    :+: :+:    :+: :+:    :+:     :+:     :+:        :+:    :+:     :+:     #
+# +:+    +:+ +:+    +:+  +:+    +:+ +:+    +:+ +:+    +:+     +:+     +:+        +:+            +:+     #
+# +#++:++#++ +#++:++#+   +#++:++#+  +#++:++#:  +#+    +:+     +#+     +#++:++#   +#+            +#+     #
+# +#+    +#+ +#+         +#+        +#+    +#+ +#+    +#+     +#+     +#+        +#+            +#+     #
+# #+#    #+# #+#         #+#        #+#    #+# #+#    #+# #+# #+#     #+#        #+#    #+#     #+#     #
+# ###    ### ###         ###        ###    ###  ########   #####      ##########  ########      ###     #
+#-------------------------------------------------------------------------------------------------------#
+
+# Help command messages. (/hp help)
+helpPages:
   '1':
     - '&e&lHidePlugins Project &7Options: [] = Required'
+    - '  &a>> &f/hp select group &7[NAME] &8- &6Select a group!'
+    - '  &a>> &f/hp create group &7[NAME] &8- &6Create a new group!'
     - ''
-    - '    &a>> &f/hp select group &7[NAME] &8- &6Select a group!'
-    - '    &a>> &f/hp create group &7[NAME] &8- &6Create a new group!'
-    - '    &a>> &f/hp set group &7[NAME] [BOOLEAN] &8- &6Enable or disable a group!'
-    - ''
-    - '    &e>> &f/hp reload &8- &6Use it to reload the configuration.'
-    - ''
+    - '  &e>> &f/hp reload &8- &6Use it to reload the configuration.'
     - '&cTo view the second help page, use &e/hp help 2'
   '2':
     - '&e&lGroup Commands &7Options: [] = Required'
+    - '  &a>> &f/hp select world &7[NAME] &8- &6To select a world.'
+    - '  &a>> &f/hp add world &7[NAME] &8- &6To add a world.'
+    - '  &a>> &f/hp select global &8- &6Select the global subgroup.'
+    - '  &a>> &f/hp add global &8- &6Add the global subgroup.'
+    - '  &a>> &f/hp add inherit &7[NAME] &8- &6Add an inheritance.'
     - ''
-    - '    &a>> &f/hp select world &7[NAME] &8- &6To select a world.'
-    - '    &a>> &f/hp set world &7[NAME] &8- &6To add a world.'
-    - '    &a>> &f/hp select global &8- &6Select the global subgroup.'
-    - '    &a>> &f/hp set global &8- &6Add the global subgroup.'
-    - '    &a>> &f/hp add inherit &7[NAME] &8- &6Add an inheritance.'
-    - '    &a>> &f/hp set help &7[BOOLEAN] &8- &6True or false customhelp.'
+    - '  &e>> &f/hp set help &7[VALUE] &8- &6Enable or disable customhelp.'
+    - '  &e>> &f/hp remove inherit &7[NAME] &8- &6Remove an inheritance.'
     - ''
-    - '    &e>> &f/hp set world &7[NAME] [BOOLEAN] &8- &6Enable or disable a world.'
-    - '    &e>> &f/hp set global &7[BOOLEAN] &8- &6Enable or disable the global subgroup.'
-    - '    &e>> &f/hp remove inherit &7[NAME] &8- &6Remove an inheritance.'
-    - ''
-    - '    &c>> &f/hp finish &8- &6To finish editing the group.'
-    - ''
+    - '  &c>> &f/hp finish &8- &6To finish editing the group.'
     - '&cTo view the third help page, use &e/hp help 3'
   '3':
     - '&e&lGlobal and World Commands &7Options: [] = Required'
+    - '  &a>> &f/hp add commands &8- &6To add commands.'
+    - '  &a>> &f/hp add tabs &8- &6To add tab suggestions.'
     - ''
-    - '    &a>> &f/hp add commands &8- &6To add commands.'
-    - '    &a>> &f/hp add tabs &8- &6To add tab suggestions.'
-    - ''
-    - '    &e>> &f/hp remove commands &8- &6To remove commands.'
-    - '    &e>> &f/hp remove tabs &8- &6To remove tab suggestions.'
-    - ''
+    - '  &e>> &f/hp remove commands &8- &6To remove commands.'
+    - '  &e>> &f/hp remove tabs &8- &6To remove tab suggestions.'
     - '&cThis is the last help page.'
-page-does-not-exist: "&7The page does not exist, use the command &e/hp help"
-
-reload-config: "&7Configuration files reloaded successfully."
-
-group-created: "&e&l[GROUP] &7was created successfully, to see the available commands use: &e/hp help 2"
-group-already-exist: "&c&l[GROUP] &7already exists."
-group-selected: "&e&l[GROUP] &7was selected correctly, to see the available commands use: &e/hp help 2"
-group-finish: "&e&l[GROUP] &7has been finalized."
-group-not-exist: "&c&l[GROUP] &7does not exist."
-group-select-first: "&7You must select a group first."
-group-end-first: "&7Before selecting another group, first end with the &e&l[GROUP]&7."
-
-global-added: "&e&lGlobal &7subgroup was successfully added to the &e&l[GROUP] &7group, to see the available commands use: &e/hp help 3"
-global-already-exist: "&e&lGlobal &7subgroup already exists in the group, to select it use &e/hp select global"
-global-selected: "&e&lGlobal &7subgroup was selected correctly, to see the available commands use: &e/hp help 3"
-global-already-selected: "&7You already have the &e&lGlobal &7subgroup selected!"
-global-deselected: "&c&lGlobal &7subgroup is no longer selected."
-global-not-exist: "&e&l[GROUP] &7does not own the &c&lGlobal &7subgroup."
-
-world-added: "&e&l[WORLD] &7was successfully added to the &e&l[GROUP] &7group, to see the available commands use: &e/hp help 3"
-world-already-exist: "&e&l[GROUP] &7already has the &c&l[WORLD]&7."
-world-selected: "&e&l[WORLD] &7was selected correctly, to see the available commands use: &e/hp help 3"
-world-deselected: "&c&l[WORLD] &7is no longer selected."
-world-not-exist: "&7The group does not have the &c&l[WORLD]&7."
-world-server-not-exist: "&c&l[WORLD] &7does not exist on the server."
-
-inherit-added: "&e&l[INHERIT] &7was successfully added to the inheritance of the &e&l[GROUP]&7."
-inherit-removed: "&e&l[INHERIT] &7was removed from the inheritance of the &e&l[GROUP]&7."
-inherit-already-exist: "&e&l[GROUP] &7already inherits the &e&l[INHERIT]&7."
-inherit-not-valid: "&7The inheritance you entered is not valid."
-
-help-set: "&7The custom help was configured correctly as: &e[BOOLEAN]"
-help-set-not-valid: "&7The option you entered is not valid."
-help-page-not-exist: "&7The &c[PAGE] &7page does not exist."
-
-commands-added: "&acommands added successfully."
-commands-removed: "&acommands remove successfully."
-command-added: "&acommand was successfully added."
-command-removed: "&acommand was successfully remove."
-commands-not-valid: "&ccommands are not valid."
-command-not-valid: "&ccommand is invalid."
-commands-already-exist: "&ecommands were already configured."
-commands-not-exist: "&ecommands are not configured."
-command-already-exist: "&ecommand was already configured."
-command-not-exist: "&ecommand is not configured."
-
-already-have-book: "&7You already have a book."
-have-no-space-in-hotbar: "&7There is no space in your hotbar."
-select-world-or-global: "&7First select a world or the global subgroup."
-
-command-does-not-exist: "&7The command you entered does not exist."
+pageDoesNotExist: "&7The page does not exist, use the command &e/hp help"
+# Reload command message. (/hp reload)
+reloadConfig: "&7Configuration files reloaded successfully."
+# Group messages.
+groupCreated: "&e&l[GROUP] &7was created successfully, to see the available commands use: &e/hp help 2"
+groupAlreadyExist: "&c&l[GROUP] &7already exists."
+groupSelected: "&e&l[GROUP] &7was selected correctly, to see the available commands use: &e/hp help 2"
+groupFinish: "&e&l[GROUP] &7has been finalized."
+groupNotExist: "&c&l[GROUP] &7does not exist."
+groupSelectFirst: "&7You must select a group first."
+groupEndFirst: "&7Before selecting another group, first end with the &e&l[GROUP]&7."
+# Global subgroup messages.
+globalAdded: "&e&lGlobal &7subgroup was successfully added to the &e&l[GROUP] &7group, to see the available commands use: &e/hp help 3"
+globalAlreadyExist: "&e&lGlobal &7subgroup already exists in the group, to select it use &e/hp select global"
+globalSelected: "&e&lGlobal &7subgroup was selected correctly, to see the available commands use: &e/hp help 3"
+globalAlreadySelected: "&7You already have the &e&lGlobal &7subgroup selected!"
+globalDeselected: "&c&lGlobal &7subgroup is no longer selected."
+globalNotExist: "&e&l[GROUP] &7does not own the &c&lGlobal &7subgroup."
+# World messages.
+worldAdded: "&e&l[WORLD] &7was successfully added to the &e&l[GROUP] &7group, to see the available commands use: &e/hp help 3"
+worldAlreadyExist: "&e&l[GROUP] &7already has the &c&l[WORLD]&7."
+worldSelected: "&e&l[WORLD] &7was selected correctly, to see the available commands use: &e/hp help 3"
+worldDeselected: "&c&l[WORLD] &7is no longer selected."
+worldNotExist: "&7The group does not have the &c&l[WORLD]&7."
+worldServerNotExist: "&c&l[WORLD] &7does not exist on the server."
+# Inherit messages.
+inheritAdded: "&e&l[INHERIT] &7was successfully added to the inheritance of the &e&l[GROUP]&7."
+inheritRemoved: "&e&l[INHERIT] &7was removed from the inheritance of the &e&l[GROUP]&7."
+inheritAlreadyExist: "&e&l[GROUP] &7already inherits the &e&l[INHERIT]&7."
+inheritNotValid: "&7The inheritance you entered is not valid."
+# Custom help messages.
+helpSet: "&7The custom help was configured correctly as: &e[BOOLEAN]"
+helpPageNotExist: "&7The &c[PAGE] &7page does not exist."
+# Add and remove commands, messages.
+commandsAdded: "&acommands added successfully."
+commandsRemoved: "&acommands remove successfully."
+commandsNotValid: "&ccommands are not valid."
+commandsAlreadyExist: "&ecommands were already configured."
+commandsNotExist: "&ecommands are not configured."
+# Give book message to add or remove commands.
+alreadyHaveBook: "&7You already have a book."
+haveNoSpaceInHotbar: "&7There is no space in your hotbar."
+selectWorldOrGlobal: "&7First select a world or the global subgroup."
+# Error message of a pair of commands that need a Boolean data. (true or false)
+setNotValid: "&7The option you entered is not valid."
+# Message when the command does not exist.
+commandDoesNotExist: "&7The command you entered does not exist."

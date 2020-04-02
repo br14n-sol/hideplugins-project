@@ -1,7 +1,6 @@
 groups:
   default:
     options:
-      enable: true
       default: true
       custom-help:
         enable: true
@@ -9,29 +8,43 @@ groups:
           world:
             pages:
               '1':
-                - 'line1..'
-                - 'line2..'
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/about: &fGets the version of this server including any plugins in use'
+                - '&6/help: &fShows the help menu'
+                - '&6/tell: &fA Mojang provided command'
+          world_nether:
+            pages:
+              '1':
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/about: &fGets the version of this server including any plugins in use'
+                - '&6/help: &fShows the help menu'
+                - '&6/msg: &fA Mojang provided command'
+          world_the_end:
+            pages:
+              '1':
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/about: &fGets the version of this server including any plugins in use'
+                - '&6/help: &fShows the help menu'
+                - '&6/?: &fCommand help aliases'
     global:
-      enable: true
-      commands: /about
-      tab: /about
+      commands: /about, /help
+      tab: /about, /help
     worlds:
       world:
-        enable: true
-        commands: /help, /tell
-        tab: /help, /tell
+        commands: /tell
+        tab: /tell
       world_nether:
-        enable: true
         commands: /msg
         tab: /msg
       world_the_end:
-        enable: true
         commands: /?
         tab: /?
   members:
     options:
-      enable: true
-      default: true
+      inheritances: default
       permission: 'hidepluginsproject.group.members'
       custom-help:
         enable: true
@@ -39,22 +52,38 @@ groups:
           world:
             pages:
               '1':
-                - 'line1..'
-                - 'line2..'
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/fill: &fFills all or parts of a region with a specific block'
+                - '&6/help: &fShows the help menu'
+                - '&6/setblock: &fA Mojang provided command'
+                - '&6/tp: &fA Mojang provided command'
+          world_nether:
+            pages:
+              '1':
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/fill: &fFills all or parts of a region with a specific block'
+                - '&6/help: &fShows the help menu'
+                - '&6/test: &fTest'
+          world_the_end:
+            pages:
+              '1':
+                - '&e&m------------------&r &fHelp: Index ([PAGE]/[LASTPAGE]) &e&m------------------'
+                - '&7Type /help [n] to get page n of help'
+                - '&6/fill: &fFills all or parts of a region with a specific block'
+                - '&6/help: &fShows the help menu'
+                - '&6/time: &fA Mojang provided command'
     global:
-      enable: true
-      commands: /fill
-      tab: /fill
+      commands: /fill, /help
+      tab: /fill, /help
     worlds:
       world:
-        enable: true
         commands: /setblock, /tp
         tab: /setblock, /tp
       world_nether:
-        enable: true
         commands: /test
         tab: /test
       world_the_end:
-        enable: true
         commands: /time
         tab: /time

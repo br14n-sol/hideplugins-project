@@ -26,8 +26,8 @@ public class TabCompletes implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public boolean onCommandTabSend(PlayerCommandSendEvent event) {
         Player player = event.getPlayer();
-        if(plugin.getConfig().getBoolean("locked-commands")) {
-            if(player.isOp() || player.hasPermission(Objects.requireNonNull(plugin.getConfig().getString("tab-usage-permission")))){
+        if(plugin.getConfig().getBoolean("lockedCommands")) {
+            if(player.isOp() || player.hasPermission(Objects.requireNonNull(plugin.getConfig().getString("tabUsagePermission")))){
                 return false;
             }
             event.getCommands().clear();
