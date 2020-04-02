@@ -89,31 +89,26 @@ public class ChiefCommand implements CommandExecutor {
                 }
             }
             /*
-             /hproject select <global>
+             /hproject select global
              */
-            else if(args[0].equalsIgnoreCase("select")) {
-                if(args[1].equalsIgnoreCase("global")) {
-                    if(selectorManager.containsGroup(player)) {
-                        if(!selectorManager.containsGlobal(player)) {
-                            if(groups.get("groups." + selectorManager.getGroup(player) + ".global", true) != null) {
-                                if(selectorManager.containsWorld(player)) {
-                                    player.sendMessage(plugin.prefix + Utils.colors(messages.getString("worldDeselected").replace("[WORLD]", selectorManager.getWorld(player))));
-                                    selectorManager.removeWorld(player);
-                                }
-                                selectorManager.putGlobal(player, "global");
-                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalSelected")));
-                            } else {
-                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalNotExist").replace("[GROUP]", selectorManager.getGroup(player))));
+            else if(args[0].equalsIgnoreCase("select") && args[1].equalsIgnoreCase("global")) {
+                if(selectorManager.containsGroup(player)) {
+                    if(!selectorManager.containsGlobal(player)) {
+                        if(groups.get("groups." + selectorManager.getGroup(player) + ".global", true) != null) {
+                            if(selectorManager.containsWorld(player)) {
+                                player.sendMessage(plugin.prefix + Utils.colors(messages.getString("worldDeselected").replace("[WORLD]", selectorManager.getWorld(player))));
+                                selectorManager.removeWorld(player);
                             }
+                            selectorManager.putGlobal(player, "global");
+                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalSelected")));
                         } else {
-                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalAlreadySelected")));
+                            player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalNotExist").replace("[GROUP]", selectorManager.getGroup(player))));
                         }
                     } else {
-                        player.sendMessage(plugin.prefix + Utils.colors(messages.getString("groupSelectFirst")));
+                        player.sendMessage(plugin.prefix + Utils.colors(messages.getString("globalAlreadySelected")));
                     }
-                }
-                else {
-                    player.sendMessage(plugin.prefix+Utils.colors(messages.getString("commandDoesNotExist")));
+                } else {
+                    player.sendMessage(plugin.prefix + Utils.colors(messages.getString("groupSelectFirst")));
                 }
             }
             /*
@@ -433,7 +428,7 @@ public class ChiefCommand implements CommandExecutor {
                  */
                 else if(args[1].equalsIgnoreCase("permission")){
                     if(selectorManager.containsGroup(player)){
-                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSetPermission").replace("[PERMISSION]", args[2])));
+                        player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupSetPermission").replace("[GROUP]", selectorManager.getGroup(player)).replace("[PERMISSION]", args[2])));
                         groups.set("groups." + selectorManager.getGroup(player) + ".options.permission", args[2]);
                         plugin.saveGroups();
                         plugin.reloadGroups();

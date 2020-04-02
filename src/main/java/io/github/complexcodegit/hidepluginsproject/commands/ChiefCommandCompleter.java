@@ -144,41 +144,37 @@ public class ChiefCommandCompleter implements TabCompleter {
                 /*
                  /hproject set help <true, false>
                  */
-                if(args[0].equalsIgnoreCase("set")){
-                    if(args[1].equalsIgnoreCase("help")){
-                        List<String> arguments = new ArrayList<>();
-                        List<String> completes = new ArrayList<>();
-                        arguments.add("true"); arguments.add("false");
-                        if(!args[2].equals("")){
-                            for(String argument : arguments){
-                                if(argument.toLowerCase().startsWith(args[2].toLowerCase())){
-                                    completes.add(argument);
-                                }
+                if(args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("help")){
+                    List<String> arguments = new ArrayList<>();
+                    List<String> completes = new ArrayList<>();
+                    arguments.add("true"); arguments.add("false");
+                    if(!args[2].equals("")){
+                        for(String argument : arguments){
+                            if(argument.toLowerCase().startsWith(args[2].toLowerCase())){
+                                completes.add(argument);
                             }
-                        } else {
-                            completes.addAll(arguments);
                         }
-                        return completes;
+                    } else {
+                        completes.addAll(arguments);
                     }
+                    return completes;
                 }
                 /*
                  /hproject select group [name]
                  */
-                else if(args[0].equalsIgnoreCase("select")){
-                    if(args[1].equalsIgnoreCase("group")){
-                        List<String> arguments = groupManager.getGroups();
-                        List<String> completes = new ArrayList<>();
-                        if(!args[2].equals("")){
-                            for(String argument : arguments){
-                                if(argument.toLowerCase().startsWith(args[2].toLowerCase())){
-                                    completes.add(argument);
-                                }
+                else if(args[0].equalsIgnoreCase("select") && args[1].equalsIgnoreCase("group")){
+                    List<String> arguments = groupManager.getGroups();
+                    List<String> completes = new ArrayList<>();
+                    if(!args[2].equals("")){
+                        for(String argument : arguments){
+                            if(argument.toLowerCase().startsWith(args[2].toLowerCase())){
+                                completes.add(argument);
                             }
-                        } else {
-                            completes.addAll(arguments);
                         }
-                        return completes;
+                    } else {
+                        completes.addAll(arguments);
                     }
+                    return completes;
                 }
             }
         }

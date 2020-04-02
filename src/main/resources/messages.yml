@@ -47,6 +47,7 @@ groupAlreadyExist: "&c&l[GROUP] &7already exists."
 groupSelected: "&e&l[GROUP] &7was selected correctly, to see the available commands use: &e/hp help 2"
 groupFinish: "&e&l[GROUP] &7has been finalized."
 groupNotExist: "&c&l[GROUP] &7does not exist."
+groupSetPermission: "&7The &e&l[GROUP] &7permission was configured as: &e[PERMISSION]"
 groupSelectFirst: "&7You must select a group first."
 groupEndFirst: "&7Before selecting another group, first end with the &e&l[GROUP]&7."
 # Global subgroup messages.

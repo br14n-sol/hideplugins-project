@@ -125,30 +125,26 @@ public class GroupManager {
     }
     public List<String> getWorldCommands(String group, String world){
         List<String> list = new ArrayList<>();
-        if(plugin.getGroups().get("groups."+group+".worlds."+world) != null)
-            if(!plugin.getGroups().getString("groups."+group+".worlds."+world+".commands").equals(""))
-                list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".worlds."+world+".commands").replace(" ", "").split(",")));
+        if(plugin.getGroups().get("groups."+group+".worlds."+world) != null && !plugin.getGroups().getString("groups."+group+".worlds."+world+".commands").equals(""))
+            list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".worlds."+world+".commands").replace(" ", "").split(",")));
         return list;
     }
     public List<String> getWorldTab(String group, String world){
         List<String> list = new ArrayList<>();
-        if(plugin.getGroups().get("groups."+group+".worlds."+world) != null)
-            if(!plugin.getGroups().getString("groups."+group+".worlds."+world+".tab").equals(""))
-                list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".worlds."+world+".tab").replace(" ", "").split(",")));
+        if(plugin.getGroups().get("groups."+group+".worlds."+world) != null && !plugin.getGroups().getString("groups."+group+".worlds."+world+".tab").equals(""))
+            list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".worlds."+world+".tab").replace(" ", "").split(",")));
         return list;
     }
     public List<String> getGlobalCommands(String group){
         List<String> list = new ArrayList<>();
-        if(plugin.getGroups().get("groups."+group+".global") != null)
-            if(!plugin.getGroups().getString("groups."+group+".global.commands").equals(""))
-                list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".global.commands").replace(" ", "").split(",")));
+        if(plugin.getGroups().get("groups."+group+".global") != null && !plugin.getGroups().getString("groups."+group+".global.commands").equals(""))
+            list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".global.commands").replace(" ", "").split(",")));
         return list;
     }
     public List<String> getGlobalTab(String group){
         List<String> list = new ArrayList<>();
-        if(plugin.getGroups().get("groups."+group+".global") != null)
-            if(!plugin.getGroups().getString("groups."+group+".global.tab").equals(""))
-                list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".global.tab").replace(" ", "").split(",")));
+        if(plugin.getGroups().get("groups."+group+".global") != null && !plugin.getGroups().getString("groups."+group+".global.tab").equals(""))
+            list.addAll(Arrays.asList(plugin.getGroups().getString("groups."+group+".global.tab").replace(" ", "").split(",")));
         return list;
     }
     public List<String> getInherit(String group){

@@ -23,7 +23,6 @@ public class PlayerJoinData implements Listener {
     public void playerJoinData(PlayerJoinEvent event){
         FileConfiguration players = plugin.getPlayers();
         FileConfiguration config = plugin.getConfig();
-        FileConfiguration groups = plugin.getGroups();
         Player player = event.getPlayer();
         if(!players.contains("Players."+player.getName())){
             players.createSection("Players."+player.getName());

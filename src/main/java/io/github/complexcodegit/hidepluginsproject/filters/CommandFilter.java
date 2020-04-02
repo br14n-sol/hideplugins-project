@@ -10,12 +10,8 @@ import org.apache.logging.log4j.message.Message;
 
 public class CommandFilter implements Filter {
     public Filter.Result checkMessage(String msg) {
-        if(msg != null) {
-            if(msg.contains("issued server command:")) {
-                if(msg.contains("/hproject") || msg.contains("/hp")) {
-                    return Filter.Result.DENY;
-                }
-            }
+        if(msg != null && msg.contains("issued server command:") && (msg.contains("/hproject") || msg.contains("/hp"))) {
+            return Filter.Result.DENY;
         }
         return Filter.Result.NEUTRAL;
     }
