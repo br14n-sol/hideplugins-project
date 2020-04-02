@@ -51,8 +51,8 @@ public class Utils {
                 break;
             }
         }
-        if(inv.getItem(-106) != null && inv.getItem(-106).getItemMeta().getDisplayName().equals(displayName)){
-            slot = -106;
+        if(inv.getItem(40) != null && inv.getItem(40).getItemMeta().getDisplayName().equals(displayName)){
+            slot = 40;
         }
         return slot;
     }

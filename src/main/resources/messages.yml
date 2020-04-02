@@ -26,6 +26,7 @@ helpPages:
     - '  &a>> &f/hp add inherit &7[NAME] &8- &6Add an inheritance.'
     - ''
     - '  &e>> &f/hp set help &7[VALUE] &8- &6Enable or disable customhelp.'
+    - '  &e>> &f/hp set permission [PERM] &8- &6GSet group permission.'
     - '  &e>> &f/hp remove inherit &7[NAME] &8- &6Remove an inheritance.'
     - ''
     - '  &c>> &f/hp finish &8- &6To finish editing the group.'

@@ -62,81 +62,66 @@ public class PlayerEditBook implements Listener {
                 } else {
                     commands = groupManager.getGlobalCommands(group);
                 }
-                for(String command : contentCommands) {
-                    if(Utils.checkCommand(command)) {
-                        if(!commands.contains(command)) {
-                            commands.add(command);
-                            if(!successfully.contains(command)){
-                                successfully.add(command);
-                            }
-                        } else {
-                            if(!alreadyExist.contains(command)){
-                                alreadyExist.add(command);
-                            }
-                        }
-                    } else {
-                        if(!notExist.contains(command)) {
-                            notExist.add(command);
-                        }
-                    }
-                }
-                if(!successfully.isEmpty()){
-                    if(option.equals("Tabs")){
-                        plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
-                    } else {
-                        plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
-                    }
-                    plugin.saveGroups();
-                    plugin.reloadGroups();
-                }
             } else {
                 if(option.equalsIgnoreCase("Tabs")){
                     commands = groupManager.getWorldTab(group, world);
                 } else {
                     commands = groupManager.getWorldCommands(group, world);
                 }
-                for(String command : contentCommands) {
-                    if(Utils.checkCommand(command)) {
-                        if(!commands.contains(command)) {
-                            commands.add(command);
-                            if(!successfully.contains(command)){
-                                successfully.add(command);
-                            }
-                        } else {
-                            if(!alreadyExist.contains(command)){
-                                alreadyExist.add(command);
-                            }
+            }
+            for(String command : contentCommands) {
+                if(Utils.checkCommand(command)) {
+                    if(!commands.contains(command)) {
+                        commands.add(command);
+                        if(!successfully.contains(command)){
+                            successfully.add(command);
                         }
                     } else {
-                        if(!notExist.contains(command)) {
-                            notExist.add(command);
+                        if(!alreadyExist.contains(command)){
+                            alreadyExist.add(command);
                         }
                     }
+                } else {
+                    if(!notExist.contains(command)) {
+                        notExist.add(command);
+                    }
                 }
-                if(!successfully.isEmpty()){
+            }
+            if(!successfully.isEmpty()){
+                if(world.equals("global")){
+                    if(option.equals("Tabs")){
+                        plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
+                    } else {
+                        plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
+                    }
+                } else {
                     if(option.equals("Tabs")){
                         plugin.getGroups().set("groups."+group+".worlds."+world+".tab", String.join(", ", commands));
                     } else {
                         plugin.getGroups().set("groups."+group+".worlds."+world+".commands", String.join(", ", commands));
                     }
-                    plugin.saveGroups();
-                    plugin.reloadGroups();
                 }
+                plugin.saveGroups();
+                plugin.reloadGroups();
             }
             FileConfiguration messages = plugin.getMessages();
-            TextComponent size = new TextComponent();
-            TextComponent message = new TextComponent();
             if(!notExist.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, notExist);
                 message.setText(Utils.colors(messages.getString("commandsNotValid")));
                 player.spigot().sendMessage(size, message);
             }
             if(!alreadyExist.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, alreadyExist);
                 message.setText(Utils.colors(messages.getString("commandsAlreadyExist")));
                 player.spigot().sendMessage(size, message);
             }
             if(!successfully.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, successfully);
                 message.setText(Utils.colors(messages.getString("commandsAdded")));
                 player.spigot().sendMessage(size, message);
@@ -172,81 +157,66 @@ public class PlayerEditBook implements Listener {
                 } else {
                     commands = groupManager.getGlobalCommands(group);
                 }
-                for(String command : contentCommands) {
-                    if(Utils.checkCommand(command)) {
-                        if(commands.contains(command)) {
-                            commands.remove(command);
-                            if(!successfully.contains(command)){
-                                successfully.add(command);
-                            }
-                        } else {
-                            if(!alreadyExist.contains(command)){
-                                alreadyExist.add(command);
-                            }
-                        }
-                    } else {
-                        if(!notExist.contains(command)) {
-                            notExist.add(command);
-                        }
-                    }
-                }
-                if(!successfully.isEmpty()){
-                    if(option.equals("Tabs")){
-                        plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
-                    } else {
-                        plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
-                    }
-                    plugin.saveGroups();
-                    plugin.reloadGroups();
-                }
             } else {
                 if(option.equalsIgnoreCase("Tabs")){
                     commands = groupManager.getWorldTab(group, world);
                 } else {
                     commands = groupManager.getWorldCommands(group, world);
                 }
-                for(String command : contentCommands) {
-                    if(Utils.checkCommand(command)) {
-                        if(commands.contains(command)) {
-                            commands.remove(command);
-                            if(!successfully.contains(command)){
-                                successfully.add(command);
-                            }
-                        } else {
-                            if(!alreadyExist.contains(command)){
-                                alreadyExist.add(command);
-                            }
+            }
+            for(String command : contentCommands) {
+                if(Utils.checkCommand(command)) {
+                    if(commands.contains(command)) {
+                        commands.remove(command);
+                        if(!successfully.contains(command)){
+                            successfully.add(command);
                         }
                     } else {
-                        if(!notExist.contains(command)) {
-                            notExist.add(command);
+                        if(!alreadyExist.contains(command)){
+                            alreadyExist.add(command);
                         }
                     }
+                } else {
+                    if(!notExist.contains(command)) {
+                        notExist.add(command);
+                    }
                 }
-                if(!successfully.isEmpty()){
+            }
+            if(!successfully.isEmpty()){
+                if(world.equals("global")){
+                    if(option.equals("Tabs")){
+                        plugin.getGroups().set("groups."+group+".global.tab", String.join(", ", commands));
+                    } else {
+                        plugin.getGroups().set("groups."+group+".global.commands", String.join(", ", commands));
+                    }
+                } else {
                     if(option.equals("Tabs")){
                         plugin.getGroups().set("groups."+group+".worlds."+world+".tab", String.join(", ", commands));
                     } else {
                         plugin.getGroups().set("groups."+group+".worlds."+world+".commands", String.join(", ", commands));
                     }
-                    plugin.saveGroups();
-                    plugin.reloadGroups();
                 }
+                plugin.saveGroups();
+                plugin.reloadGroups();
             }
             FileConfiguration messages = plugin.getMessages();
-            TextComponent size = new TextComponent();
-            TextComponent message = new TextComponent();
             if(!notExist.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, notExist);
                 message.setText(Utils.colors(messages.getString("commandsNotValid")));
                 player.spigot().sendMessage(size, message);
             }
             if(!alreadyExist.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, alreadyExist);
                 message.setText(Utils.colors(messages.getString("commandsNotExist")));
                 player.spigot().sendMessage(size, message);
             }
             if(!successfully.isEmpty()){
+                TextComponent size = new TextComponent();
+                TextComponent message = new TextComponent();
                 set(size, successfully);
                 message.setText(Utils.colors(messages.getString("commandsRemoved")));
                 player.spigot().sendMessage(size, message);

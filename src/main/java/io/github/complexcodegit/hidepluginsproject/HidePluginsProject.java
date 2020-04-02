@@ -54,6 +54,7 @@ public class HidePluginsProject extends JavaPlugin {
         pm.registerEvents(new PlayerChangeWorld(), this);
         pm.registerEvents(new PlayerJoinData(this), this);
         pm.registerEvents(new PlayerCameOut(new GroupManager(this)), this);
+        pm.registerEvents(new PlayerDropItem(), this);
     }
     private void registerCommands(){
         getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new SelectorManager()));

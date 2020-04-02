@@ -152,7 +152,7 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+messages.getString("haveNoSpaceInHotbar"));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("haveNoSpaceInHotbar")));
                             }
                         } else {
                             player.sendMessage(plugin.prefix+Utils.colors(messages.getString("selectWorldOrGlobal")));
@@ -222,7 +222,7 @@ public class ChiefCommand implements CommandExecutor {
                                     Bukkit.getScheduler().runTaskLater(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 100F, 100F), 7);
                                 }
                             } else {
-                                player.sendMessage(plugin.prefix+messages.getString("haveNoSpaceInHotbar"));
+                                player.sendMessage(plugin.prefix+Utils.colors(messages.getString("haveNoSpaceInHotbar")));
                             }
                         } else {
                             player.sendMessage(plugin.prefix+Utils.colors(messages.getString("selectWorldOrGlobal")));
