@@ -63,7 +63,7 @@ public class PlayerEditBook implements Listener {
                     commands = groupManager.getGlobalCommands(group);
                 }
             } else {
-                if(option.equalsIgnoreCase("Tabs")){
+                if(option.equals("Tabs")){
                     commands = groupManager.getWorldTab(group, world);
                 } else {
                     commands = groupManager.getWorldCommands(group, world);

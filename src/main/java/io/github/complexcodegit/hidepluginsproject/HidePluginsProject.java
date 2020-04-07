@@ -31,10 +31,11 @@ public class HidePluginsProject extends JavaPlugin {
         ((Logger)LogManager.getRootLogger()).addFilter(new CommandFilter());
         registerConfig();
         FileManager.save(this);
+        GroupManager.generateGroups(this);
         registerEvents();
         registerCommands();
         getLogger().finest("HidePlugins Project is enabled.");
-        MetricManager.customMetrics(this, new GroupManager(this));
+        MetricManager.customMetrics(this);
         if(getConfig().getBoolean("updates")){
             UpdateCheck updater = new UpdateCheck(this);
             try {

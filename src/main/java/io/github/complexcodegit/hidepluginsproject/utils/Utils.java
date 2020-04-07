@@ -109,4 +109,7 @@ public class Utils {
             }
         }
     }
+    public static List<String> toList(String string){
+        return new ArrayList<>(Arrays.asList(string.replace(" ", "").split(",")));
+    }
 }

@@ -2,7 +2,7 @@ package io.github.complexcodegit.hidepluginsproject.events;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import org.bukkit.configuration.file.FileConfiguration;
+import io.github.complexcodegit.hidepluginsproject.objects.GroupObject;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,8 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,20 +34,13 @@ public class TabCompletes implements Listener {
         }
         return false;
     }
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public boolean tabSuggest(TabCompleteEvent event){
+    @EventHandler
+    public boolean tabComplete(TabCompleteEvent event){
         if(event.getSender() instanceof Player){
-            if(event.getBuffer().startsWith("/help")){
-                FileConfiguration groups = plugin.getGroups();
-                Player player = (Player)event.getSender();
-                String group = groupManager.getPlayerGroup(player);
-                if(groups.getBoolean("groups."+group+".options.custom-help.enable") &&
-                        groups.contains("groups."+group+".options.custom-help.worlds."+player.getWorld().getName())){
-                    ArrayList<String> pages = new ArrayList<>(groups.getConfigurationSection("groups."
-                            +group+".options.custom-help.worlds."+player.getWorld().getName()+".pages").getKeys(false));
-                    Collections.sort(pages);
-                    event.setCompletions(pages);
-                }
+            Player player = (Player)event.getSender();
+            GroupObject group = GroupManager.getPlayerGroup(player);
+            if(plugin.getConfig().getBoolean("lockedCommands") && group.hasCustomHelp() && event.getBuffer().startsWith("/help")){
+                event.setCancelled(true);
             }
         }
         return false;

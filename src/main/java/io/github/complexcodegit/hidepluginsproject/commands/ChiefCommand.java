@@ -57,6 +57,10 @@ public class ChiefCommand implements CommandExecutor {
                 plugin.reloadMessages();
                 plugin.reloadPlayers();
                 plugin.reloadConfig();
+                if(!selectorManager.containsGroup(player)) {
+                    GroupManager.generateGroups(plugin);
+                    GroupManager.updateCmds();
+                }
             }
             /*
              /hproject finish
@@ -64,6 +68,8 @@ public class ChiefCommand implements CommandExecutor {
             else if(args[0].equalsIgnoreCase("finish")) {
                 if(selectorManager.containsGroup(player)) {
                     player.sendMessage(plugin.prefix+Utils.colors(messages.getString("groupFinish").replace("[GROUP]", selectorManager.getGroup(player))));
+                    GroupManager.generateGroups(plugin);
+                    GroupManager.updateCmdGroup(selectorManager.getGroup(player));
                     selectorManager.removeGroup(player);
                     selectorManager.removeWorld(player);
                     selectorManager.removeGlobal(player);
