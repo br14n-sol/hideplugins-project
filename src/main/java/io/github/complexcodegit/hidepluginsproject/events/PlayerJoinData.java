@@ -1,7 +1,6 @@
 package io.github.complexcodegit.hidepluginsproject.events;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
-import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,6 +56,5 @@ public class PlayerJoinData implements Listener {
                 plugin.savePlayers();
             }
         }
-        GroupManager.getPlayerGroup(player).addPlayer(player);
     }
 }

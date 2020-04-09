@@ -53,7 +53,7 @@ public class LockedCommands implements Listener {
             List<String> commandList = groupManager.getCommands(player, false);
             GroupObject playerGroup = GroupManager.getPlayerGroup(player);
             if(commandList.contains(command)){
-                if(command.equalsIgnoreCase("/help") && playerGroup.hasCustomHelp() && groupManager.getHelpPage(player, "1") != null){
+                if(command.equalsIgnoreCase("/help") && playerGroup.hasCustomHelp()){
                     event.setCancelled(true);
                     if(!(pageNumber.equals(command))){
                         if(groupManager.getHelpPage(player, pageNumber) != null){
@@ -77,10 +77,10 @@ public class LockedCommands implements Listener {
                 event.setCancelled(false);
                 return false;
             } else {
+                if(config.getBoolean("cooldown.enable")){
+                    CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
+                }
                 if(Utils.checkCommand(command)){
-                    if(config.getBoolean("cooldown.enable")){
-                        CooldownManager.setCooldown(player, config.getInt("cooldown.time"));
-                    }
                     if(config.getBoolean("playerCommandHistory")){
                         if(Objects.equals(players.getString("Players."+player.getName()+".command-history"), "")){
                             List<String> list = new ArrayList<>();

@@ -17,13 +17,17 @@ public class WorldObject {
         return worldName;
     }
     public void addCommand(String command){
-        commandList.add(command);
+        if(!commandList.contains(command)){
+            commandList.add(command);
+        }
     }
     public List<String> getCommands(){
         return commandList;
     }
     public void addTab(String tab){
-        tabList.add(tab.replaceFirst("/", ""));
+        if(!tabList.contains(tab)){
+            tabList.add(tab.replaceFirst("/", ""));
+        }
     }
     public List<String> getTabs(){
         return tabList;

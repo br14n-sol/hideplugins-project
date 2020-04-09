@@ -1,25 +1,34 @@
 package io.github.complexcodegit.hidepluginsproject.objects;
 
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupObject {
     private String groupName;
+    private int id;
     private boolean paramDefault = false;
     private boolean paramCustomHelp = false;
     private String permission = null;
     private List<GroupObject> inheritanceList = new ArrayList<>();
     private List<WorldObject> worldList = new ArrayList<>();
-    private List<Player> playerList = new ArrayList<>();
+    private GlobalObject globalObject = new GlobalObject();
 
-    public GroupObject(String groupName){
+    public GroupObject(String groupName, int id){
         this.groupName = groupName;
+        this.id = id;
     }
 
     public String getGroupName(){
         return groupName;
+    }
+    public int getId(){
+        return id;
+    }
+    public void setGlobal(GlobalObject globalObject){
+        this.globalObject = globalObject;
+    }
+    public GlobalObject getGlobal(){
+        return globalObject;
     }
     public void setDefault(Boolean paramDefault){
         this.paramDefault = paramDefault;
@@ -58,14 +67,5 @@ public class GroupObject {
             }
         }
         return null;
-    }
-    public void addPlayer(Player player){
-        playerList.add(player);
-    }
-    public List<Player> getPlayerList(){
-        return playerList;
-    }
-    public void removePlayer(Player player){
-        playerList.remove(player);
     }
 }

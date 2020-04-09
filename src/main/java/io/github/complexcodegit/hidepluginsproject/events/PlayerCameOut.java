@@ -16,6 +16,5 @@ public class PlayerCameOut implements Listener {
         if(event.getPlayer().hasPermission("hidepluginsproject.hproject") || groupManager.getCommands(event.getPlayer(), false).contains("/hproject")) {
             event.getPlayer().chat("/hproject finish");
         }
-        GroupManager.getPlayerGroup(event.getPlayer()).removePlayer(event.getPlayer());
     }
 }
