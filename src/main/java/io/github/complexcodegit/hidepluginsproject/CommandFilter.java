@@ -1,4 +1,4 @@
-package io.github.complexcodegit.hidepluginsproject.filters;
+package io.github.complexcodegit.hidepluginsproject;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;

@@ -41,7 +41,8 @@ helpPages:
     - '&cThis is the last help page.'
 pageDoesNotExist: "&7The page does not exist, use the command &e/hp help"
 # Reload command message. (/hp reload)
-reloadConfig: "&7Configuration files reloaded successfully."
+reloadConfig: "&7Configuration files were successfully reloaded..."
+loadGroups: "&7[GROUPS] groups were loaded correctly!"
 # Group messages.
 groupCreated: "&e&l[GROUP] &7was created successfully, to see the available commands use: &e/hp help 2"
 groupAlreadyExist: "&c&l[GROUP] &7already exists."

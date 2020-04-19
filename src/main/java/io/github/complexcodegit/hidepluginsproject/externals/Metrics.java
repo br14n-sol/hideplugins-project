@@ -1,4 +1,4 @@
-package io.github.complexcodegit.hidepluginsproject.external;
+package io.github.complexcodegit.hidepluginsproject.externals;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -716,5 +716,4 @@ public class Metrics {
             return data;
         }
     }
-
 }

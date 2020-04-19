@@ -4,68 +4,70 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupObject {
-    private String groupName;
-    private int id;
+    private final String paramName;
+    private final int paramID;
+    private static int paramIdNext = 0;
+    private String paramPermission = null;
     private boolean paramDefault = false;
-    private boolean paramCustomHelp = false;
-    private String permission = null;
-    private List<GroupObject> inheritanceList = new ArrayList<>();
-    private List<WorldObject> worldList = new ArrayList<>();
-    private GlobalObject globalObject = new GlobalObject();
+    private boolean paramHelp = false;
+    private List<GroupObject> paramInheritances = new ArrayList<>();
+    private List<WorldObject> paramWorlds = new ArrayList<>();
+    private GlobalObject paramGlobal = new GlobalObject();
 
-    public GroupObject(String groupName, int id){
-        this.groupName = groupName;
-        this.id = id;
+    public GroupObject(String paramName){
+        this.paramName = paramName;
+        paramID = paramIdNext;
+        paramIdNext++;
     }
 
-    public String getGroupName(){
-        return groupName;
+    public String getName(){
+        return paramName;
     }
-    public int getId(){
-        return id;
+    public int getID(){
+        return paramID;
     }
-    public void setGlobal(GlobalObject globalObject){
-        this.globalObject = globalObject;
-    }
-    public GlobalObject getGlobal(){
-        return globalObject;
-    }
-    public void setDefault(Boolean paramDefault){
-        this.paramDefault = paramDefault;
+    public String getPermission(){
+        return paramPermission;
     }
     public boolean isDefault(){
         return paramDefault;
     }
-    public void setCustomHelp(Boolean paramCustomHelp){
-        this.paramCustomHelp = paramCustomHelp;
-    }
-    public boolean hasCustomHelp(){
-        return paramCustomHelp;
-    }
-    public void setPermission(String permission){
-        this.permission = permission;
-    }
-    public String getPermission(){
-        return permission;
-    }
-    public void addInheritance(GroupObject groupObject){
-        inheritanceList.add(groupObject);
+    public boolean hasHelp(){
+        return paramHelp;
     }
     public List<GroupObject> getInheritances(){
-        return inheritanceList;
-    }
-    public void addWorld(WorldObject worldObject){
-        worldList.add(worldObject);
+        return paramInheritances;
     }
     public List<WorldObject> getWorlds(){
-        return worldList;
+        return paramWorlds;
     }
-    public WorldObject getWorld(String worldName) {
-        for(WorldObject worldObject : worldList){
-            if(worldObject.getWorldName().equals(worldName)){
+    public WorldObject getWorld(String paramName){
+        for(WorldObject worldObject : paramWorlds){
+            if(worldObject.getName().equals(paramName)){
                 return worldObject;
             }
         }
         return null;
+    }
+    public GlobalObject getGlobal(){
+        return paramGlobal;
+    }
+    public void setPermission(String paramPermission){
+        this.paramPermission = paramPermission;
+    }
+    public void setDefault(boolean paramDefault){
+        this.paramDefault = paramDefault;
+    }
+    public void setHelp(boolean paramHelp){
+        this.paramHelp = paramHelp;
+    }
+    public void addInheritance(GroupObject groupObject){
+        paramInheritances.add(groupObject);
+    }
+    public void addWorld(WorldObject worldObject){
+        paramWorlds.add(worldObject);
+    }
+    public void setGlobal(GlobalObject globalObject){
+        paramGlobal = globalObject;
     }
 }

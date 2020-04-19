@@ -2,7 +2,7 @@ package io.github.complexcodegit.hidepluginsproject.events;
 
 import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import io.github.complexcodegit.hidepluginsproject.utils.Utils;
+import io.github.complexcodegit.hidepluginsproject.Utils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -225,7 +225,7 @@ public class PlayerEditBook implements Listener {
     }
 
     public void set(TextComponent component, List<String> list){
-        component.setText(plugin.prefix+"§7"+list.size()+" ");
+        component.setText(plugin.getPrefix()+"§7"+list.size()+" ");
         if(list.size() > 1){
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(String.join(", ", list)).create()));
         } else {

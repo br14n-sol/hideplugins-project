@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ChiefCommandCompleter implements TabCompleter {
+public class MainCommandSuggest implements TabCompleter {
     private GroupManager groupManager;
-    public ChiefCommandCompleter(GroupManager groupManager){
+    public MainCommandSuggest(GroupManager groupManager){
         this.groupManager = groupManager;
     }
 

@@ -3,18 +3,18 @@ package io.github.complexcodegit.hidepluginsproject.objects;
 import java.util.List;
 
 public class PageObject {
-    private String pageNumber;
-    private List<String> pageLines;
+    private final String paramNumber;
+    private final List<String> paramLines;
 
-    public PageObject(String pageNumber, List<String> pageLines){
-        this.pageNumber = pageNumber;
-        this.pageLines = pageLines;
+    public PageObject(String paramNumber, List<String> paramLines){
+        this.paramNumber = paramNumber;
+        this.paramLines = paramLines;
     }
 
-    public String getPageNumber(){
-        return pageNumber;
+    public String getNumber(){
+        return paramNumber;
     }
     public List<String> getLines(){
-        return pageLines;
+        return paramLines;
     }
 }

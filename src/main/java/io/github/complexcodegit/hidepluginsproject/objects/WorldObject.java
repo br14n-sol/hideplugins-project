@@ -4,46 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WorldObject {
-    private String worldName;
-    private List<String> commandList = new ArrayList<>();
-    private List<String> tabList = new ArrayList<>();
-    private List<PageObject> pagesList = new ArrayList<>();
+    private final String paramName;
+    private List<PageObject> paramPages = new ArrayList<>();
+    private List<String> paramCommands = new ArrayList<>();
+    private List<String> paramTabs = new ArrayList<>();
 
-    public WorldObject(String worldName){
-        this.worldName = worldName;
+    public WorldObject(String paramName){
+        this.paramName = paramName;
     }
 
-    public String getWorldName(){
-        return worldName;
-    }
-    public void addCommand(String command){
-        if(!commandList.contains(command)){
-            commandList.add(command);
-        }
-    }
-    public List<String> getCommands(){
-        return commandList;
-    }
-    public void addTab(String tab){
-        if(!tabList.contains(tab)){
-            tabList.add(tab.replaceFirst("/", ""));
-        }
-    }
-    public List<String> getTabs(){
-        return tabList;
-    }
-    public void addPage(PageObject pageObject){
-        pagesList.add(pageObject);
+    public String getName(){
+        return paramName;
     }
     public List<PageObject> getPages(){
-        return pagesList;
+        return paramPages;
     }
-    public PageObject getPage(String pageNumber){
-        for(PageObject pageObject : pagesList){
-            if(pageObject.getPageNumber().equals(pageNumber)){
+    public PageObject getPage(String paramNumber){
+        for(PageObject pageObject : paramPages){
+            if(pageObject.getNumber().equals(paramNumber)){
                 return pageObject;
             }
         }
         return null;
+    }
+    public List<String> getCommands(){
+        return paramCommands;
+    }
+    public List<String> getTabs(){
+        return paramTabs;
+    }
+    public void addPage(PageObject pageObject){
+        paramPages.add(pageObject);
+    }
+    public void addCommand(String command){
+        if(!paramCommands.contains(command)){
+            paramCommands.add(command);
+        }
+    }
+    public void addTab(String command){
+        if(!paramTabs.contains(command)){
+            paramTabs.add(command.replaceFirst("/", ""));
+        }
     }
 }

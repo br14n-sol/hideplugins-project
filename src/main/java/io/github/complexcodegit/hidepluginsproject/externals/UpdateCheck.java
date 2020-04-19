@@ -1,6 +1,6 @@
-package io.github.complexcodegit.hidepluginsproject.external;
+package io.github.complexcodegit.hidepluginsproject.externals;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import io.github.complexcodegit.hidepluginsproject.HidePluginsProject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,15 +11,14 @@ import java.net.URLConnection;
 public class UpdateCheck {
     private URL checkURL;
     private String newVersion = "";
-    private JavaPlugin plugin;
+    private HidePluginsProject plugin;
 
-    public UpdateCheck(JavaPlugin plugin) {
+    public UpdateCheck(HidePluginsProject plugin) {
         this.plugin = plugin;
         this.newVersion = plugin.getDescription().getVersion();
         try {
             this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + 25317);
-        } catch (MalformedURLException ignored) {
-        }
+        } catch (MalformedURLException ignored) {}
     }
 
     public String getLatestVersion() {
@@ -34,4 +33,3 @@ public class UpdateCheck {
         return !plugin.getDescription().getVersion().equals(newVersion);
     }
 }
-

@@ -1,16 +1,16 @@
 package io.github.complexcodegit.hidepluginsproject;
 
-import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommand;
-import io.github.complexcodegit.hidepluginsproject.commands.ChiefCommandCompleter;
-import io.github.complexcodegit.hidepluginsproject.external.UpdateCheck;
-import io.github.complexcodegit.hidepluginsproject.filters.CommandFilter;
-import io.github.complexcodegit.hidepluginsproject.managers.FileManager;
-import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
-import io.github.complexcodegit.hidepluginsproject.managers.MetricManager;
-import io.github.complexcodegit.hidepluginsproject.managers.SelectorManager;
+import io.github.complexcodegit.hidepluginsproject.commands.MainCommand;
+import io.github.complexcodegit.hidepluginsproject.commands.MainCommandSuggest;
 import io.github.complexcodegit.hidepluginsproject.events.*;
+import io.github.complexcodegit.hidepluginsproject.externals.Metrics;
+import io.github.complexcodegit.hidepluginsproject.externals.UpdateCheck;
+import io.github.complexcodegit.hidepluginsproject.handlers.GroupsHandler;
+import io.github.complexcodegit.hidepluginsproject.handlers.PlayersHandler;
+import io.github.complexcodegit.hidepluginsproject.managers.GroupManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -19,23 +19,27 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
 
 public class HidePluginsProject extends JavaPlugin {
-    private FileConfiguration groups;
-    private File groupsFile;
-    private FileConfiguration messages;
-    private File messagesFile;
-    private FileConfiguration players;
-    private File playersFile;
-    public String prefix = "§a§lHPP§7§l>§r ";
+    private FileConfiguration groups; private File groupsFile;
+    private FileConfiguration messages; private File messagesFile;
+    private FileConfiguration players; private File playersFile;
 
+    public void onLoad(){
+        registerConfig();
+        registerFiles();
+        GroupsHandler.read(this);
+        if(!Bukkit.getOnlinePlayers().isEmpty()){
+            PlayersHandler.setLoadPlayers();
+        }
+    }
     public void onEnable(){
         ((Logger)LogManager.getRootLogger()).addFilter(new CommandFilter());
-        registerConfig();
-        FileManager.save(this);
-        GroupManager.generateGroups(this);
         registerEvents();
         registerCommands();
-        getLogger().finest("HidePlugins Project is enabled.");
-        MetricManager.customMetrics(this);
+        if(!GroupsHandler.getLoadGroups().isEmpty()){
+            Metrics metrics = new Metrics(this, 5432);
+            metrics.addCustomChart(new Metrics.SingleLineChart("groups", () -> GroupsHandler.getLoadGroups().size()));
+            getLogger().info(GroupsHandler.getLoadGroups().size() + " groups were loaded correctly.");
+        }
         if(getConfig().getBoolean("updates")){
             UpdateCheck updater = new UpdateCheck(this);
             try {
@@ -47,19 +51,29 @@ public class HidePluginsProject extends JavaPlugin {
             }
         }
     }
-    private void registerEvents() {
+    public void onDisable(){
+        if(!PlayersHandler.getPlayers().isEmpty()){
+            PlayersHandler.savePlayers();
+            getLogger().info(PlayersHandler.getPlayers().size() + " players were saved correctly.");
+        }
+    }
+
+    private void registerEvents(){
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new TabCompletes(this, new GroupManager(this)), this);
-        pm.registerEvents(new PlayerEditBook(this, new GroupManager(this)), this);
-        pm.registerEvents(new LockedCommands(this, new GroupManager(this)), this);
-        pm.registerEvents(new PlayerChangeWorld(), this);
+        pm.registerEvents(new PlayerCommandBlock(this, new GroupManager(this)), this);
+        pm.registerEvents(new PlayerTabSuggest(this, new GroupManager(this)), this);
+        pm.registerEvents(new PlayerHelpSuggest(this, new GroupManager(this)), this);
         pm.registerEvents(new PlayerJoinData(this), this);
-        pm.registerEvents(new PlayerCameOut(new GroupManager(this)), this);
+        pm.registerEvents(new PlayerQuitData(), this);
         pm.registerEvents(new PlayerDropItem(), this);
+        pm.registerEvents(new PlayerEditBook(this, new GroupManager(this)), this);
     }
     private void registerCommands(){
-        getCommand("hproject").setExecutor(new ChiefCommand(this, new GroupManager(this), new SelectorManager()));
-        getCommand("hproject").setTabCompleter(new ChiefCommandCompleter(new GroupManager(this)));
+        getCommand("hproject").setExecutor(new MainCommand(this, new GroupManager(this)));
+        getCommand("hproject").setTabCompleter(new MainCommandSuggest(new GroupManager(this)));
+    }
+    public String getPrefix(){
+        return "§a§lHPP§7§l>§r ";
     }
     private void registerConfig() {
         File config = new File(getDataFolder(), "config.yml");
@@ -68,28 +82,34 @@ public class HidePluginsProject extends JavaPlugin {
             saveDefaultConfig();
         }
     }
+    private void registerFiles(){
+        groupsFile = new File(getDataFolder(), "groups.yml");
+        playersFile = new File(getDataFolder(), "players.yml");
+        messagesFile = new File(getDataFolder(), "messages.yml");
+        if(!groupsFile.exists())
+            saveResource("groups.yml", false);
+        if(!playersFile.exists())
+            saveResource("players.yml", false);
+        if(!messagesFile.exists())
+            saveResource("messages.yml", false);
+    }
     public void reloadGroups() {
         if(groups == null) {
             groupsFile = new File(getDataFolder(), "groups.yml");
         }
-
         groups = YamlConfiguration.loadConfiguration(groupsFile);
         try {
             Reader defConfigStream = new InputStreamReader(getResource("groups.yml"), "UTF8");
-            if(defConfigStream != null) {
+            if(defConfigStream != null){
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
                 groups.setDefaults(defConfig);
             }
-        } catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        } catch(UnsupportedEncodingException ignored) { }
     }
     public void saveGroups() {
         try {
             groups.save(groupsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) { }
     }
     public FileConfiguration getGroups() {
         if(groups == null) {
@@ -101,7 +121,6 @@ public class HidePluginsProject extends JavaPlugin {
         if(messages == null) {
             messagesFile = new File(getDataFolder(), "messages.yml");
         }
-
         messages = YamlConfiguration.loadConfiguration(messagesFile);
         try {
             Reader defConfigStream = new InputStreamReader(getResource("messages.yml"), "UTF8");
@@ -109,9 +128,7 @@ public class HidePluginsProject extends JavaPlugin {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
                 messages.setDefaults(defConfig);
             }
-        } catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        } catch(UnsupportedEncodingException ignored) {}
     }
     public FileConfiguration getMessages() {
         if(messages == null) {
@@ -119,17 +136,10 @@ public class HidePluginsProject extends JavaPlugin {
         }
         return messages;
     }
-    public FileConfiguration getPlayers() {
-        if(players == null) {
-            reloadPlayers();
-        }
-        return players;
-    }
     public void reloadPlayers() {
         if(players == null) {
             playersFile = new File(getDataFolder(), "players.yml");
         }
-
         players = YamlConfiguration.loadConfiguration(playersFile);
         try {
             Reader defConfigStream = new InputStreamReader(getResource("players.yml"), "UTF8");
@@ -137,15 +147,17 @@ public class HidePluginsProject extends JavaPlugin {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
                 players.setDefaults(defConfig);
             }
-        } catch(UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch(UnsupportedEncodingException ignored) {}
+    }
+    public FileConfiguration getPlayers() {
+        if(players == null) {
+            reloadPlayers();
         }
+        return players;
     }
     public void savePlayers() {
         try {
             players.save(playersFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) {}
     }
 }
